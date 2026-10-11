@@ -14,8 +14,10 @@ export function webpFor(src: string | null | undefined): string | null {
 export function Pic({ src, alt, ...rest }: ImgHTMLAttributes<HTMLImageElement> & { src: string; alt: string }) {
   const webp = webpFor(src);
   if (!webp) return <img src={src} alt={alt} {...rest} />;
+  // display: contents — the <picture> wrapper takes no box of its own, so the <img>'s
+  // sizing classes (h-full / w-full / object-cover) keep working against the original parent.
   return (
-    <picture>
+    <picture className="contents">
       <source type="image/webp" srcSet={webp} />
       <img src={src} alt={alt} {...rest} />
     </picture>

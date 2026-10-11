@@ -29,7 +29,9 @@ export function Partners({ initial }: { initial?: PartnerRow[] }) {
         <div className="text-xs font-semibold tracking-widest text-[var(--royal)] uppercase">{t("partners.title")}</div>
         <h3 className="mt-2 text-xl sm:text-2xl font-semibold text-muted-foreground">{t("partners.sub")}</h3>
       </div>
-      <div className="mt-12 relative">
+      {/* The marquee track is always LTR: in RTL an overflowing row sits to the LEFT of the viewport,
+          so the translateX(-50%) loop would slide the logos out of view (visible on phones in Arabic). */}
+      <div className="mt-12 relative" dir="ltr">
         <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-secondary/80 to-transparent z-10" />
         <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-secondary/80 to-transparent z-10" />
         <div className="flex gap-8 animate-marquee w-max items-center">
@@ -41,7 +43,8 @@ export function Partners({ initial }: { initial?: PartnerRow[] }) {
               <Pic
                 src={p.logo_url}
                 alt={p.name}
-                loading="lazy"
+                loading="eager"
+                decoding="async"
                 className="max-h-12 max-w-[140px] w-auto object-contain opacity-80 hover:opacity-100 transition"
               />
             </div>
