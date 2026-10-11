@@ -16,4 +16,18 @@ export default defineConfig({
   vite: {
     plugins: [mcpPlugin()],
   },
+  nitro: {
+    cloudflare: {
+      // Merged into the generated .output/server/wrangler.json on every build.
+      // Only PUBLIC values live here; SUPABASE_SERVICE_ROLE_KEY is a Secret set in the
+      // Cloudflare dashboard (Settings → Variables and Secrets) and is never committed.
+      wrangler: {
+        name: "united-insurance",
+        vars: {
+          SUPABASE_URL: "https://rdbbhkvzcpdyctscdhvu.supabase.co",
+          SUPABASE_PUBLISHABLE_KEY: "sb_publishable_gyzdwQsKYUtUT7FmWvm53w_QaRCXEAP",
+        },
+      },
+    },
+  },
 });
