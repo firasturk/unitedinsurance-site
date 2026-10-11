@@ -44,8 +44,8 @@ const CSP = [
   "default-src 'self'",
   // TanStack Start hydrates through inline scripts; Turnstile + Cloudflare Web Analytics are allowed explicitly.
   "script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://static.cloudflareinsights.com",
-  "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-  "font-src 'self' data: https://fonts.gstatic.com",
+  "style-src 'self' 'unsafe-inline'",
+  "font-src 'self' data:",
   "img-src 'self' data: blob: https://*.supabase.co",
   "media-src 'self' blob:",
   "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://challenges.cloudflare.com https://cloudflareinsights.com",

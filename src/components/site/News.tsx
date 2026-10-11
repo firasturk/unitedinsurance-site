@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { formatDate } from "@/lib/dates";
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
@@ -6,10 +7,6 @@ import { useServerFn } from "@tanstack/react-start";
 import { useLang } from "@/lib/i18n";
 import { listLatestArticles, type ArticleCard } from "@/lib/public.functions";
 
-function formatDate(iso: string, lang: "en" | "ar") {
-  const d = new Date(iso);
-  return d.toLocaleDateString(lang === "ar" ? "ar-JO" : "en-US", { year: "numeric", month: "short", day: "numeric" });
-}
 
 export function News({ initial, limit = 6 }: { initial?: ArticleCard[]; limit?: number }) {
   const { t, lang } = useLang();
@@ -63,7 +60,7 @@ export function News({ initial, limit = 6 }: { initial?: ArticleCard[]; limit?: 
                   <ArrowUpRight className="absolute bottom-4 right-4 rtl:right-auto rtl:left-4 h-10 w-10 p-2.5 rounded-full glass text-white opacity-0 group-hover:opacity-100 transition" />
                 </div>
                 <div className="flex flex-1 flex-col p-6">
-                  <div className="text-xs text-muted-foreground">{formatDate(n.date, lang)}</div>
+                  <div className="text-xs text-muted-foreground">{formatDate(n.date, lang, "short")}</div>
                   <h3 className="mt-2 text-lg font-semibold leading-snug line-clamp-2">
                     {lang === "ar" ? n.title_ar : n.title_en}
                   </h3>

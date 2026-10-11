@@ -2,6 +2,15 @@
 @source "../src";
 @import "tw-animate-css";
 
+/* Self-hosted fonts (served from unitedjo.com, split by script so a page only downloads the
+   Arabic or Latin subset it uses). Replaces the render-blocking Google Fonts stylesheet. */
+@import "@fontsource-variable/cairo";
+@import "@fontsource-variable/inter";
+@import "@fontsource/poppins/500.css";
+@import "@fontsource/poppins/600.css";
+@import "@fontsource/poppins/700.css";
+@import "@fontsource/poppins/800.css";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -38,9 +47,9 @@
   --color-silver: var(--silver);
   --color-gold: var(--gold);
 
-  --font-sans: "Inter", "Cairo", system-ui, sans-serif;
-  --font-display: "Poppins", "Cairo", system-ui, sans-serif;
-  --font-arabic: "Cairo", "Tajawal", system-ui, sans-serif;
+  --font-sans: "Inter Variable", "Inter", "Cairo Variable", "Cairo", system-ui, sans-serif;
+  --font-display: "Poppins", "Cairo Variable", "Cairo", system-ui, sans-serif;
+  --font-arabic: "Cairo Variable", "Cairo", system-ui, sans-serif;
 }
 
 :root {

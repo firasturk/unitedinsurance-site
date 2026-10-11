@@ -1,4 +1,5 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { formatDate } from "@/lib/dates";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import { SiteLayout } from "@/components/site/Layout";
@@ -73,9 +74,6 @@ export const Route = createFileRoute("/news/$slug")({
   component: ArticlePage,
 });
 
-function formatDate(iso: string, lang: "en" | "ar") {
-  return new Date(iso).toLocaleDateString(lang === "ar" ? "ar-JO" : "en-US", { year: "numeric", month: "long", day: "numeric" });
-}
 
 function ArticlePage() {
   const { article, related } = Route.useLoaderData();
