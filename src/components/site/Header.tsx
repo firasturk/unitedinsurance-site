@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { logo } from "@/lib/media";
-import { useState, useEffect } from "react";
+import { Pic } from "@/components/site/Pic";
+import { useState, useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Globe, ChevronDown } from "lucide-react";
@@ -51,11 +52,40 @@ export function Header() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Mobile drawer: Escape closes it, focus moves inside while open and returns to the
+  // menu button afterwards, and the page behind it stops scrolling.
+  const menuButton = useRef<HTMLButtonElement>(null);
+  const drawer = useRef<HTMLElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+      if (e.key === "Tab" && drawer.current) {
+        const focusables = drawer.current.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])');
+        if (!focusables.length) return;
+        const first = focusables[0];
+        const last = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const t = setTimeout(() => drawer.current?.querySelector<HTMLElement>("button, a")?.focus(), 50);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+      clearTimeout(t);
+      menuButton.current?.focus();
+    };
+  }, [open]);
+
   return (
     <header className={`sticky top-0 z-50 transition-all ${scrolled ? "glass-light shadow-soft" : "bg-background/60 backdrop-blur"}`}>
       <div className="mx-auto grid h-16 max-w-7xl grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 sm:px-6">
         <Link to="/" className="flex items-center shrink-0" aria-label="United Insurance">
-          <img src={logo} alt="United Insurance" className="h-9 w-auto" />
+          <Pic src={logo} alt="United Insurance" width={230} height={65} className="h-9 w-auto" />
         </Link>
 
         <nav className="hidden min-w-0 2xl:flex items-center justify-center gap-0.5 rounded-full px-1.5 py-1 bg-background/50 backdrop-blur-md border border-white/20 shadow-sm">
@@ -70,7 +100,7 @@ export function Header() {
                   {t(n.k)}
                   <ChevronDown className="h-3.5 w-3.5" />
                 </Link>
-                <div className="absolute top-full start-0 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
+                <div className="absolute top-full start-0 pt-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible transition">
                   <div className="min-w-56 rounded-2xl bg-background border border-border shadow-elevated p-2">
                     {n.children.map(c => (
                       <Link
@@ -105,9 +135,10 @@ export function Header() {
           <button
             onClick={() => setLang(lang === "en" ? "ar" : "en")}
             className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full text-xs font-semibold border border-border hover:bg-accent transition"
-            aria-label="Toggle language"
+            lang={lang === "en" ? "ar" : "en"}
+            aria-label={lang === "en" ? "التبديل إلى العربية" : "Switch to English"}
           >
-            <Globe className="h-3.5 w-3.5" />
+            <Globe className="h-3.5 w-3.5" aria-hidden="true" />
             {lang === "en" ? "العربية" : "English"}
           </button>
           <Link
@@ -117,11 +148,14 @@ export function Header() {
             {t("nav.quote")}
           </Link>
           <button
+            ref={menuButton}
             className="2xl:hidden grid place-items-center h-9 w-9 rounded-md hover:bg-accent"
             onClick={() => setOpen(true)}
-            aria-label="Open menu"
+            aria-label={lang === "ar" ? "فتح القائمة" : "Open menu"}
+            aria-expanded={open}
+            aria-controls="mobile-menu"
           >
-            <Menu className="h-5 w-5" />
+            <Menu className="h-5 w-5" aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -136,6 +170,11 @@ export function Header() {
               onClick={() => setOpen(false)}
             />
             <motion.aside
+              ref={drawer}
+              id="mobile-menu"
+              role="dialog"
+              aria-modal="true"
+              aria-label={lang === "ar" ? "القائمة" : "Menu"}
               initial={{ x: lang === "ar" ? "-100%" : "100%" }}
               animate={{ x: 0 }}
               exit={{ x: lang === "ar" ? "-100%" : "100%" }}
@@ -143,9 +182,9 @@ export function Header() {
               className={`fixed top-0 ${lang === "ar" ? "left-0 border-r" : "right-0 border-l"} z-50 h-full w-80 max-w-[85vw] bg-white shadow-elevated p-6 flex flex-col border-border text-start`}
             >
               <div className="flex items-center justify-between mb-8">
-                <img src={logo} alt="United Insurance" className="h-8 w-auto" />
-                <button onClick={() => setOpen(false)} className="grid place-items-center h-9 w-9 rounded-md bg-white/60 hover:bg-white transition" aria-label="Close">
-                  <X className="h-5 w-5" />
+                <Pic src={logo} alt="United Insurance" width={230} height={65} className="h-8 w-auto" />
+                <button onClick={() => setOpen(false)} className="grid place-items-center h-9 w-9 rounded-md bg-white/60 hover:bg-white transition" aria-label={lang === "ar" ? "إغلاق" : "Close"}>
+                  <X className="h-5 w-5" aria-hidden="true" />
                 </button>
               </div>
               <nav className="flex flex-col gap-1.5">

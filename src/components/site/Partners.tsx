@@ -1,4 +1,5 @@
 import { useLang } from "@/lib/i18n";
+import { Pic } from "@/components/site/Pic";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { listPartners, type PartnerRow } from "@/lib/public.functions";
@@ -37,7 +38,7 @@ export function Partners({ initial }: { initial?: PartnerRow[] }) {
               key={`${p.id}-${i}`}
               className="shrink-0 h-24 px-8 flex items-center justify-center rounded-2xl bg-card border border-border min-w-[200px]"
             >
-              <img
+              <Pic
                 src={p.logo_url}
                 alt={p.name}
                 loading="lazy"

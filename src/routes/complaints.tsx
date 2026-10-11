@@ -1,5 +1,5 @@
 import { pageHead } from "@/lib/seo";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { complaintFormPdf } from "@/lib/media";
 import { useState } from "react";
@@ -200,10 +200,13 @@ function ComplaintsPage() {
 
             <label className="mt-4 flex items-start gap-3 text-xs text-muted-foreground">
               <input type="checkbox" required className="mt-0.5" />
-              <span>{L(
-                "I consent to United Insurance processing my data to handle this case in accordance with the privacy policy.",
-                "أوافق على معالجة بياناتي من قبل المتحدة للتأمين لمتابعة هذه الحالة وفقاً لسياسة الخصوصية."
-              )}</span>
+              <span>
+                {L(
+                  "I consent to United Insurance processing my data to handle this case in accordance with the ",
+                  "أوافق على معالجة بياناتي من قبل المتحدة للتأمين لمتابعة هذه الحالة وفقاً لـ",
+                )}
+                <Link to="/privacy" className="font-semibold text-[var(--royal)] hover:underline">{L("privacy policy", "سياسة الخصوصية")}</Link>.
+              </span>
             </label>
 
             <button type="submit" disabled={sending} className="mt-6 inline-flex items-center gap-2 h-12 px-6 rounded-full gradient-royal text-white font-semibold text-sm shadow-soft hover:shadow-glow transition disabled:opacity-70">

@@ -19,6 +19,7 @@ import { Route as ComplaintsRouteImport } from './routes/complaints'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as GovernanceRouteImport } from './routes/governance'
 import { Route as InsuranceRouteImport } from './routes/insurance'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as QuoteRouteImport } from './routes/quote'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
@@ -98,6 +99,11 @@ const GovernanceRoute = GovernanceRouteImport.update({
 const InsuranceRoute = InsuranceRouteImport.update({
   id: '/insurance',
   path: '/insurance',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const QuoteRoute = QuoteRouteImport.update({
@@ -275,6 +281,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/governance': typeof GovernanceRouteWithChildren
   '/insurance': typeof InsuranceRouteWithChildren
+  '/privacy': typeof PrivacyRoute
   '/quote': typeof QuoteRoute
   '/reports': typeof ReportsRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -314,6 +321,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/complaints': typeof ComplaintsRoute
   '/contact': typeof ContactRoute
+  '/privacy': typeof PrivacyRoute
   '/quote': typeof QuoteRoute
   '/reports': typeof ReportsRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -356,6 +364,7 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/governance': typeof GovernanceRouteWithChildren
   '/insurance': typeof InsuranceRouteWithChildren
+  '/privacy': typeof PrivacyRoute
   '/quote': typeof QuoteRoute
   '/reports': typeof ReportsRoute
   '/robots.txt': typeof RobotsDottxtRoute
@@ -400,6 +409,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/governance'
     | '/insurance'
+    | '/privacy'
     | '/quote'
     | '/reports'
     | '/robots.txt'
@@ -439,6 +449,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/complaints'
     | '/contact'
+    | '/privacy'
     | '/quote'
     | '/reports'
     | '/robots.txt'
@@ -480,6 +491,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/governance'
     | '/insurance'
+    | '/privacy'
     | '/quote'
     | '/reports'
     | '/robots.txt'
@@ -524,6 +536,7 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   GovernanceRoute: typeof GovernanceRouteWithChildren
   InsuranceRoute: typeof InsuranceRouteWithChildren
+  PrivacyRoute: typeof PrivacyRoute
   QuoteRoute: typeof QuoteRoute
   ReportsRoute: typeof ReportsRoute
   RobotsDottxtRoute: typeof RobotsDottxtRoute
@@ -605,6 +618,13 @@ declare module '@tanstack/react-router' {
       path: '/insurance'
       fullPath: '/insurance'
       preLoaderRoute: typeof InsuranceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/quote': {
@@ -937,6 +957,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   GovernanceRoute: GovernanceRouteWithChildren,
   InsuranceRoute: InsuranceRouteWithChildren,
+  PrivacyRoute: PrivacyRoute,
   QuoteRoute: QuoteRoute,
   ReportsRoute: ReportsRoute,
   RobotsDottxtRoute: RobotsDottxtRoute,

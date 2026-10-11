@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Pic } from "@/components/site/Pic";
 import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -49,7 +50,7 @@ export function Services({ initial }: { initial?: InsuranceServiceRow[] }) {
               >
                 <div className="relative aspect-[16/11] overflow-hidden bg-secondary">
                   {s.image_url && (
-                    <img
+                    <Pic
                       src={s.image_url}
                       alt={title}
                       loading="lazy"

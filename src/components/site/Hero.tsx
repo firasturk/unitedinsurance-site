@@ -1,4 +1,6 @@
 import { motion } from "framer-motion";
+import { Pic, webpFor } from "@/components/site/Pic";
+import { useEffect, useState } from "react";
 import { marineHero, heroVideo, heroVideoWebm } from "@/lib/media";
 import { ArrowRight, Shield, Heart, Car, Plane, Anchor, Flame } from "lucide-react";
 import { Link } from "@tanstack/react-router";
@@ -28,22 +30,42 @@ export function Hero({ initial }: { initial?: { json: string | null } }) {
   const title = hero ? (lang === "ar" ? hero.title_ar : hero.title_en) : t("hero.title");
   const subtitle = hero ? (lang === "ar" ? hero.subtitle_ar : hero.subtitle_en) : t("hero.subtitle");
   const bannerSrc = hero?.image_url || marineHero;
+  const [showVideo, setShowVideo] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px) and (prefers-reduced-motion: no-preference)");
+    const update = () => setShowVideo(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   return (
     <section className="relative overflow-hidden min-h-[88svh] text-white">
-      <video
+      {/* The poster renders on the server (fast first paint); the decorative video only
+          mounts on larger screens for people who haven't asked for reduced motion. */}
+      <Pic
+        src={bannerSrc}
+        alt=""
+        fetchPriority="high"
+        decoding="async"
         className="absolute inset-0 h-full w-full object-cover"
-        poster={bannerSrc}
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="metadata"
-        aria-label="United Insurance banner"
-      >
-        <source src={heroVideoWebm} type="video/webm" />
-        <source src={heroVideo} type="video/mp4" />
-      </video>
+      />
+      {showVideo && (
+        <video
+          className="absolute inset-0 h-full w-full object-cover"
+          poster={webpFor(bannerSrc) ?? bannerSrc}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          aria-hidden="true"
+          tabIndex={-1}
+        >
+          <source src={heroVideoWebm} type="video/webm" />
+          <source src={heroVideo} type="video/mp4" />
+        </video>
+      )}
 
       <div className="absolute inset-0 bg-[linear-gradient(180deg,oklch(0.14_0.04_260_/_0.18)_0%,oklch(0.16_0.05_260_/_0.32)_45%,oklch(0.14_0.04_260_/_0.62)_100%)]" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_20%,oklch(0.72_0.12_240_/_0.32),transparent_42%)]" />

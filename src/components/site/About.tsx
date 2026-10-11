@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Pic } from "@/components/site/Pic";
 import { futureTower } from "@/lib/media";
 import { ShieldCheck, Globe2, Users } from "lucide-react";
 import { useLang } from "@/lib/i18n";
@@ -49,7 +50,7 @@ export function About() {
           <div className="absolute -inset-6 rounded-[2.5rem] bg-[radial-gradient(circle_at_center,oklch(0.48_0.18_264_/_0.18),transparent_68%)] blur-3xl" />
           <div className="relative overflow-hidden rounded-[2rem] border border-white/10 shadow-elevated">
             <div className="relative aspect-[4/5]">
-              <img
+              <Pic
                 src={futureTower}
                 alt="Future-focused landmark symbolizing long-term stability"
                 loading="lazy"

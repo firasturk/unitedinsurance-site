@@ -154,3 +154,9 @@
 @utility animate-float { animation: float-slow 8s ease-in-out infinite; }
 @utility animate-pulse-glow { animation: pulse-glow 4s ease-in-out infinite; }
 @utility animate-marquee { animation: marquee 40s linear infinite; }
+
+/* People who asked their OS for less motion get static UI (decorative loops stop, transitions shorten). */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float, .animate-pulse-glow, .animate-marquee { animation: none !important; }
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; }
+}

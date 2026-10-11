@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Pic } from "@/components/site/Pic";
 import { useQuery } from "@tanstack/react-query";
 import { getRouteApi } from "@tanstack/react-router";
 
@@ -33,7 +34,7 @@ function MemberCard({ m, i, lang }: { m: TeamRow; i: number; lang: "en" | "ar" }
         <>
           <div className="aspect-square rounded-2xl overflow-hidden mb-5 relative bg-gradient-to-br from-[var(--royal)]/15 to-[var(--royal)]/5 shrink-0">
             {m.photo_url ? (
-              <img src={m.photo_url} alt={name} loading="lazy" className="absolute inset-0 h-full w-full object-cover object-[center_20%]" />
+              <Pic src={m.photo_url} alt={name} loading="lazy" className="absolute inset-0 h-full w-full object-cover object-[center_20%]" />
             ) : (
               <div className="absolute inset-0 grid place-items-center">
                 <div className="text-6xl font-bold text-[var(--royal)]/40 select-none">
@@ -121,7 +122,7 @@ function FeaturedMember({ m, lang }: { m: TeamRow; lang: "en" | "ar" }) {
               <>
                 <div className="aspect-square rounded-2xl overflow-hidden mb-6 relative bg-gradient-to-br from-[var(--royal)]/15 to-[var(--royal)]/5">
                   {m.photo_url ? (
-                    <img src={m.photo_url} alt={name} loading="lazy" className="absolute inset-0 h-full w-full object-cover object-top" />
+                    <Pic src={m.photo_url} alt={name} loading="lazy" className="absolute inset-0 h-full w-full object-cover object-top" />
                   ) : (
                     <div className="absolute inset-0 grid place-items-center">
                       <div className="text-7xl font-bold text-[var(--royal)]/40 select-none">

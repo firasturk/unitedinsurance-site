@@ -4,7 +4,7 @@ import { SITE_URL, withLangPrefix, type Lang } from "@/lib/locale";
 const STATIC_PATHS = [
   "/", "/about", "/insurance", "/team", "/team/board", "/team/executive", "/reports",
   "/governance", "/governance/code-of-conduct", "/whistleblower", "/news", "/complaints",
-  "/agents", "/careers", "/contact", "/quote",
+  "/agents", "/careers", "/contact", "/quote", "/privacy",
 ];
 
 function esc(s: string) {

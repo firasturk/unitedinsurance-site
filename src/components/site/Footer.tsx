@@ -1,4 +1,5 @@
 import { Link } from "@tanstack/react-router";
+import { Pic } from "@/components/site/Pic";
 import { logo } from "@/lib/media";
 import { MapPin, Phone, Mail, Facebook, Linkedin, Instagram, ArrowRight } from "lucide-react";
 import { useLang } from "@/lib/i18n";
@@ -25,7 +26,7 @@ export function Footer() {
         <div className="grid md:grid-cols-4 gap-10">
           <div className="md:col-span-1">
             <div className="flex items-center">
-              <img src={logo} alt="United Insurance" className="h-14 w-auto brightness-0 invert" />
+              <Pic src={logo} alt="United Insurance" width={230} height={65} className="h-14 w-auto brightness-0 invert" />
             </div>
             <div className="mt-5 flex gap-3">
               <a href="https://www.facebook.com/unitedjocom" target="_blank" rel="noopener noreferrer" className="grid h-9 w-9 place-items-center rounded-full glass hover:bg-white/15 transition" aria-label="Facebook">
@@ -63,8 +64,8 @@ export function Footer() {
             <div className="text-sm font-semibold mb-4">{t("footer.contact")}</div>
             <ul className="space-y-3 text-sm text-white/70">
               <li className="flex items-start gap-2.5"><MapPin className="h-4 w-4 mt-0.5 shrink-0" /><span>{t("footer.address")}</span></li>
-              <li className="flex items-center gap-2.5" dir="ltr"><Phone className="h-4 w-4 shrink-0" /><span>+962 6 200 3333</span></li>
-              <li className="flex items-center gap-2.5" dir="ltr"><Phone className="h-4 w-4 shrink-0" /><span>+962 2 726 0200 (Irbid Branch)</span></li>
+              <li className="flex items-center gap-2.5" dir="ltr"><Phone className="h-4 w-4 shrink-0" aria-hidden="true" /><a href="tel:+96262003333" className="hover:text-white transition">+962 6 200 3333</a></li>
+              <li className="flex items-center gap-2.5" dir="ltr"><Phone className="h-4 w-4 shrink-0" aria-hidden="true" /><a href="tel:+96227260200" className="hover:text-white transition">+962 2 726 0200</a><span className="text-white/60">(Irbid Branch)</span></li>
               <li className="flex items-center gap-2.5"><Mail className="h-4 w-4 shrink-0" /><a href="mailto:uic@unitedjo.com" className="hover:text-white transition">uic@unitedjo.com</a></li>
             </ul>
             <a href="https://maps.app.goo.gl/AhrsDefPeNER1BsY7" target="_blank" rel="noopener noreferrer" className="block mt-4 rounded-xl overflow-hidden border border-white/10 hover:border-white/20 transition">
@@ -84,7 +85,10 @@ export function Footer() {
 
         <div className="mt-14 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white/50">
           <div>© {new Date().getFullYear()} United Insurance. {t("footer.rights")}</div>
-          <div>Amman · Jordan</div>
+          <div className="flex items-center gap-4">
+            <Link to="/privacy" className="hover:text-white transition">{t("footer.privacy")}</Link>
+            <span>Amman · Jordan</span>
+          </div>
         </div>
       </div>
     </footer>

@@ -123,6 +123,7 @@ export const dict: Dict = {
   "footer.rights": { en: "All rights reserved.", ar: "جميع الحقوق محفوظة." },
   "footer.quick": { en: "Quick links", ar: "روابط سريعة" },
   "footer.services": { en: "Services", ar: "الخدمات" },
+  "footer.privacy": { en: "Privacy Policy", ar: "سياسة الخصوصية" },
 };
 
 type Ctx = { lang: Lang; setLang: (l: Lang) => void; t: (k: keyof typeof dict) => string; dir: "ltr" | "rtl" };
