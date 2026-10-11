@@ -4,18 +4,23 @@ import { Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useLang } from "@/lib/i18n";
-import { listArticles } from "@/lib/public.functions";
+import { listLatestArticles, type ArticleCard } from "@/lib/public.functions";
 
 function formatDate(iso: string, lang: "en" | "ar") {
   const d = new Date(iso);
   return d.toLocaleDateString(lang === "ar" ? "ar-JO" : "en-US", { year: "numeric", month: "short", day: "numeric" });
 }
 
-export function News() {
+export function News({ initial, limit = 6 }: { initial?: ArticleCard[]; limit?: number }) {
   const { t, lang } = useLang();
-  const fetchArticles = useServerFn(listArticles);
-  const { data: articles = [] } = useQuery({ queryKey: ["pub-articles"], queryFn: () => fetchArticles() });
-  const items = articles.slice(0, 6);
+  const fetchArticles = useServerFn(listLatestArticles);
+  const { data: articles = [] } = useQuery({
+    queryKey: ["pub-articles-latest", limit],
+    queryFn: () => fetchArticles({ data: { limit } }),
+    initialData: initial,
+    staleTime: 300_000,
+  });
+  const items = articles.slice(0, limit);
 
   return (
     <section className="py-24 sm:py-32">

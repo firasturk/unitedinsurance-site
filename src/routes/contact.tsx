@@ -1,3 +1,4 @@
+import { pageHead } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
@@ -12,13 +13,13 @@ import { ContactInfo } from "@/components/site/ContactInfo";
 import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/contact")({
-  head: () => ({
-    meta: [
-      { title: "Contact — United Insurance" },
-      { name: "description", content: "Speak with a United Insurance advisor or request an insurance quote." },
-    ],
-    links: [{ rel: "canonical", href: "/contact" }],
-  }),
+  head: ({ match }) =>
+    pageHead({
+      lang: match.context.lang,
+      path: "/contact",
+      title: {"en": "Contact Us", "ar": "اتصل بنا"},
+      description: {"en": "Speak with a United Insurance advisor or request an insurance quote. Amman, Zahran Street, Building 188 — +962 6 200 3333.", "ar": "تحدث مع مستشار في الشركة المتحدة للتأمين أو اطلب عرض سعر. عمّان، شارع زهران، بناية 188 — 3333 200 6 962+."},
+    }),
   component: ContactPage,
 });
 

@@ -1,3 +1,4 @@
+import { pageHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
@@ -11,18 +12,13 @@ import { PageHero } from "@/components/site/PageHero";
 import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/quote")({
-  head: () => ({
-    meta: [
-      { title: "Request a Quote — United Insurance" },
-      { name: "description", content: "Pick your insurance type and share your details — a United Insurance advisor will send you a tailored quote." },
-      { property: "og:title", content: "Request a Quote — United Insurance" },
-      { property: "og:description", content: "Two quick steps to get a tailored insurance quote from United Insurance." },
-      { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://unitedinsurance.life/quote" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [{ rel: "canonical", href: "https://unitedinsurance.life/quote" }],
-  }),
+  head: ({ match }) =>
+    pageHead({
+      lang: match.context.lang,
+      path: "/quote",
+      title: {"en": "Request a Quote", "ar": "اطلب عرض سعر"},
+      description: {"en": "Pick your insurance type and share your details — a United Insurance advisor will send you a tailored quote.", "ar": "اختر نوع التأمين وشاركنا بياناتك — سيرسل لك مستشار الشركة المتحدة للتأمين عرض سعر مخصصاً."},
+    }),
   loader: async () => ({ services: await listInsuranceServices() }),
   component: QuotePage,
 });

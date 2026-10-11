@@ -7,10 +7,10 @@ import { getSiteContent } from "@/lib/public.functions";
 
 type Notice = { enabled: boolean; eyebrow_en: string; eyebrow_ar: string; title_en: string; title_ar: string; link_slug: string };
 
-export function AssemblyNotice() {
+export function AssemblyNotice({ initial }: { initial?: { json: string | null } }) {
   const { lang } = useLang();
   const fetch = useServerFn(getSiteContent);
-  const { data } = useQuery({ queryKey: ["sc-notice"], queryFn: () => fetch({ data: { key: "assembly_notice" } }) });
+  const { data } = useQuery({ queryKey: ["sc-notice"], queryFn: () => fetch({ data: { key: "assembly_notice" } }), initialData: initial, staleTime: 300_000 });
   const notice: Notice | null = data?.json ? JSON.parse(data.json) : null;
   if (!notice || !notice.enabled) return null;
 

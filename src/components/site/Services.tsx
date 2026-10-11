@@ -10,12 +10,14 @@ const ICONS: Record<string, LucideIcon> = {
   Car, HeartPulse, Sparkles, Plane, Anchor, Flame, Shield, ShieldCheck, Building, Briefcase, Home, Truck, Users, Globe2,
 };
 
-export function Services() {
+export function Services({ initial }: { initial?: InsuranceServiceRow[] }) {
   const { t, lang } = useLang();
   const fetchServices = useServerFn(listInsuranceServices);
   const { data: services = [] } = useQuery({
     queryKey: ["pub-insurance-services"],
     queryFn: () => fetchServices(),
+    initialData: initial,
+    staleTime: 300_000,
   });
 
   return (

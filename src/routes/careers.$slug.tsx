@@ -1,6 +1,4 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
 import { ArrowLeft, Briefcase, CalendarDays, CheckCircle2, MapPin } from "lucide-react";
 import { SiteLayout } from "@/components/site/Layout";
 import { PageHero } from "@/components/site/PageHero";
@@ -9,53 +7,70 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useLang } from "@/lib/i18n";
 import { getVacancyBySlug, type VacancyRow } from "@/lib/public.functions";
+import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/careers/$slug")({
-  head: ({ params }) => ({
-    meta: [
-      { title: `Vacancy — ${params.slug.replace(/-/g, " ")} | United Insurance Careers` },
-      { name: "description", content: "Job details, responsibilities and qualifications for this vacancy at United Insurance. Apply online with your CV." },
-      { property: "og:title", content: "Vacancy — United Insurance Careers" },
-      { property: "og:description", content: "Review the role requirements and submit your application online." },
-      { property: "og:type", content: "article" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-  }),
+  loader: async ({ params }) => {
+    const vacancy = await getVacancyBySlug({ data: { slug: params.slug } });
+    if (!vacancy) throw notFound();
+    return { vacancy };
+  },
+  head: ({ match, loaderData }) => {
+    const v = loaderData?.vacancy;
+    const lang = match.context.lang;
+    if (!v) return pageHead({ lang, path: `/careers/${match.params.slug}`, title: { en: "Vacancy", ar: "وظيفة شاغرة" }, description: "", noindex: true });
+    const title = lang === "ar" ? v.title_ar : v.title_en;
+    const summary = lang === "ar" ? v.summary_ar : v.summary_en;
+    return pageHead({
+      lang,
+      path: `/careers/${v.slug}`,
+      title: { en: `${v.title_en} — Careers`, ar: `${v.title_ar} — الوظائف` },
+      description: summary || (lang === "ar" ? "تفاصيل الوظيفة والمهام والمؤهلات — قدّم طلبك عبر الموقع." : "Job details, responsibilities and qualifications — apply online with your CV."),
+      type: "article",
+      jsonLd: [
+        {
+          "@context": "https://schema.org",
+          "@type": "JobPosting",
+          title,
+          description: summary,
+          datePosted: (v as { created_at?: string }).created_at?.slice(0, 10),
+          ...(v.closing_date ? { validThrough: v.closing_date } : {}),
+          employmentType: /part/i.test(v.type_en) ? "PART_TIME" : "FULL_TIME",
+          hiringOrganization: { "@type": "Organization", name: "United Insurance Company PLC", sameAs: "https://unitedjo.com" },
+          jobLocation: {
+            "@type": "Place",
+            address: { "@type": "PostalAddress", addressLocality: v.location_en || "Amman", addressCountry: "JO" },
+          },
+          ...(v.department_en ? { occupationalCategory: v.department_en } : {}),
+        },
+      ],
+    });
+  },
+  notFoundComponent: () => <VacancyNotFound />,
   component: VacancyPage,
 });
 
-function VacancyPage() {
-  const { slug } = Route.useParams();
+function VacancyNotFound() {
   const { lang } = useLang();
   const L = (en: string, ar: string) => (lang === "ar" ? ar : en);
-  const fetchVacancy = useServerFn(getVacancyBySlug);
-  const { data: vacancy, isLoading } = useQuery({
-    queryKey: ["vacancy", slug],
-    queryFn: () => fetchVacancy({ data: { slug } }),
-  });
+  return (
+    <SiteLayout>
+      <div className="mx-auto max-w-4xl px-6 py-32 text-center">
+        <h1 className="text-2xl font-bold">{L("Vacancy not found", "الشاغر غير موجود")}</h1>
+        <Link to="/careers">
+          <Button className="mt-6 rounded-full">{L("Back to careers", "العودة إلى الوظائف")}</Button>
+        </Link>
+      </div>
+    </SiteLayout>
+  );
+}
+
+function VacancyPage() {
+  const { vacancy } = Route.useLoaderData();
+  const { lang } = useLang();
+  const L = (en: string, ar: string) => (lang === "ar" ? ar : en);
 
   const t = (v: VacancyRow, key: string) => (v as any)[`${key}_${lang === "ar" ? "ar" : "en"}`];
-
-  if (isLoading) {
-    return (
-      <SiteLayout>
-        <div className="mx-auto max-w-4xl px-6 py-32 text-muted-foreground">{L("Loading…", "جارٍ التحميل…")}</div>
-      </SiteLayout>
-    );
-  }
-
-  if (!vacancy) {
-    return (
-      <SiteLayout>
-        <div className="mx-auto max-w-4xl px-6 py-32 text-center">
-          <h1 className="text-2xl font-bold">{L("Vacancy not found", "الشاغر غير موجود")}</h1>
-          <Link to="/careers">
-            <Button className="mt-6 rounded-full">{L("Back to careers", "العودة إلى الوظائف")}</Button>
-          </Link>
-        </div>
-      </SiteLayout>
-    );
-  }
 
   const lists = [
     { title: L("Key responsibilities", "المهام الرئيسية"), items: t(vacancy, "responsibilities") as string[] },

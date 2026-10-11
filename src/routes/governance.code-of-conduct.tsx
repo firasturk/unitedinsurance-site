@@ -1,3 +1,4 @@
+import { pageHead } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/site/Layout";
 import { PageHero } from "@/components/site/PageHero";
@@ -5,24 +6,13 @@ import { useLang } from "@/lib/i18n";
 import { codeOfConduct } from "@/data/code-of-conduct";
 
 export const Route = createFileRoute("/governance/code-of-conduct")({
-  head: () => ({
-    meta: [
-      { title: "Code of Conduct Regulation — United Insurance" },
-      {
-        name: "description",
-        content:
-          "Instructions No. 5 of 2025 on professional conduct and fair, transparent dealing with insurance clients.",
-      },
-      { property: "og:title", content: "Code of Conduct Regulation — United Insurance" },
-      {
-        property: "og:description",
-        content: "تعليمات أصول ممارسة المهنة والضوابط اللازمة لتعامل شركة التأمين مع عملائها.",
-      },
-      { property: "og:type", content: "article" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [{ rel: "canonical", href: "/governance/code-of-conduct" }],
-  }),
+  head: ({ match }) =>
+    pageHead({
+      lang: match.context.lang,
+      path: "/governance/code-of-conduct",
+      title: {"en": "Code of Conduct Regulation", "ar": "تعليمات أصول ممارسة المهنة"},
+      description: {"en": "Instructions No. 5 of 2025 on professional conduct and fair, transparent dealing with insurance clients.", "ar": "تعليمات أصول ممارسة المهنة رقم 5 لسنة 2025 والضوابط اللازمة لتعامل شركة التأمين مع عملائها بعدالة وشفافية."},
+    }),
   component: CodeOfConductPage,
 });
 

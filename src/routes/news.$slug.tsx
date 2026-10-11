@@ -1,11 +1,11 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
 import { SiteLayout } from "@/components/site/Layout";
 import { useLang } from "@/lib/i18n";
-import { getArticleBySlug, listArticles } from "@/lib/public.functions";
+import { getArticleBySlug, listLatestArticles } from "@/lib/public.functions";
+import { pageHead } from "@/lib/seo";
+import { SITE_URL, absoluteUrl } from "@/lib/locale";
 
 // Social previews need a full address, so a site-relative image path is expanded
 // to the address the page was served from.
@@ -17,36 +17,41 @@ function absolutize(url: string, origin: string) {
 
 export const Route = createFileRoute("/news/$slug")({
   loader: async (ctx) => {
-    const article = await getArticleBySlug({ data: { slug: ctx.params.slug } });
+    const [article, latest] = await Promise.all([
+      getArticleBySlug({ data: { slug: ctx.params.slug } }),
+      listLatestArticles({ data: { limit: 3 } }),
+    ]);
     if (!article) throw notFound();
-    const req = (ctx as { request?: Request }).request;
-    let origin = "";
-    try {
-      origin = req ? new URL(req.url).origin : "";
-    } catch {
-      origin = "";
-    }
-    return { article, origin };
+    return { article, related: latest.filter((a) => a.slug !== article.slug).slice(0, 2) };
   },
-  head: ({ loaderData }) => {
+  head: ({ match, loaderData }) => {
     const a = loaderData?.article;
-    const origin = loaderData?.origin ?? "";
-    if (!a) return { meta: [{ title: "Article — United Insurance" }] };
-    const cover = a.cover_url ? absolutize(a.cover_url, origin) : null;
-    return {
-      meta: [
-        { title: `${a.title_en} — United Insurance` },
-        { name: "description", content: a.excerpt_en },
-        { property: "og:title", content: a.title_en },
-        { property: "og:description", content: a.excerpt_en },
-        ...(cover ? [{ property: "og:image", content: cover }, { name: "twitter:image", content: cover }] : []),
-        { property: "og:type", content: "article" },
-        { name: "twitter:card", content: "summary_large_image" },
-        { name: "twitter:title", content: a.title_en },
-        { name: "twitter:description", content: a.excerpt_en },
+    const lang = match.context.lang;
+    if (!a) return pageHead({ lang, path: `/news/${match.params.slug}`, title: { en: "Article", ar: "مقال" }, description: "", noindex: true });
+    const title = lang === "ar" ? a.title_ar : a.title_en;
+    const excerpt = lang === "ar" ? a.excerpt_ar : a.excerpt_en;
+    return pageHead({
+      lang,
+      path: `/news/${a.slug}`,
+      title: { en: a.title_en, ar: a.title_ar },
+      description: { en: a.excerpt_en, ar: a.excerpt_ar },
+      image: a.cover_url,
+      type: "article",
+      jsonLd: [
+        {
+          "@context": "https://schema.org",
+          "@type": "NewsArticle",
+          headline: title,
+          description: excerpt,
+          datePublished: a.date,
+          inLanguage: lang,
+          ...(a.cover_url ? { image: [absolutize(a.cover_url, SITE_URL)] } : {}),
+          author: { "@type": "Organization", name: "United Insurance Company PLC" },
+          publisher: { "@type": "Organization", name: "United Insurance Company PLC", logo: { "@type": "ImageObject", url: `${SITE_URL}/media/united-logo.png` } },
+          mainEntityOfPage: absoluteUrl(`/news/${a.slug}`, lang),
+        },
       ],
-      links: [{ rel: "canonical", href: `/news/${a.slug}` }],
-    };
+    });
   },
   notFoundComponent: () => (
     <SiteLayout>
@@ -73,15 +78,12 @@ function formatDate(iso: string, lang: "en" | "ar") {
 }
 
 function ArticlePage() {
-  const { article } = Route.useLoaderData();
+  const { article, related } = Route.useLoaderData();
   const { lang, t } = useLang();
-  const fetchAll = useServerFn(listArticles);
-  const { data: all = [] } = useQuery({ queryKey: ["pub-articles"], queryFn: () => fetchAll() });
 
   const title = lang === "ar" ? article.title_ar : article.title_en;
   const excerpt = lang === "ar" ? article.excerpt_ar : article.excerpt_en;
   const body = lang === "ar" ? article.body_ar : article.body_en;
-  const related = all.filter((a) => a.slug !== article.slug).slice(0, 2);
 
   return (
     <SiteLayout>

@@ -1,6 +1,7 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, type ReactNode } from "react";
+import { withLangPrefix, type Lang } from "./locale";
 
-export type Lang = "en" | "ar";
+export type { Lang };
 
 type Dict = Record<string, { en: string; ar: string }>;
 
@@ -127,23 +128,24 @@ export const dict: Dict = {
 type Ctx = { lang: Lang; setLang: (l: Lang) => void; t: (k: keyof typeof dict) => string; dir: "ltr" | "rtl" };
 const LangCtx = createContext<Ctx | null>(null);
 
-export function LangProvider({ children }: { children: ReactNode }) {
-  const [lang, setLangState] = useState<Lang>("ar");
-
-  useEffect(() => {
-    const saved = (typeof window !== "undefined" && (localStorage.getItem("lang") as Lang)) || "ar";
-    setLangState(saved);
-  }, []);
-
+// The language comes from the URL ("/en/…" = English, otherwise Arabic) and is decided
+// by the root route on the server, so the first HTML render is already in the right language.
+export function LangProvider({ lang, children }: { lang: Lang; children: ReactNode }) {
   useEffect(() => {
     if (typeof document === "undefined") return;
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
+    try {
+      localStorage.setItem("lang", lang);
+    } catch {}
   }, [lang]);
 
+  // Switching language = loading the same page under the other prefix (a full navigation,
+  // so the server renders it in the new language and search engines see two real URLs).
   const setLang = (l: Lang) => {
-    setLangState(l);
-    if (typeof window !== "undefined") localStorage.setItem("lang", l);
+    if (typeof window === "undefined" || l === lang) return;
+    const { pathname, search, hash } = window.location;
+    window.location.assign(withLangPrefix(pathname, l) + search + hash);
   };
 
   const t = (k: string) => dict[k]?.[lang] ?? String(k);

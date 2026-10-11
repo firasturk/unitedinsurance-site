@@ -1,45 +1,62 @@
 import { createFileRoute, notFound, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { useServerFn } from "@tanstack/react-start";
 import { SiteLayout } from "@/components/site/Layout";
 import { PageHero } from "@/components/site/PageHero";
 import { motion } from "framer-motion";
 import { CheckCircle, ArrowRight, FileText, Shield, Clock, Users, Download } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 import { getInsuranceServiceBySlug } from "@/lib/public.functions";
+import { pageHead } from "@/lib/seo";
 
 export const Route = createFileRoute("/insurance/$type")({
-  head: ({ params }) => ({
-    meta: [
-      { title: `${params.type.charAt(0).toUpperCase() + params.type.slice(1)} Insurance — United Insurance` },
-      { name: "description", content: `Learn more about our ${params.type} insurance solutions.` },
-    ],
-    links: [{ rel: "canonical", href: `/insurance/${params.type}` }],
-  }),
+  loader: async ({ params }) => {
+    const service = await getInsuranceServiceBySlug({ data: { slug: params.type } });
+    if (!service) throw notFound();
+    return { service };
+  },
+  head: ({ match, loaderData }) => {
+    const s = loaderData?.service;
+    const lang = match.context.lang;
+    if (!s) return pageHead({ lang, path: `/insurance/${match.params.type}`, title: { en: "Insurance", ar: "التأمين" }, description: "", noindex: true });
+    return pageHead({
+      lang,
+      path: `/insurance/${s.slug}`,
+      title: { en: s.title_en, ar: s.title_ar },
+      description: { en: s.summary_en, ar: s.summary_ar },
+      image: s.image_url,
+      jsonLd: [
+        {
+          "@context": "https://schema.org",
+          "@type": "Service",
+          name: lang === "ar" ? s.title_ar : s.title_en,
+          description: lang === "ar" ? s.summary_ar : s.summary_en,
+          serviceType: "Insurance",
+          areaServed: "JO",
+          provider: { "@type": "InsuranceAgency", name: "United Insurance Company PLC", url: "https://unitedjo.com" },
+        },
+      ],
+    });
+  },
+  notFoundComponent: () => <NotFoundView />,
   component: InsuranceTypePage,
 });
 
+function NotFoundView() {
+  const { lang } = useLang();
+  return (
+    <SiteLayout>
+      <div className="mx-auto max-w-3xl px-6 py-32 text-center">
+        <h1 className="text-3xl font-bold">{lang === "ar" ? "الخدمة غير موجودة" : "Service not found"}</h1>
+        <Link to="/insurance" className="mt-6 inline-flex items-center gap-2 text-[var(--royal)] font-semibold">
+          {lang === "ar" ? "→ جميع حلول التأمين" : "← All insurance solutions"}
+        </Link>
+      </div>
+    </SiteLayout>
+  );
+}
+
 function InsuranceTypePage() {
-  const { type } = Route.useParams();
+  const { service } = Route.useLoaderData();
   const { t, lang } = useLang();
-  const fetchService = useServerFn(getInsuranceServiceBySlug);
-
-  const { data: service, isLoading } = useQuery({
-    queryKey: ["pub-insurance-service", type],
-    queryFn: () => fetchService({ data: { slug: type } }),
-  });
-
-  if (isLoading) {
-    return (
-      <SiteLayout>
-        <div className="py-32 text-center text-muted-foreground">Loading…</div>
-      </SiteLayout>
-    );
-  }
-
-  if (!service) {
-    throw notFound();
-  }
 
   const title = lang === "ar" ? service.title_ar : service.title_en;
   const summary = lang === "ar" ? service.summary_ar : service.summary_en;

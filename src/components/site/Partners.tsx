@@ -1,12 +1,12 @@
 import { useLang } from "@/lib/i18n";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { listPartners } from "@/lib/public.functions";
+import { listPartners, type PartnerRow } from "@/lib/public.functions";
 
-export function Partners() {
+export function Partners({ initial }: { initial?: PartnerRow[] }) {
   const { t } = useLang();
   const fetchPartners = useServerFn(listPartners);
-  const { data } = useQuery({ queryKey: ["partners"], queryFn: () => fetchPartners() });
+  const { data } = useQuery({ queryKey: ["partners"], queryFn: () => fetchPartners(), initialData: initial, staleTime: 300_000 });
   const partners = data ?? [];
 
   if (partners.length === 0) {

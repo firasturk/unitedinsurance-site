@@ -1,3 +1,4 @@
+import { pageHead } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 import { FileText, Download } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -8,17 +9,13 @@ import { useLang } from "@/lib/i18n";
 import { listForms, type FormRow } from "@/lib/public.functions";
 
 export const Route = createFileRoute("/reports")({
-  head: () => ({
-    meta: [
-      { title: "Annual Reports — United Insurance" },
-      { name: "description", content: "Download United Insurance annual reports and financial disclosures." },
-      { property: "og:title", content: "Annual Reports — United Insurance" },
-      { property: "og:description", content: "Download United Insurance annual reports and financial disclosures." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-    ],
-    links: [{ rel: "canonical", href: "/reports" }],
-  }),
+  head: ({ match }) =>
+    pageHead({
+      lang: match.context.lang,
+      path: "/reports",
+      title: {"en": "Annual Reports", "ar": "التقارير السنوية"},
+      description: {"en": "Download United Insurance annual reports and financial disclosures.", "ar": "تحميل التقارير السنوية والإفصاحات المالية للشركة المتحدة للتأمين."},
+    }),
   loader: async () => ({ forms: await listForms() }),
   component: ReportsPage,
 });

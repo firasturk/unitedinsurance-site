@@ -12,26 +12,33 @@ import { type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { LangProvider } from "../lib/i18n";
+import { langFromPathname, type Lang } from "../lib/locale";
+import { pageHead, organizationJsonLd, SITE_NAME } from "../lib/seo";
+import { SiteLayout } from "../components/site/Layout";
 
 function NotFoundComponent() {
+  const { lang } = Route.useRouteContext();
+  const ar = lang === "ar";
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-foreground">404</h1>
-        <h2 className="mt-4 text-xl font-semibold text-foreground">Page not found</h2>
+    <SiteLayout>
+      <div className="mx-auto flex min-h-[60vh] max-w-xl flex-col items-center justify-center px-6 py-24 text-center">
+        <div className="text-7xl font-bold text-[var(--royal)]">404</div>
+        <h1 className="mt-4 text-2xl font-bold text-foreground">{ar ? "الصفحة غير موجودة" : "Page not found"}</h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+          {ar
+            ? "الصفحة التي تبحث عنها غير موجودة أو تم نقلها."
+            : "The page you're looking for doesn't exist or has been moved."}
         </p>
-        <div className="mt-6">
-          <Link
-            to="/"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
-          >
-            Go home
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <Link to="/" className="inline-flex items-center h-11 px-6 rounded-full gradient-royal text-white text-sm font-semibold shadow-soft">
+            {ar ? "العودة للرئيسية" : "Go to homepage"}
+          </Link>
+          <Link to="/contact" className="inline-flex items-center h-11 px-6 rounded-full border border-border text-sm font-semibold hover:bg-secondary/60 transition">
+            {ar ? "اتصل بنا" : "Contact us"}
           </Link>
         </div>
       </div>
-    </div>
+    </SiteLayout>
   );
 }
 
@@ -70,32 +77,45 @@ function ErrorComponent({ error, reset }: ErrorComponentProps) {
   );
 }
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "United Insurance — A Safe Future Starts Today" },
-      { name: "description", content: "Premium bilingual insurance coverage — motor, medical, life, travel, marine and fire — backed by global reinsurers." },
-      { property: "og:site_name", content: "United Insurance" },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { property: "og:title", content: "United Insurance — A Safe Future Starts Today" },
-      { name: "twitter:title", content: "United Insurance — A Safe Future Starts Today" },
-      { property: "og:description", content: "Premium bilingual insurance coverage — motor, medical, life, travel, marine and fire — backed by global reinsurers." },
-      { name: "twitter:description", content: "Premium bilingual insurance coverage — motor, medical, life, travel, marine and fire — backed by global reinsurers." },
-      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/fcdaef1f-f882-47d6-abae-0859e431582e" },
-      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/fcdaef1f-f882-47d6-abae-0859e431582e" },
-    ],
-    links: [
-      { rel: "stylesheet", href: appCss },
-      { rel: "icon", type: "image/png", href: "/media/favicon.png" },
-      { rel: "apple-touch-icon", href: "/media/favicon.png" },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&family=Cairo:wght@400;500;600;700;800&display=swap" },
-    ],
+const DESCRIPTION = {
+  en: "United Insurance Company PLC — trusted in Jordan since 1972. Motor, medical, life, travel, marine, fire and engineering insurance, backed by leading global reinsurers.",
+  ar: "الشركة المتحدة للتأمين م.ع.م — ثقة في الأردن منذ 1972. تأمين المركبات والطبي والحياة والسفر والبحري والحريق والهندسي، بدعم من كبرى شركات إعادة التأمين العالمية.",
+};
+
+export const Route = createRootRouteWithContext<{ queryClient: QueryClient; lang: Lang }>()({
+  // The language is read from the public URL ("/en/…" → English); the router has already
+  // stripped the prefix for route matching. Available to every route as context.lang.
+  beforeLoad: ({ location }): { lang: Lang } => ({
+    lang: langFromPathname((location as { publicHref?: string }).publicHref ?? location.pathname),
   }),
+  head: ({ match }) => {
+    const lang = match.context.lang;
+    const page = pageHead({
+      lang,
+      path: "/",
+      title: { en: "United Insurance — A Safe Future Starts Today", ar: "الشركة المتحدة للتأمين — مستقبل آمن يبدأ اليوم" },
+      description: DESCRIPTION,
+      jsonLd: [organizationJsonLd(lang)],
+    });
+    return {
+      meta: [
+        { charSet: "utf-8" },
+        { name: "viewport", content: "width=device-width, initial-scale=1" },
+        { name: "theme-color", content: "#0b2a5b" },
+        { name: "application-name", content: SITE_NAME[lang] },
+        ...page.meta,
+      ],
+      links: [
+        { rel: "stylesheet", href: appCss },
+        { rel: "icon", type: "image/png", href: "/media/favicon.png" },
+        { rel: "apple-touch-icon", href: "/media/favicon.png" },
+        { rel: "preconnect", href: "https://fonts.googleapis.com" },
+        { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
+        { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700;800&family=Cairo:wght@400;500;600;700;800&display=swap" },
+        // canonical + hreflang are emitted by each page (links are not de-duplicated across routes)
+      ],
+    };
+  },
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
@@ -103,14 +123,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 });
 
 function RootShell({ children }: { children: ReactNode }) {
+  const { lang } = Route.useRouteContext();
   return (
-    <html lang="ar" dir="rtl" suppressHydrationWarning>
+    <html lang={lang} dir={lang === "ar" ? "rtl" : "ltr"} suppressHydrationWarning>
       <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `try{var l=localStorage.getItem("lang")||"ar";document.documentElement.lang=l;document.documentElement.dir=l==="ar"?"rtl":"ltr"}catch(e){document.documentElement.lang="ar";document.documentElement.dir="rtl"}`,
-          }}
-        />
         <HeadContent />
       </head>
       <body>
@@ -122,11 +138,11 @@ function RootShell({ children }: { children: ReactNode }) {
 }
 
 function RootComponent() {
-  const { queryClient } = Route.useRouteContext();
+  const { queryClient, lang } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
-      <LangProvider>
+      <LangProvider lang={lang}>
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <Outlet />
       </LangProvider>

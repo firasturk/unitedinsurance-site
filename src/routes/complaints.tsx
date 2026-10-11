@@ -1,3 +1,4 @@
+import { pageHead } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { complaintFormPdf } from "@/lib/media";
@@ -12,13 +13,13 @@ import { useLang } from "@/lib/i18n";
 import { submitComplaint } from "@/lib/public.functions";
 
 export const Route = createFileRoute("/complaints")({
-  head: () => ({
-    meta: [
-      { title: "Suggestions & Complaints — United Insurance" },
-      { name: "description", content: "Submit a suggestion or complaint to United Insurance. We respond within 5 business days." },
-    ],
-    links: [{ rel: "canonical", href: "/complaints" }],
-  }),
+  head: ({ match }) =>
+    pageHead({
+      lang: match.context.lang,
+      path: "/complaints",
+      title: {"en": "Suggestions & Complaints", "ar": "الاقتراحات والشكاوى"},
+      description: {"en": "Submit a suggestion or complaint to United Insurance and receive a reference number. Initial response within two business days.", "ar": "قدّم اقتراحك أو شكواك إلى الشركة المتحدة للتأمين واحصل على رقم مرجعي. ردّ مبدئي خلال يومي عمل."},
+    }),
   component: ComplaintsPage,
 });
 

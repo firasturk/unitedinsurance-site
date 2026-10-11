@@ -1,3 +1,4 @@
+import { pageHead } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 import { govManual } from "@/lib/media";
 import { Scale, Users, ShieldCheck, FileCheck, Download } from "lucide-react";
@@ -6,13 +7,13 @@ import { PageHero } from "@/components/site/PageHero";
 import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/governance/")({
-  head: () => ({
-    meta: [
-      { title: "Governance — United Insurance" },
-      { name: "description", content: "Corporate governance, ethics and compliance at United Insurance." },
-    ],
-    links: [{ rel: "canonical", href: "/governance" }],
-  }),
+  head: ({ match }) =>
+    pageHead({
+      lang: match.context.lang,
+      path: "/governance",
+      title: {"en": "Governance", "ar": "الحوكمة"},
+      description: {"en": "Corporate governance, ethics and compliance at United Insurance — download the Governance Manual.", "ar": "حوكمة الشركات والأخلاقيات والالتزام في الشركة المتحدة للتأمين — تحميل دليل الحوكمة."},
+    }),
   component: GovPage,
 });
 

@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { pageHead } from "@/lib/seo";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -24,32 +25,28 @@ import { useLang } from "@/lib/i18n";
 import { listVacancies, type VacancyRow } from "@/lib/public.functions";
 
 export const Route = createFileRoute("/careers/")({
-  head: () => ({
-    meta: [
-      { title: "Careers — United by People, Driven by Purpose" },
-      {
-        name: "description",
-        content:
-          "Build your career at United Insurance. Explore our culture, learning and development, career journey and current job openings in Jordan.",
-      },
-      { property: "og:title", content: "Careers — United by People, Driven by Purpose" },
-      {
-        property: "og:description",
-        content: "Discover why people grow with United Insurance and apply online for current vacancies.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [{ rel: "canonical", href: "/careers" }],
-  }),
+  head: ({ match }) =>
+    pageHead({
+      lang: match.context.lang,
+      path: "/careers",
+      title: {"en": "Careers — United by People, Driven by Purpose", "ar": "الوظائف — أفراد متميزون وثقافة راسخة"},
+      description: {"en": "Build your career at United Insurance. Explore our culture, learning and development, career journey and current job openings in Jordan.", "ar": "ابنِ مسيرتك المهنية في الشركة المتحدة للتأمين: ثقافتنا، التعلم والتطوير، والوظائف الشاغرة حالياً في الأردن."},
+    }),
+  loader: async () => ({ vacancies: await listVacancies() }),
   component: CareersPage,
 });
 
 function CareersPage() {
   const { lang } = useLang();
   const L = (en: string, ar: string) => (lang === "ar" ? ar : en);
+  const initial = Route.useLoaderData();
   const fetchVacancies = useServerFn(listVacancies);
-  const { data: vacancies = [] } = useQuery({ queryKey: ["vacancies"], queryFn: () => fetchVacancies() });
+  const { data: vacancies = [] } = useQuery({
+    queryKey: ["vacancies"],
+    queryFn: () => fetchVacancies(),
+    initialData: initial.vacancies,
+    staleTime: 300_000,
+  });
 
   const [q, setQ] = useState("");
   const [dept, setDept] = useState("");

@@ -1,5 +1,8 @@
 import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
+import { getRouteApi } from "@tanstack/react-router";
+
+const teamRoute = getRouteApi("/team");
 import { useServerFn } from "@tanstack/react-start";
 import { SiteLayout } from "@/components/site/Layout";
 import { PageHero } from "@/components/site/PageHero";
@@ -156,8 +159,14 @@ export function TeamSectionPage({
 }) {
   const { lang } = useLang();
   const L = (pair?: { en: string; ar: string }) => (pair ? (lang === "ar" ? pair.ar : pair.en) : undefined);
+  const initial = teamRoute.useLoaderData();
   const fetchTeam = useServerFn(listTeam);
-  const { data = [], isLoading } = useQuery({ queryKey: ["pub-team"], queryFn: () => fetchTeam() });
+  const { data = [], isLoading } = useQuery({
+    queryKey: ["pub-team"],
+    queryFn: () => fetchTeam(),
+    initialData: initial.team,
+    staleTime: 300_000,
+  });
 
   const board = data.filter((m) => m.section === "board");
   const executive = data.filter((m) => m.section === "executive" || m.section === "senior");

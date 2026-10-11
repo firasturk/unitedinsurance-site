@@ -1,3 +1,4 @@
+import { pageHead } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 import { agentsList } from "@/lib/media";
 import { useQuery } from "@tanstack/react-query";
@@ -11,17 +12,17 @@ import { PageHero } from "@/components/site/PageHero";
 import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/agents")({
-  head: () => ({
-    meta: [
-      { title: "Agents — United Insurance" },
-      { name: "description", content: "Licensed agents of United Insurance Company PLC, the official agent list and the latest agents news." },
-      { property: "og:title", content: "Agents — United Insurance" },
-      { property: "og:description", content: "Download the official agent list and read the latest agents notices." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [{ rel: "canonical", href: "/agents" }],
-  }),
+  head: ({ match }) =>
+    pageHead({
+      lang: match.context.lang,
+      path: "/agents",
+      title: {"en": "Agents", "ar": "الوكلاء"},
+      description: {"en": "Licensed agents of United Insurance Company PLC, the official agent list and the latest agents news.", "ar": "وكلاء الشركة المتحدة للتأمين المرخّصون، القائمة الرسمية للوكلاء وآخر تعاميم الوكلاء."},
+    }),
+  loader: async () => {
+    const [news, content] = await Promise.all([listAgentNews(), getSiteContent({ data: { key: "agents_pdf" } })]);
+    return { news: news as AgentNews[], pdf: content.json ? (JSON.parse(content.json) as { url?: string }) : null };
+  },
   component: AgentsPage,
 });
 
@@ -38,11 +39,14 @@ type AgentNews = {
 function AgentsPage() {
   const { lang } = useLang();
   const [active, setActive] = useState<AgentNews | null>(null);
+  const initial = Route.useLoaderData();
   const fetchNews = useServerFn(listAgentNews);
   const fetchContent = useServerFn(getSiteContent);
   const { data: news = [] } = useQuery({
     queryKey: ["agent-news-public"],
-    queryFn: async () => (await fetchNews()).filter((n) => n.published) as AgentNews[],
+    queryFn: async () => (await fetchNews()) as AgentNews[],
+    initialData: initial.news,
+    staleTime: 300_000,
   });
   const { data: pdf } = useQuery({
     queryKey: ["site-content", "agents_pdf"],
@@ -50,6 +54,8 @@ function AgentsPage() {
       const res = await fetchContent({ data: { key: "agents_pdf" } });
       return res.json ? (JSON.parse(res.json) as { url?: string }) : null;
     },
+    initialData: initial.pdf,
+    staleTime: 300_000,
   });
   const pdfUrl = pdf?.url || agentsList;
   const L = (en: string, ar: string) => (lang === "ar" ? ar : en);

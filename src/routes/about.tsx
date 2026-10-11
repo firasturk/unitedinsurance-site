@@ -1,3 +1,4 @@
+import { pageHead } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 import { SiteLayout } from "@/components/site/Layout";
 import { PageHero } from "@/components/site/PageHero";
@@ -6,15 +7,13 @@ import { MissionVision } from "@/components/site/MissionVision";
 import { useLang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/about")({
-  head: () => ({
-    meta: [
-      { title: "About — United Insurance" },
-      { name: "description", content: "Half a century of disciplined underwriting and trusted service across the region." },
-      { property: "og:title", content: "About United Insurance" },
-      { property: "og:description", content: "Half a century of protecting what matters." },
-    ],
-    links: [{ rel: "canonical", href: "/about" }],
-  }),
+  head: ({ match }) =>
+    pageHead({
+      lang: match.context.lang,
+      path: "/about",
+      title: {"en": "About Us", "ar": "من نحن"},
+      description: {"en": "Half a century of disciplined underwriting and trusted service — United Insurance Company PLC, Amman, Jordan, since 1972.", "ar": "أكثر من نصف قرن من الاكتتاب المنضبط والخدمة الموثوقة — الشركة المتحدة للتأمين م.ع.م، عمّان، الأردن، منذ 1972."},
+    }),
   component: AboutPage,
 });
 

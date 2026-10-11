@@ -1,3 +1,4 @@
+import { pageHead } from "@/lib/seo";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -9,31 +10,13 @@ import { useLang } from "@/lib/i18n";
 const REPORT_EMAIL = "whistleblower@unitedjo.com";
 
 export const Route = createFileRoute("/whistleblower")({
-  head: () => ({
-    meta: [
-      { title: "Whistleblower — United Insurance Company PLC" },
-      {
-        name: "description",
-        content:
-          "Report fraud, corruption, conflicts of interest or any violation of law, regulation or instructions to United Insurance. All reports are handled in strict confidence by an independent department.",
-      },
-      { property: "og:type", content: "website" },
-      { property: "og:title", content: "Whistleblower — United Insurance Company PLC" },
-      {
-        property: "og:description",
-        content:
-          "A whistleblowing policy built on transparency and independence. Report any violation — internally or externally — in strict confidence.",
-      },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Whistleblower — United Insurance Company PLC" },
-      {
-        name: "twitter:description",
-        content:
-          "Report fraud, corruption or any violation of law, regulation or instructions in strict confidence.",
-      },
-    ],
-    links: [{ rel: "canonical", href: "https://unitedinsurance.life/whistleblower" }],
-  }),
+  head: ({ match }) =>
+    pageHead({
+      lang: match.context.lang,
+      path: "/whistleblower",
+      title: {"en": "Whistleblower", "ar": "الإبلاغ عن المخالفات"},
+      description: {"en": "Report fraud, corruption, conflicts of interest or any violation of law, regulation or instructions to United Insurance. All reports are handled in strict confidence by an independent department.", "ar": "أبلغ عن الاحتيال أو الفساد أو تضارب المصالح أو أي مخالفة للقانون أو التعليمات. تُعالج جميع البلاغات بسرية تامة من قبل دائرة مستقلة."},
+    }),
   component: WhistleblowerPage,
 });
 

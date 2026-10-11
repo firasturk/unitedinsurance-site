@@ -21,6 +21,8 @@ import { Route as GovernanceRouteImport } from './routes/governance'
 import { Route as InsuranceRouteImport } from './routes/insurance'
 import { Route as QuoteRouteImport } from './routes/quote'
 import { Route as ReportsRouteImport } from './routes/reports'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TeamRouteImport } from './routes/team'
 import { Route as WhistleblowerRouteImport } from './routes/whistleblower'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
@@ -106,6 +108,16 @@ const QuoteRoute = QuoteRouteImport.update({
 const ReportsRoute = ReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TeamRoute = TeamRouteImport.update({
@@ -265,6 +277,8 @@ export interface FileRoutesByFullPath {
   '/insurance': typeof InsuranceRouteWithChildren
   '/quote': typeof QuoteRoute
   '/reports': typeof ReportsRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/team': typeof TeamRouteWithChildren
   '/whistleblower': typeof WhistleblowerRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -302,6 +316,8 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/quote': typeof QuoteRoute
   '/reports': typeof ReportsRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/whistleblower': typeof WhistleblowerRoute
   '/careers/$slug': typeof CareersSlugRoute
   '/governance/code-of-conduct': typeof GovernanceCodeOfConductRoute
@@ -342,6 +358,8 @@ export interface FileRoutesById {
   '/insurance': typeof InsuranceRouteWithChildren
   '/quote': typeof QuoteRoute
   '/reports': typeof ReportsRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/team': typeof TeamRouteWithChildren
   '/whistleblower': typeof WhistleblowerRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
@@ -384,6 +402,8 @@ export interface FileRouteTypes {
     | '/insurance'
     | '/quote'
     | '/reports'
+    | '/robots.txt'
+    | '/sitemap.xml'
     | '/team'
     | '/whistleblower'
     | '/admin'
@@ -421,6 +441,8 @@ export interface FileRouteTypes {
     | '/contact'
     | '/quote'
     | '/reports'
+    | '/robots.txt'
+    | '/sitemap.xml'
     | '/whistleblower'
     | '/careers/$slug'
     | '/governance/code-of-conduct'
@@ -460,6 +482,8 @@ export interface FileRouteTypes {
     | '/insurance'
     | '/quote'
     | '/reports'
+    | '/robots.txt'
+    | '/sitemap.xml'
     | '/team'
     | '/whistleblower'
     | '/_authenticated/admin'
@@ -502,6 +526,8 @@ export interface RootRouteChildren {
   InsuranceRoute: typeof InsuranceRouteWithChildren
   QuoteRoute: typeof QuoteRoute
   ReportsRoute: typeof ReportsRoute
+  RobotsDottxtRoute: typeof RobotsDottxtRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TeamRoute: typeof TeamRouteWithChildren
   WhistleblowerRoute: typeof WhistleblowerRoute
   NewsSlugRoute: typeof NewsSlugRoute
@@ -593,6 +619,20 @@ declare module '@tanstack/react-router' {
       path: '/reports'
       fullPath: '/reports'
       preLoaderRoute: typeof ReportsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/team': {
@@ -899,6 +939,8 @@ const rootRouteChildren: RootRouteChildren = {
   InsuranceRoute: InsuranceRouteWithChildren,
   QuoteRoute: QuoteRoute,
   ReportsRoute: ReportsRoute,
+  RobotsDottxtRoute: RobotsDottxtRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   TeamRoute: TeamRouteWithChildren,
   WhistleblowerRoute: WhistleblowerRoute,
   NewsSlugRoute: NewsSlugRoute,

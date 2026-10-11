@@ -72,6 +72,23 @@ export const listArticles = createServerFn({ method: "GET" }).handler(async () =
   return (data ?? []) as ArticleRow[];
 });
 
+export type ArticleCard = Pick<ArticleRow, "id" | "slug" | "date" | "category" | "cover_url" | "title_en" | "title_ar" | "excerpt_en" | "excerpt_ar">;
+
+/** Latest published articles with only the columns a card needs (homepage). */
+export const listLatestArticles = createServerFn({ method: "GET" })
+  .inputValidator((d: { limit?: number }) => z.object({ limit: z.number().int().min(1).max(24).default(6) }).parse(d ?? {}))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows, error } = await supabaseAdmin
+      .from("articles")
+      .select("id,slug,date,category,cover_url,title_en,title_ar,excerpt_en,excerpt_ar")
+      .eq("published", true)
+      .order("date", { ascending: false })
+      .limit(data.limit);
+    if (error) throw new Error(error.message);
+    return (rows ?? []) as ArticleCard[];
+  });
+
 export const getArticleBySlug = createServerFn({ method: "GET" })
   .inputValidator((d: { slug: string }) => z.object({ slug: z.string().min(1).max(200) }).parse(d))
   .handler(async ({ data }) => {
@@ -180,6 +197,7 @@ export const listAgentNews = createServerFn({ method: "GET" }).handler(async () 
   const { data, error } = await supabaseAdmin
     .from("agent_news")
     .select("*")
+    .eq("published", true)
     .order("sort_order", { ascending: true });
   if (error) throw new Error(error.message);
   return (data ?? []) as AgentNewsRow[];

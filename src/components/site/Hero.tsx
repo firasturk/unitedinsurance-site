@@ -19,10 +19,10 @@ const floaters = [
 
 type HeroContent = { eyebrow_en: string; eyebrow_ar: string; title_en: string; title_ar: string; subtitle_en: string; subtitle_ar: string; image_url?: string | null };
 
-export function Hero() {
+export function Hero({ initial }: { initial?: { json: string | null } }) {
   const { t, lang } = useLang();
   const fetchSC = useServerFn(getSiteContent);
-  const { data } = useQuery({ queryKey: ["sc-hero"], queryFn: () => fetchSC({ data: { key: "hero" } }) });
+  const { data } = useQuery({ queryKey: ["sc-hero"], queryFn: () => fetchSC({ data: { key: "hero" } }), initialData: initial, staleTime: 300_000 });
   const hero: HeroContent | null = data?.json ? JSON.parse(data.json) : null;
   const eyebrow = hero ? (lang === "ar" ? hero.eyebrow_ar : hero.eyebrow_en) : t("hero.eyebrow");
   const title = hero ? (lang === "ar" ? hero.title_ar : hero.title_en) : t("hero.title");
