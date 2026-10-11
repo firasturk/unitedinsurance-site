@@ -61,7 +61,8 @@ function AdminLayout() {
   }
 
   return (
-    <div className="min-h-screen flex bg-secondary/30">
+    // The admin UI is English-only: keep it left-to-right whatever language the public site opened in.
+    <div className="min-h-screen flex bg-secondary/30 text-left" dir="ltr" lang="en">
       <aside className="w-64 shrink-0 border-r border-border bg-card flex flex-col">
         <div className="p-5 border-b border-border">
           <div className="text-xs font-semibold tracking-widest uppercase text-[var(--royal)]">Admin</div>

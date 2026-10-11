@@ -47,7 +47,7 @@ function AuthPage() {
 
   return (
     <SiteLayout>
-      <section className="py-24 min-h-[70vh] grid place-items-center px-6">
+      <section className="py-24 min-h-[70vh] grid place-items-center px-6" dir="ltr" lang="en">
         <div className="w-full max-w-md rounded-3xl border border-border bg-card p-8 shadow-elevated">
           <div className="flex items-center gap-3 mb-6">
             <div className="grid h-10 w-10 place-items-center rounded-full bg-[var(--royal)] text-white">
