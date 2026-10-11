@@ -5,7 +5,6 @@ import { SiteLayout } from "@/components/site/Layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Lock } from "lucide-react";
 
@@ -46,20 +45,6 @@ function AuthPage() {
     window.location.href = destination;
   }
 
-  async function signUp(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { emailRedirectTo: `${window.location.origin}${destination}` },
-    });
-    setLoading(false);
-    if (error) return toast.error(error.message);
-    toast.success("Account created — you can sign in now.");
-  }
-
-
   return (
     <SiteLayout>
       <section className="py-24 min-h-[70vh] grid place-items-center px-6">
@@ -74,41 +59,20 @@ function AuthPage() {
             </div>
           </div>
 
-          <Tabs defaultValue="signin">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signin">Sign in</TabsTrigger>
-              <TabsTrigger value="signup">Sign up</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="signin">
-              <form onSubmit={signIn} className="space-y-4 mt-4">
-                <div>
-                  <Label htmlFor="email-in">Email</Label>
-                  <Input id="email-in" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
-                </div>
-                <div>
-                  <Label htmlFor="pw-in">Password</Label>
-                  <Input id="pw-in" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
-                </div>
-                <Button type="submit" disabled={loading} className="w-full">{loading ? "Signing in…" : "Sign in"}</Button>
-              </form>
-            </TabsContent>
-
-            <TabsContent value="signup">
-              <form onSubmit={signUp} className="space-y-4 mt-4">
-                <div>
-                  <Label htmlFor="email-up">Email</Label>
-                  <Input id="email-up" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
-                </div>
-                <div>
-                  <Label htmlFor="pw-up">Password (min 6)</Label>
-                  <Input id="pw-up" type="password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
-                </div>
-                <Button type="submit" disabled={loading} className="w-full">{loading ? "Creating…" : "Create account"}</Button>
-              </form>
-            </TabsContent>
-          </Tabs>
-
+          <form onSubmit={signIn} className="space-y-4 mt-2">
+            <div>
+              <Label htmlFor="email-in">Email</Label>
+              <Input id="email-in" type="email" autoComplete="username" required value={email} onChange={(e) => setEmail(e.target.value)} />
+            </div>
+            <div>
+              <Label htmlFor="pw-in">Password</Label>
+              <Input id="pw-in" type="password" autoComplete="current-password" required minLength={6} value={password} onChange={(e) => setPassword(e.target.value)} />
+            </div>
+            <Button type="submit" disabled={loading} className="w-full">{loading ? "Signing in…" : "Sign in"}</Button>
+          </form>
+          <p className="mt-4 text-xs text-muted-foreground text-center">
+            Accounts are created by the site administrator. Forgot your password? Contact IT.
+          </p>
 
           <p className="mt-6 text-xs text-muted-foreground text-center">
             <Link to="/" className="hover:underline">← Back to home</Link>

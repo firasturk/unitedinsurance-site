@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { listInsuranceServices, submitContactMessage, type InsuranceServiceRow } from "@/lib/public.functions";
+import { SpamGuard } from "@/components/site/SpamGuard";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Check, Send, Shield } from "lucide-react";
@@ -54,13 +55,17 @@ function QuotePage() {
       insurance_type: picked,
       message: String(fd.get("message") ?? "").trim() || L(`Quote request: ${picked}`, `طلب عرض سعر: ${picked}`),
     };
+    const guard = {
+      website: String(fd.get("website") ?? ""),
+      turnstile: String(fd.get("cf-turnstile-response") ?? ""),
+    };
     if (!payload.full_name || !payload.email || !payload.phone || !payload.insurance_type) {
       toast.error(L("Please fill in all fields.", "الرجاء تعبئة جميع الحقول."));
       return;
     }
     setSending(true);
     try {
-      await send({ data: payload });
+      await send({ data: { ...payload, source: "quote", ...guard } });
       setSent(true);
       form.reset();
       toast.success(L("Your quote request has been sent.", "تم إرسال طلب عرض السعر."));
@@ -184,6 +189,8 @@ function QuotePage() {
                     className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--royal)]/40"
                   />
                 </label>
+
+                <SpamGuard />
 
                 <button
                   type="submit"

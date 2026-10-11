@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { submitContactMessage } from "@/lib/public.functions";
+import { SpamGuard } from "@/components/site/SpamGuard";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { Phone, Mail, MapPin, Send } from "lucide-react";
@@ -38,13 +39,17 @@ function ContactPage() {
       insurance_type: String(fd.get("type") ?? "").trim(),
       message: String(fd.get("message") ?? "").trim(),
     };
+    const guard = {
+      website: String(fd.get("website") ?? ""),
+      turnstile: String(fd.get("cf-turnstile-response") ?? ""),
+    };
     if (Object.values(payload).some((v) => !v)) {
       toast.error(L("Please fill in all fields.", "الرجاء تعبئة جميع الحقول."));
       return;
     }
     setSending(true);
     try {
-      await send({ data: payload });
+      await send({ data: { ...payload, source: "contact", ...guard } });
       setSent(true);
       form.reset();
       toast.success(L("Your message has been sent.", "تم إرسال رسالتك بنجاح."));
@@ -97,6 +102,7 @@ function ContactPage() {
               <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{L("Message", "الرسالة")} *</span>
               <textarea name="message" rows={5} required minLength={5} className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--royal)]/40" />
             </label>
+            <SpamGuard />
             <button type="submit" disabled={sending} className="mt-6 disabled:opacity-60 inline-flex items-center gap-2 h-12 px-6 rounded-full gradient-royal text-white font-semibold text-sm shadow-soft hover:shadow-glow transition">
               {sending ? L("Sending…", "جارٍ الإرسال…") : sent ? L("Sent ✓", "تم الإرسال ✓") : <>{t("nav.quote")} <Send className="h-4 w-4 rtl:rotate-180" /></>}
             </button>

@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { meIsAdmin } from "@/lib/admin.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Newspaper, Users, Home, FileText, LogOut, ShieldAlert, ArrowLeft, Shield, Handshake, Briefcase, Inbox, MailOpen } from "lucide-react";
+import { LayoutDashboard, Newspaper, Users, Home, FileText, LogOut, ShieldAlert, ArrowLeft, Shield, Handshake, Briefcase, Inbox, MailOpen, MessageSquareWarning } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminLayout,
@@ -22,6 +22,7 @@ const NAV: { to: string; label: string; icon: typeof LayoutDashboard; exact?: bo
   { to: "/admin/vacancies", label: "Vacancies", icon: Briefcase },
   { to: "/admin/applications", label: "Applications", icon: Inbox },
   { to: "/admin/messages", label: "Contact Messages", icon: MailOpen },
+  { to: "/admin/complaints", label: "Complaints", icon: MessageSquareWarning },
 ];
 
 

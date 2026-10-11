@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 
 // Serves dashboard-uploaded files from the site's own address.
 // Buckets are private, so the file is fetched server-side and streamed back.
-const ALLOWED_BUCKETS = new Set(["articles", "team", "forms", "insurance", "logos", "cvs"]);
+// "cvs" is deliberately NOT here: applicant CVs are served to admins only via signed URLs (getCvUrl).
+const ALLOWED_BUCKETS = new Set(["articles", "team", "forms", "insurance", "logos"]);
 
 const MIME: Record<string, string> = {
   png: "image/png",
@@ -53,12 +54,18 @@ export const Route = createFileRoute("/api/public/media/$")({
           return new Response("Not found", { status: 404 });
         }
 
+        const mime = mimeFor(path, data.type);
+        const filename = (path.split("/").pop() ?? "file").replace(/["\r\n]/g, "");
+        // Documents download; images/video display inline. A sandboxing CSP keeps any
+        // uploaded SVG/HTML-like content from running script on this origin.
+        const disposition = mime === "application/pdf" || mime === "application/octet-stream" ? "attachment" : "inline";
         return new Response(data, {
           headers: {
-            "Content-Type": mimeFor(path, data.type),
+            "Content-Type": mime,
             "Content-Length": String(data.size),
             "Cache-Control": "public, max-age=31536000, immutable",
-            "Content-Disposition": `inline; filename="${path.split("/").pop() ?? "file"}"`,
+            "Content-Disposition": `${disposition}; filename="${filename}"`,
+            "Content-Security-Policy": "default-src 'none'; style-src 'unsafe-inline'; img-src data:; sandbox",
             "X-Content-Type-Options": "nosniff",
           },
         });

@@ -395,6 +395,8 @@ export const deleteApplication = createServerFn({ method: "POST" })
     return { ok: true };
   });
 
+// CVs are personal data: never served from a public URL. Admins get a short-lived signed
+// download link (60 s) generated through their own session, so storage RLS still applies.
 export const getCvUrl = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { path: string }) => z.object({ path: z.string().min(1).max(300) }).parse(d))
@@ -403,9 +405,13 @@ export const getCvUrl = createServerFn({ method: "POST" })
     const safe = data.path
       .split("/")
       .filter((s) => s && s !== "." && s !== "..")
-      .map(encodeURIComponent)
       .join("/");
-    return { url: `/api/public/media/cvs/${safe}` };
+    const filename = safe.split("/").pop() ?? "cv";
+    const { data: signed, error } = await context.supabase.storage
+      .from("cvs")
+      .createSignedUrl(safe, 60, { download: filename });
+    if (error || !signed?.signedUrl) throw new Error(error?.message ?? "Could not create a download link");
+    return { url: signed.signedUrl };
   });
 
 // ===== Contact messages =====
@@ -439,6 +445,41 @@ export const deleteContactMessage = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     await assertAdmin(context.supabase, context.userId);
     const { error } = await context.supabase.from("contact_messages").delete().eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+// ===== Suggestions & complaints =====
+export const listComplaints = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { data, error } = await context.supabase
+      .from("complaints")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) throw new Error(error.message);
+    return data ?? [];
+  });
+
+export const updateComplaintStatus = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) =>
+    z.object({ id: z.string().uuid(), status: z.enum(["new", "in_progress", "resolved", "closed"]) }).parse(d),
+  )
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { error } = await context.supabase.from("complaints").update({ status: data.status }).eq("id", data.id);
+    if (error) throw new Error(error.message);
+    return { ok: true };
+  });
+
+export const deleteComplaint = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { error } = await context.supabase.from("complaints").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
   });

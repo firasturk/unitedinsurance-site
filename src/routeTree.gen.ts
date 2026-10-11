@@ -19,13 +19,10 @@ import { Route as ComplaintsRouteImport } from './routes/complaints'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as GovernanceRouteImport } from './routes/governance'
 import { Route as InsuranceRouteImport } from './routes/insurance'
-import { Route as McpRouteImport } from './routes/mcp'
 import { Route as QuoteRouteImport } from './routes/quote'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as TeamRouteImport } from './routes/team'
 import { Route as WhistleblowerRouteImport } from './routes/whistleblower'
-import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
-import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as CareersIndexRouteImport } from './routes/careers.index'
 import { Route as CareersSlugRouteImport } from './routes/careers.$slug'
@@ -38,12 +35,11 @@ import { Route as NewsSlugRouteImport } from './routes/news.$slug'
 import { Route as TeamIndexRouteImport } from './routes/team.index'
 import { Route as TeamBoardRouteImport } from './routes/team.board'
 import { Route as TeamExecutiveRouteImport } from './routes/team.executive'
-import { Route as DotlovableOauthConsentRouteImport } from './routes/[.]lovable.oauth.consent'
-import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated/admin.index'
 import { Route as AuthenticatedAdminAgentsRouteImport } from './routes/_authenticated/admin.agents'
 import { Route as AuthenticatedAdminApplicationsRouteImport } from './routes/_authenticated/admin.applications'
 import { Route as AuthenticatedAdminArticlesRouteImport } from './routes/_authenticated/admin.articles'
+import { Route as AuthenticatedAdminComplaintsRouteImport } from './routes/_authenticated/admin.complaints'
 import { Route as AuthenticatedAdminFormsRouteImport } from './routes/_authenticated/admin.forms'
 import { Route as AuthenticatedAdminHomepageRouteImport } from './routes/_authenticated/admin.homepage'
 import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin.messages'
@@ -102,11 +98,6 @@ const InsuranceRoute = InsuranceRouteImport.update({
   path: '/insurance',
   getParentRoute: () => rootRouteImport,
 } as any)
-const McpRoute = McpRouteImport.update({
-  id: '/mcp',
-  path: '/mcp',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const QuoteRoute = QuoteRouteImport.update({
   id: '/quote',
   path: '/quote',
@@ -127,18 +118,6 @@ const WhistleblowerRoute = WhistleblowerRouteImport.update({
   path: '/whistleblower',
   getParentRoute: () => rootRouteImport,
 } as any)
-const Char91DotmcpChar93ListToolsRoute =
-  Char91DotmcpChar93ListToolsRouteImport.update({
-    id: '/.mcp/list-tools',
-    path: '/.mcp/list-tools',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const Char91DotwellKnownChar93OauthProtectedResourceRoute =
-  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
-    id: '/.well-known/oauth-protected-resource',
-    path: '/.well-known/oauth-protected-resource',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -199,17 +178,6 @@ const TeamExecutiveRoute = TeamExecutiveRouteImport.update({
   path: '/executive',
   getParentRoute: () => TeamRoute,
 } as any)
-const DotlovableOauthConsentRoute = DotlovableOauthConsentRouteImport.update({
-  id: '/.lovable/oauth/consent',
-  path: '/.lovable/oauth/consent',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const Char91DotmcpChar93InvokeToolToolRoute =
-  Char91DotmcpChar93InvokeToolToolRouteImport.update({
-    id: '/.mcp/invoke-tool/$tool',
-    path: '/.mcp/invoke-tool/$tool',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -231,6 +199,12 @@ const AuthenticatedAdminArticlesRoute =
   AuthenticatedAdminArticlesRouteImport.update({
     id: '/articles',
     path: '/articles',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminComplaintsRoute =
+  AuthenticatedAdminComplaintsRouteImport.update({
+    id: '/complaints',
+    path: '/complaints',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminFormsRoute = AuthenticatedAdminFormsRouteImport.update({
@@ -289,13 +263,10 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/governance': typeof GovernanceRouteWithChildren
   '/insurance': typeof InsuranceRouteWithChildren
-  '/mcp': typeof McpRoute
   '/quote': typeof QuoteRoute
   '/reports': typeof ReportsRoute
   '/team': typeof TeamRouteWithChildren
   '/whistleblower': typeof WhistleblowerRoute
-  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
-  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/careers/$slug': typeof CareersSlugRoute
   '/governance/code-of-conduct': typeof GovernanceCodeOfConductRoute
@@ -308,11 +279,10 @@ export interface FileRoutesByFullPath {
   '/insurance/': typeof InsuranceIndexRoute
   '/news/': typeof NewsIndexRoute
   '/team/': typeof TeamIndexRoute
-  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
-  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/agents': typeof AuthenticatedAdminAgentsRoute
   '/admin/applications': typeof AuthenticatedAdminApplicationsRoute
   '/admin/articles': typeof AuthenticatedAdminArticlesRoute
+  '/admin/complaints': typeof AuthenticatedAdminComplaintsRoute
   '/admin/forms': typeof AuthenticatedAdminFormsRoute
   '/admin/homepage': typeof AuthenticatedAdminHomepageRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
@@ -330,12 +300,9 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/complaints': typeof ComplaintsRoute
   '/contact': typeof ContactRoute
-  '/mcp': typeof McpRoute
   '/quote': typeof QuoteRoute
   '/reports': typeof ReportsRoute
   '/whistleblower': typeof WhistleblowerRoute
-  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
-  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/careers/$slug': typeof CareersSlugRoute
   '/governance/code-of-conduct': typeof GovernanceCodeOfConductRoute
   '/insurance/$type': typeof InsuranceTypeRoute
@@ -347,11 +314,10 @@ export interface FileRoutesByTo {
   '/insurance': typeof InsuranceIndexRoute
   '/news': typeof NewsIndexRoute
   '/team': typeof TeamIndexRoute
-  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
-  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/admin/agents': typeof AuthenticatedAdminAgentsRoute
   '/admin/applications': typeof AuthenticatedAdminApplicationsRoute
   '/admin/articles': typeof AuthenticatedAdminArticlesRoute
+  '/admin/complaints': typeof AuthenticatedAdminComplaintsRoute
   '/admin/forms': typeof AuthenticatedAdminFormsRoute
   '/admin/homepage': typeof AuthenticatedAdminHomepageRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
@@ -374,13 +340,10 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/governance': typeof GovernanceRouteWithChildren
   '/insurance': typeof InsuranceRouteWithChildren
-  '/mcp': typeof McpRoute
   '/quote': typeof QuoteRoute
   '/reports': typeof ReportsRoute
   '/team': typeof TeamRouteWithChildren
   '/whistleblower': typeof WhistleblowerRoute
-  '/.mcp/list-tools': typeof Char91DotmcpChar93ListToolsRoute
-  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/careers/$slug': typeof CareersSlugRoute
   '/governance/code-of-conduct': typeof GovernanceCodeOfConductRoute
@@ -393,11 +356,10 @@ export interface FileRoutesById {
   '/insurance/': typeof InsuranceIndexRoute
   '/news/': typeof NewsIndexRoute
   '/team/': typeof TeamIndexRoute
-  '/.lovable/oauth/consent': typeof DotlovableOauthConsentRoute
-  '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/_authenticated/admin/agents': typeof AuthenticatedAdminAgentsRoute
   '/_authenticated/admin/applications': typeof AuthenticatedAdminApplicationsRoute
   '/_authenticated/admin/articles': typeof AuthenticatedAdminArticlesRoute
+  '/_authenticated/admin/complaints': typeof AuthenticatedAdminComplaintsRoute
   '/_authenticated/admin/forms': typeof AuthenticatedAdminFormsRoute
   '/_authenticated/admin/homepage': typeof AuthenticatedAdminHomepageRoute
   '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
@@ -420,13 +382,10 @@ export interface FileRouteTypes {
     | '/contact'
     | '/governance'
     | '/insurance'
-    | '/mcp'
     | '/quote'
     | '/reports'
     | '/team'
     | '/whistleblower'
-    | '/.mcp/list-tools'
-    | '/.well-known/oauth-protected-resource'
     | '/admin'
     | '/careers/$slug'
     | '/governance/code-of-conduct'
@@ -439,11 +398,10 @@ export interface FileRouteTypes {
     | '/insurance/'
     | '/news/'
     | '/team/'
-    | '/.lovable/oauth/consent'
-    | '/.mcp/invoke-tool/$tool'
     | '/admin/agents'
     | '/admin/applications'
     | '/admin/articles'
+    | '/admin/complaints'
     | '/admin/forms'
     | '/admin/homepage'
     | '/admin/messages'
@@ -461,12 +419,9 @@ export interface FileRouteTypes {
     | '/auth'
     | '/complaints'
     | '/contact'
-    | '/mcp'
     | '/quote'
     | '/reports'
     | '/whistleblower'
-    | '/.mcp/list-tools'
-    | '/.well-known/oauth-protected-resource'
     | '/careers/$slug'
     | '/governance/code-of-conduct'
     | '/insurance/$type'
@@ -478,11 +433,10 @@ export interface FileRouteTypes {
     | '/insurance'
     | '/news'
     | '/team'
-    | '/.lovable/oauth/consent'
-    | '/.mcp/invoke-tool/$tool'
     | '/admin/agents'
     | '/admin/applications'
     | '/admin/articles'
+    | '/admin/complaints'
     | '/admin/forms'
     | '/admin/homepage'
     | '/admin/messages'
@@ -504,13 +458,10 @@ export interface FileRouteTypes {
     | '/contact'
     | '/governance'
     | '/insurance'
-    | '/mcp'
     | '/quote'
     | '/reports'
     | '/team'
     | '/whistleblower'
-    | '/.mcp/list-tools'
-    | '/.well-known/oauth-protected-resource'
     | '/_authenticated/admin'
     | '/careers/$slug'
     | '/governance/code-of-conduct'
@@ -523,11 +474,10 @@ export interface FileRouteTypes {
     | '/insurance/'
     | '/news/'
     | '/team/'
-    | '/.lovable/oauth/consent'
-    | '/.mcp/invoke-tool/$tool'
     | '/_authenticated/admin/agents'
     | '/_authenticated/admin/applications'
     | '/_authenticated/admin/articles'
+    | '/_authenticated/admin/complaints'
     | '/_authenticated/admin/forms'
     | '/_authenticated/admin/homepage'
     | '/_authenticated/admin/messages'
@@ -550,17 +500,12 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   GovernanceRoute: typeof GovernanceRouteWithChildren
   InsuranceRoute: typeof InsuranceRouteWithChildren
-  McpRoute: typeof McpRoute
   QuoteRoute: typeof QuoteRoute
   ReportsRoute: typeof ReportsRoute
   TeamRoute: typeof TeamRouteWithChildren
   WhistleblowerRoute: typeof WhistleblowerRoute
-  Char91DotmcpChar93ListToolsRoute: typeof Char91DotmcpChar93ListToolsRoute
-  Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   NewsSlugRoute: typeof NewsSlugRoute
   NewsIndexRoute: typeof NewsIndexRoute
-  DotlovableOauthConsentRoute: typeof DotlovableOauthConsentRoute
-  Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicMediaSplatRoute: typeof ApiPublicMediaSplatRoute
 }
 
@@ -636,13 +581,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof InsuranceRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/mcp': {
-      id: '/mcp'
-      path: '/mcp'
-      fullPath: '/mcp'
-      preLoaderRoute: typeof McpRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/quote': {
       id: '/quote'
       path: '/quote'
@@ -669,20 +607,6 @@ declare module '@tanstack/react-router' {
       path: '/whistleblower'
       fullPath: '/whistleblower'
       preLoaderRoute: typeof WhistleblowerRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/.mcp/list-tools': {
-      id: '/.mcp/list-tools'
-      path: '/.mcp/list-tools'
-      fullPath: '/.mcp/list-tools'
-      preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/.well-known/oauth-protected-resource': {
-      id: '/.well-known/oauth-protected-resource'
-      path: '/.well-known/oauth-protected-resource'
-      fullPath: '/.well-known/oauth-protected-resource'
-      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -769,20 +693,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TeamExecutiveRouteImport
       parentRoute: typeof TeamRoute
     }
-    '/.lovable/oauth/consent': {
-      id: '/.lovable/oauth/consent'
-      path: '/.lovable/oauth/consent'
-      fullPath: '/.lovable/oauth/consent'
-      preLoaderRoute: typeof DotlovableOauthConsentRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/.mcp/invoke-tool/$tool': {
-      id: '/.mcp/invoke-tool/$tool'
-      path: '/.mcp/invoke-tool/$tool'
-      fullPath: '/.mcp/invoke-tool/$tool'
-      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
       path: '/'
@@ -809,6 +719,13 @@ declare module '@tanstack/react-router' {
       path: '/articles'
       fullPath: '/admin/articles'
       preLoaderRoute: typeof AuthenticatedAdminArticlesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/complaints': {
+      id: '/_authenticated/admin/complaints'
+      path: '/complaints'
+      fullPath: '/admin/complaints'
+      preLoaderRoute: typeof AuthenticatedAdminComplaintsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/forms': {
@@ -874,6 +791,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminAgentsRoute: typeof AuthenticatedAdminAgentsRoute
   AuthenticatedAdminApplicationsRoute: typeof AuthenticatedAdminApplicationsRoute
   AuthenticatedAdminArticlesRoute: typeof AuthenticatedAdminArticlesRoute
+  AuthenticatedAdminComplaintsRoute: typeof AuthenticatedAdminComplaintsRoute
   AuthenticatedAdminFormsRoute: typeof AuthenticatedAdminFormsRoute
   AuthenticatedAdminHomepageRoute: typeof AuthenticatedAdminHomepageRoute
   AuthenticatedAdminMessagesRoute: typeof AuthenticatedAdminMessagesRoute
@@ -888,6 +806,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminAgentsRoute: AuthenticatedAdminAgentsRoute,
   AuthenticatedAdminApplicationsRoute: AuthenticatedAdminApplicationsRoute,
   AuthenticatedAdminArticlesRoute: AuthenticatedAdminArticlesRoute,
+  AuthenticatedAdminComplaintsRoute: AuthenticatedAdminComplaintsRoute,
   AuthenticatedAdminFormsRoute: AuthenticatedAdminFormsRoute,
   AuthenticatedAdminHomepageRoute: AuthenticatedAdminHomepageRoute,
   AuthenticatedAdminMessagesRoute: AuthenticatedAdminMessagesRoute,
@@ -978,18 +897,12 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   GovernanceRoute: GovernanceRouteWithChildren,
   InsuranceRoute: InsuranceRouteWithChildren,
-  McpRoute: McpRoute,
   QuoteRoute: QuoteRoute,
   ReportsRoute: ReportsRoute,
   TeamRoute: TeamRouteWithChildren,
   WhistleblowerRoute: WhistleblowerRoute,
-  Char91DotmcpChar93ListToolsRoute: Char91DotmcpChar93ListToolsRoute,
-  Char91DotwellKnownChar93OauthProtectedResourceRoute:
-    Char91DotwellKnownChar93OauthProtectedResourceRoute,
   NewsSlugRoute: NewsSlugRoute,
   NewsIndexRoute: NewsIndexRoute,
-  DotlovableOauthConsentRoute: DotlovableOauthConsentRoute,
-  Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicMediaSplatRoute: ApiPublicMediaSplatRoute,
 }
 export const routeTree = rootRouteImport

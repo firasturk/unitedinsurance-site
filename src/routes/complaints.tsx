@@ -1,11 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
 import { complaintFormPdf } from "@/lib/media";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { MessageSquare, ShieldCheck, Clock, Send, CheckCircle2, FileText, Download } from "lucide-react";
+import { MessageSquare, ShieldCheck, Clock, Send, CheckCircle2, FileText, Download, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 import { SiteLayout } from "@/components/site/Layout";
 import { PageHero } from "@/components/site/PageHero";
+import { SpamGuard } from "@/components/site/SpamGuard";
 import { useLang } from "@/lib/i18n";
+import { submitComplaint } from "@/lib/public.functions";
 
 export const Route = createFileRoute("/complaints")({
   head: () => ({
@@ -20,12 +24,54 @@ export const Route = createFileRoute("/complaints")({
 
 function ComplaintsPage() {
   const { lang } = useLang();
-  const [sent, setSent] = useState(false);
+  const [reference, setReference] = useState<string | null>(null);
+  const [sending, setSending] = useState(false);
+  const send = useServerFn(submitComplaint);
   const L = (en: string, ar: string) => (lang === "ar" ? ar : en);
+
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const fd = new FormData(form);
+    const str = (k: string) => String(fd.get(k) ?? "").trim();
+    const payload = {
+      kind: str("type") as "suggestion" | "complaint" | "inquiry",
+      full_name: str("name"),
+      national_id: str("id"),
+      email: str("email"),
+      phone: str("phone"),
+      policy_number: str("policy"),
+      subject: str("subject"),
+      message: str("message"),
+      lang,
+      website: str("website"),
+      turnstile: str("cf-turnstile-response"),
+    };
+    const required = [payload.full_name, payload.national_id, payload.email, payload.phone, payload.subject, payload.message];
+    if (required.some((v) => !v)) {
+      toast.error(L("Please fill in all required fields.", "الرجاء تعبئة جميع الحقول المطلوبة."));
+      return;
+    }
+    if (payload.message.length < 10) {
+      toast.error(L("Please describe your case in more detail.", "الرجاء وصف الحالة بمزيد من التفصيل."));
+      return;
+    }
+    setSending(true);
+    try {
+      const res = await send({ data: payload });
+      setReference(res.reference);
+      form.reset();
+      if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+    } catch (err: any) {
+      toast.error(err?.message ?? L("Could not submit your case.", "تعذّر إرسال الحالة."));
+    } finally {
+      setSending(false);
+    }
+  }
 
   const pillars = [
     { Icon: ShieldCheck, t: L("Confidential", "سرية تامة"), d: L("Your data is handled with strict confidentiality.", "نتعامل مع بياناتك بسرية تامة.") },
-    { Icon: Clock, t: L("2 business days", "يومان عمل"), d: L("Initial response within five working days.", "ردّ مبدئي خلال يومي عمل.") },
+    { Icon: Clock, t: L("2 business days", "يومان عمل"), d: L("Initial response within two business days.", "ردّ مبدئي خلال يومي عمل.") },
     { Icon: CheckCircle2, t: L("Tracked & resolved", "متابعة وحلّ"), d: L("Every case is logged, escalated and closed.", "تُسجَّل كل حالة وتتم متابعتها حتى الإغلاق.") },
   ];
 
@@ -91,39 +137,65 @@ function ComplaintsPage() {
             </a>
           </div>
 
+          {reference ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
+              className="lg:col-span-3 rounded-3xl bg-card border border-border p-8 shadow-soft"
+              role="status"
+            >
+              <div className="grid h-12 w-12 place-items-center rounded-xl gradient-royal text-white mb-4"><CheckCircle2 className="h-6 w-6" /></div>
+              <h2 className="text-2xl font-bold">{L("Your case has been received", "تم استلام حالتك")}</h2>
+              <p className="text-sm text-muted-foreground mt-2">
+                {L("Keep this reference number for any follow-up:", "احتفظ بهذا الرقم المرجعي لأي متابعة:")}
+              </p>
+              <div className="mt-4 inline-block rounded-xl border border-border bg-secondary/60 px-5 py-3 font-mono text-xl font-bold tracking-wider" dir="ltr">{reference}</div>
+              <p className="text-sm text-muted-foreground mt-4">
+                {L("Our complaints team will contact you within two business days.", "سيتواصل معك فريق إدارة الشكاوى خلال يومي عمل.")}
+              </p>
+              <button
+                type="button"
+                onClick={() => setReference(null)}
+                className="mt-6 inline-flex items-center gap-2 h-11 px-5 rounded-full border border-border text-sm font-semibold hover:bg-secondary/60 transition"
+              >
+                {L("Submit another case", "إرسال حالة أخرى")}
+              </button>
+            </motion.div>
+          ) : (
           <motion.form
             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-            onSubmit={(e) => { e.preventDefault(); setSent(true); }}
+            onSubmit={handleSubmit}
             className="lg:col-span-3 rounded-3xl bg-card border border-border p-8 shadow-soft"
           >
             <h2 className="text-2xl font-bold">{L("Submit your case", "أرسل حالتك")}</h2>
-            <p className="text-sm text-muted-foreground mt-1">{L("All fields are required.", "جميع الحقول مطلوبة.")}</p>
+            <p className="text-sm text-muted-foreground mt-1">{L("All fields are required unless marked optional.", "جميع الحقول مطلوبة ما لم يُذكر أنها اختيارية.")}</p>
 
             <div className="grid sm:grid-cols-2 gap-4 mt-6">
-              <Field label={L("Full name", "الاسم الكامل")} name="name" />
-              <Field label={L("National ID", "الرقم الوطني")} name="id" />
-              <Field label={L("Email", "البريد الإلكتروني")} name="email" type="email" />
-              <Field label={L("Phone", "رقم الهاتف")} name="phone" />
+              <Field label={L("Full name", "الاسم الكامل")} name="name" autoComplete="name" required />
+              <Field label={L("National ID", "الرقم الوطني")} name="id" required />
+              <Field label={L("Email", "البريد الإلكتروني")} name="email" type="email" autoComplete="email" required />
+              <Field label={L("Phone", "رقم الهاتف")} name="phone" type="tel" autoComplete="tel" required />
               <Field label={L("Policy number (optional)", "رقم الوثيقة (اختياري)")} name="policy" />
               <label className="block">
                 <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{L("Type", "النوع")}</span>
-                <select name="type" className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--royal)]/40">
-                  <option>{L("Suggestion", "اقتراح")}</option>
-                  <option>{L("Complaint", "شكوى")}</option>
-                  <option>{L("Inquiry", "استفسار")}</option>
+                <select name="type" defaultValue="complaint" className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--royal)]/40">
+                  <option value="suggestion">{L("Suggestion", "اقتراح")}</option>
+                  <option value="complaint">{L("Complaint", "شكوى")}</option>
+                  <option value="inquiry">{L("Inquiry", "استفسار")}</option>
                 </select>
               </label>
             </div>
 
             <label className="block mt-4">
               <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{L("Subject", "الموضوع")}</span>
-              <input name="subject" className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--royal)]/40" />
+              <input name="subject" required maxLength={200} className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--royal)]/40" />
             </label>
 
             <label className="block mt-4">
               <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{L("Details", "التفاصيل")}</span>
-              <textarea name="message" rows={6} className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--royal)]/40" />
+              <textarea name="message" rows={6} required minLength={10} maxLength={5000} className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--royal)]/40" />
             </label>
+
+            <SpamGuard />
 
             <label className="mt-4 flex items-start gap-3 text-xs text-muted-foreground">
               <input type="checkbox" required className="mt-0.5" />
@@ -133,21 +205,22 @@ function ComplaintsPage() {
               )}</span>
             </label>
 
-            <button type="submit" className="mt-6 inline-flex items-center gap-2 h-12 px-6 rounded-full gradient-royal text-white font-semibold text-sm shadow-soft hover:shadow-glow transition">
-              {sent ? L("Submitted ✓", "تم الإرسال ✓") : <>{L("Submit", "إرسال")} <Send className="h-4 w-4 rtl:rotate-180" /></>}
+            <button type="submit" disabled={sending} className="mt-6 inline-flex items-center gap-2 h-12 px-6 rounded-full gradient-royal text-white font-semibold text-sm shadow-soft hover:shadow-glow transition disabled:opacity-70">
+              {sending ? <><Loader2 className="h-4 w-4 animate-spin" /> {L("Sending…", "جارٍ الإرسال…")}</> : <>{L("Submit", "إرسال")} <Send className="h-4 w-4 rtl:rotate-180" /></>}
             </button>
           </motion.form>
+          )}
         </div>
       </section>
     </SiteLayout>
   );
 }
 
-function Field({ label, name, type = "text" }: { label: string; name: string; type?: string }) {
+function Field({ label, name, type = "text", autoComplete, required }: { label: string; name: string; type?: string; autoComplete?: string; required?: boolean }) {
   return (
     <label className="block">
       <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{label}</span>
-      <input name={name} type={type} className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--royal)]/40" />
+      <input name={name} type={type} autoComplete={autoComplete} required={required} className="mt-2 w-full rounded-xl border border-border bg-background px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--royal)]/40" />
     </label>
   );
 }

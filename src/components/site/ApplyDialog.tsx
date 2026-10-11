@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
+import { SpamGuard } from "@/components/site/SpamGuard";
 import { toast } from "sonner";
 import { Loader2, UploadCloud, CheckCircle2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogTrigger } from "@/components/ui/dialog";
@@ -41,10 +42,11 @@ export function ApplyDialog({
   const [form, setForm] = useState({ full_name: "", email: "", phone: "", cover_note: "" });
   const [file, setFile] = useState<File | null>(null);
 
-  async function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!file) return toast.error(L("Please attach your CV", "الرجاء إرفاق سيرتك الذاتية"));
     if (file.size > 5 * 1024 * 1024) return toast.error(L("CV must be under 5MB", "يجب أن يكون حجم الملف أقل من 5 ميجابايت"));
+    const fd = new FormData(e.currentTarget);
     setBusy(true);
     try {
       const cv_base64 = await toBase64(file);
@@ -55,6 +57,8 @@ export function ApplyDialog({
           cv_name: file.name,
           cv_type: file.type,
           cv_base64,
+          website: String(fd.get("website") ?? ""),
+          turnstile: String(fd.get("cf-turnstile-response") ?? ""),
         },
       });
       setDone(true);
@@ -100,37 +104,41 @@ export function ApplyDialog({
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <Label>{L("Full name", "الاسم الكامل")}</Label>
-                  <Input required value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} />
+                  <Label htmlFor="apply-name">{L("Full name", "الاسم الكامل")}</Label>
+                  <Input id="apply-name" name="full_name" autoComplete="name" required value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label>{L("Email", "البريد الإلكتروني")}</Label>
-                  <Input type="email" required dir="ltr" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
+                  <Label htmlFor="apply-email">{L("Email", "البريد الإلكتروني")}</Label>
+                  <Input id="apply-email" name="email" type="email" autoComplete="email" required dir="ltr" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
                 </div>
               </div>
               <div className="space-y-1.5">
-                <Label>{L("Phone", "رقم الهاتف")}</Label>
-                <Input dir="ltr" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+                <Label htmlFor="apply-phone">{L("Phone", "رقم الهاتف")}</Label>
+                <Input id="apply-phone" name="phone" type="tel" autoComplete="tel" dir="ltr" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
               </div>
               <div className="space-y-1.5">
-                <Label>{L("Cover note (optional)", "نبذة تعريفية (اختياري)")}</Label>
-                <Textarea rows={4} value={form.cover_note} onChange={(e) => setForm({ ...form, cover_note: e.target.value })} />
+                <Label htmlFor="apply-note">{L("Cover note (optional)", "نبذة تعريفية (اختياري)")}</Label>
+                <Textarea id="apply-note" name="cover_note" rows={4} value={form.cover_note} onChange={(e) => setForm({ ...form, cover_note: e.target.value })} />
               </div>
               <div className="space-y-1.5">
-                <Label>{L("CV / Resume", "السيرة الذاتية")}</Label>
-                <label className="flex items-center gap-3 rounded-xl border border-dashed border-border px-4 py-4 cursor-pointer hover:border-[var(--royal)]/50 transition">
-                  <UploadCloud className="h-5 w-5 text-[var(--royal)]" />
+                <Label htmlFor="apply-cv">{L("CV / Resume", "السيرة الذاتية")}</Label>
+                <label htmlFor="apply-cv" className="flex items-center gap-3 rounded-xl border border-dashed border-border px-4 py-4 cursor-pointer hover:border-[var(--royal)]/50 focus-within:ring-2 focus-within:ring-[var(--royal)]/40 transition">
+                  <UploadCloud className="h-5 w-5 text-[var(--royal)]" aria-hidden="true" />
                   <span className="text-sm text-muted-foreground truncate">
                     {file ? file.name : L("Choose a PDF or Word file", "اختر ملف PDF أو Word")}
                   </span>
                   <input
+                    id="apply-cv"
+                    name="cv"
                     type="file"
+                    required
                     accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                    className="hidden"
+                    className="sr-only"
                     onChange={(e) => setFile(e.target.files?.[0] ?? null)}
                   />
                 </label>
               </div>
+              <SpamGuard />
               <Button type="submit" disabled={busy} className="w-full h-11 rounded-full">
                 {busy && <Loader2 className="h-4 w-4 me-2 animate-spin" />}
                 {L("Submit application", "إرسال الطلب")}

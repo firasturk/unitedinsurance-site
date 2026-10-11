@@ -199,6 +199,57 @@ export type Database = {
           },
         ]
       }
+      complaints: {
+        Row: {
+          created_at: string
+          email: string
+          emailed: boolean
+          full_name: string
+          id: string
+          kind: string
+          lang: string
+          message: string
+          national_id: string
+          phone: string
+          policy_number: string
+          reference: string
+          status: string
+          subject: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          emailed?: boolean
+          full_name: string
+          id?: string
+          kind?: string
+          lang?: string
+          message: string
+          national_id: string
+          phone: string
+          policy_number?: string
+          reference: string
+          status?: string
+          subject: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          emailed?: boolean
+          full_name?: string
+          id?: string
+          kind?: string
+          lang?: string
+          message?: string
+          national_id?: string
+          phone?: string
+          policy_number?: string
+          reference?: string
+          status?: string
+          subject?: string
+        }
+        Relationships: []
+      }
       contact_messages: {
         Row: {
           created_at: string
