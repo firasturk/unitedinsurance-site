@@ -81,6 +81,13 @@ function withSecurityHeaders(response: Response): Response {
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
+      // One canonical host: www.unitedjo.com → unitedjo.com (keeps path + query), so search
+      // engines and analytics see a single site.
+      const url = new URL(request.url);
+      if (url.hostname.startsWith("www.")) {
+        url.hostname = url.hostname.slice(4);
+        return withSecurityHeaders(Response.redirect(url.toString(), 301));
+      }
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
       return withSecurityHeaders(await normalizeCatastrophicSsrResponse(response));
