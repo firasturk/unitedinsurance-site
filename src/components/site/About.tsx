@@ -5,7 +5,8 @@ import { ShieldCheck, Globe2, Users } from "lucide-react";
 import { useLang } from "@/lib/i18n";
 import { useCountUp } from "@/hooks/useCountUp";
 
-export function About() {
+// showTitle=false on the About page, where the page hero already carries the title.
+export function About({ showTitle = true }: { showTitle?: boolean }) {
   const { t, lang } = useLang();
   const { count: yearsCount, ref: yearsRef } = useCountUp(54, 2000);
   const pts = [
@@ -23,9 +24,13 @@ export function About() {
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
         >
-          <div className="text-xs font-semibold uppercase tracking-widest text-[var(--royal)]">{t("about.eyebrow")}</div>
-          <h2 className="mt-3 text-3xl font-bold text-balance sm:text-4xl md:text-5xl">{t("about.title")}</h2>
-          <p className="mt-5 max-w-xl text-base leading-relaxed text-muted-foreground">{t("about.body")}</p>
+          {showTitle && (
+            <>
+              <div className="text-xs font-semibold uppercase tracking-widest text-[var(--royal)]">{t("about.eyebrow")}</div>
+              <h2 className="mt-3 text-3xl font-bold text-balance sm:text-4xl md:text-5xl">{t("about.title")}</h2>
+            </>
+          )}
+          <p className={`${showTitle ? "mt-5" : ""} max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg`}>{t("about.body")}</p>
 
           <div className="mt-8 grid gap-4 sm:grid-cols-3">
             {pts.map((p) => (

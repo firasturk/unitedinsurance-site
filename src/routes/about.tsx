@@ -21,8 +21,8 @@ function AboutPage() {
   const { t } = useLang();
   return (
     <SiteLayout>
-      <PageHero art="about" eyebrow={t("about.eyebrow")} title={t("about.title")} subtitle={t("about.body")} />
-      <AboutSection />
+      <PageHero art="about" eyebrow={t("about.eyebrow")} title={t("about.title")} />
+      <AboutSection showTitle={false} />
       <MissionVision />
     </SiteLayout>
   );
