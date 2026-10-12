@@ -84,7 +84,7 @@ export function Header() {
   return (
     <header className={`sticky top-0 z-50 transition-all ${scrolled ? "glass-light shadow-soft" : "bg-background/60 backdrop-blur"}`}>
       <div className="mx-auto grid h-16 max-w-7xl grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 sm:px-6">
-        <Link to="/" className="flex items-center shrink-0" aria-label="United Insurance">
+        <Link to="/" className="col-start-1 flex items-center shrink-0" aria-label="United Insurance">
           <Pic src={logo} alt="United Insurance" width={230} height={65} className="h-9 w-auto" />
         </Link>
 
@@ -131,10 +131,10 @@ export function Header() {
           )}
         </nav>
 
-        <div className="flex shrink-0 items-center gap-2">
+        <div className="col-start-3 flex shrink-0 items-center gap-2 justify-self-end">
           <button
             onClick={() => setLang(lang === "en" ? "ar" : "en")}
-            className="inline-flex items-center gap-1.5 h-9 px-3 rounded-full text-xs font-semibold border border-border hover:bg-accent transition"
+            className="inline-flex items-center gap-1.5 h-11 2xl:h-9 px-4 2xl:px-3 rounded-full text-sm 2xl:text-xs font-semibold border border-border bg-background/70 hover:bg-accent transition"
             lang={lang === "en" ? "ar" : "en"}
             aria-label={lang === "en" ? "التبديل إلى العربية" : "Switch to English"}
           >
@@ -149,13 +149,13 @@ export function Header() {
           </Link>
           <button
             ref={menuButton}
-            className="2xl:hidden grid place-items-center h-9 w-9 rounded-md hover:bg-accent"
+            className="2xl:hidden grid place-items-center h-11 w-11 rounded-full border border-border bg-background/70 hover:bg-accent transition"
             onClick={() => setOpen(true)}
             aria-label={lang === "ar" ? "فتح القائمة" : "Open menu"}
             aria-expanded={open}
             aria-controls="mobile-menu"
           >
-            <Menu className="h-5 w-5" aria-hidden="true" />
+            <Menu className="h-6 w-6" aria-hidden="true" />
           </button>
         </div>
       </div>
