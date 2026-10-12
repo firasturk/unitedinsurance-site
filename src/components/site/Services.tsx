@@ -46,8 +46,10 @@ export function Services({ initial }: { initial?: InsuranceServiceRow[] }) {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{ duration: 0.5, delay: i * 0.06 }}
-                className="group overflow-hidden rounded-[1.75rem] border border-border bg-card shadow-soft transition-all hover:-translate-y-1 hover:shadow-elevated"
+                className="group overflow-hidden rounded-[1.75rem] border border-border bg-card shadow-soft transition-all hover:-translate-y-1 hover:shadow-elevated focus-within:ring-2 focus-within:ring-[var(--royal)]/40"
               >
+                {/* the whole card is the link; the "learn more" line below is just its visual cue */}
+                <Link to="/insurance/$type" params={{ type: s.slug }} className="block h-full outline-none" aria-label={title}>
                 <div className="relative aspect-[16/11] overflow-hidden bg-secondary">
                   {s.image_url && (
                     <Pic
@@ -66,11 +68,12 @@ export function Services({ initial }: { initial?: InsuranceServiceRow[] }) {
                 <div className="p-7">
                   <h3 className="text-xl font-semibold">{title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{summary}</p>
-                  <Link to="/insurance/$type" params={{ type: s.slug }} className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--royal)] hover:underline">
+                  <span className="mt-6 inline-flex items-center gap-1.5 text-sm font-semibold text-[var(--royal)] group-hover:underline">
                     {t("svc.learn")}
                     <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 rtl:rotate-180 rtl:group-hover:-translate-x-1" />
-                  </Link>
+                  </span>
                 </div>
+                </Link>
               </motion.article>
             );
           })}
