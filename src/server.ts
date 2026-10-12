@@ -2,6 +2,7 @@ import "./lib/error-capture";
 
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
+import { legacyRedirect } from "./lib/legacy-redirects";
 
 type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
@@ -88,6 +89,11 @@ export default {
       if (url.hostname.startsWith("www.")) {
         url.hostname = url.hostname.slice(4);
         return withSecurityHeaders(Response.redirect(url.toString(), 301));
+      }
+      // Old Joomla URLs (/index.php/en/…) still show up in Google: send them to the new pages.
+      const legacy = legacyRedirect(url.pathname);
+      if (legacy) {
+        return withSecurityHeaders(Response.redirect(new URL(legacy, url.origin).toString(), 301));
       }
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
