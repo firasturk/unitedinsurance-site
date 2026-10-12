@@ -53,7 +53,8 @@ export function News({ initial, limit = 6 }: { initial?: ArticleCard[]; limit?: 
                       className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.04]"
                     />
                   )}
-                  <div className="absolute inset-0 bg-navy-deep/80" />
+                  {/* 80% → 65% tint; one step lighter (50%) on hover so the photo shows through */}
+                  <div className="absolute inset-0 bg-navy-deep/65 transition-colors duration-300 group-hover:bg-navy-deep/50" />
                   <div className="absolute top-4 left-4 rtl:left-auto rtl:right-4 inline-flex items-center px-2.5 py-1 rounded-full glass text-white text-[10px] font-semibold tracking-wide">
                     {n.category}
                   </div>
