@@ -8,7 +8,7 @@ import {
   Scripts,
   type ErrorComponentProps,
 } from "@tanstack/react-router";
-import { type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { LangProvider } from "../lib/i18n";
@@ -19,9 +19,12 @@ import { SiteLayout } from "../components/site/Layout";
 function NotFoundComponent() {
   const { lang } = Route.useRouteContext();
   const ar = lang === "ar";
+  // The root head() already emits the site title; a second <title> would be invalid, so set it on mount.
+  useEffect(() => {
+    document.title = ar ? "الصفحة غير موجودة — الشركة المتحدة للتأمين" : "Page not found — United Insurance";
+  }, [ar]);
   return (
     <SiteLayout>
-      <title>{ar ? "الصفحة غير موجودة — الشركة المتحدة للتأمين" : "Page not found — United Insurance"}</title>
       <div className="mx-auto flex min-h-[60vh] max-w-xl flex-col items-center justify-center px-6 py-24 text-center">
         <div className="text-7xl font-bold text-[var(--royal)]">404</div>
         <h1 className="mt-4 text-2xl font-bold text-foreground">{ar ? "الصفحة غير موجودة" : "Page not found"}</h1>
