@@ -61,8 +61,8 @@ function MemberCard({ m, i, lang }: { m: TeamRow; i: number; lang: "en" | "ar" }
 // C-level members (Chief …) form their own centered row above the rest.
 const isChief = (m: TeamRow) => /^chief\b/i.test((m.role_en || "").trim());
 
-function Section({ title, members, lang }: { title: string; members: TeamRow[]; lang: "en" | "ar" }) {
-  if (!members.length) return null;
+function Section({ title, members, lang, lead }: { title: string; members: TeamRow[]; lang: "en" | "ar"; lead?: TeamRow }) {
+  if (!members.length && !lead) return null;
 
   const chiefs = members.filter(isChief);
   const rest = members.filter((m) => !isChief(m));
@@ -70,9 +70,20 @@ function Section({ title, members, lang }: { title: string; members: TeamRow[]; 
   return (
     <section className="py-16">
       <div className="mx-auto max-w-7xl px-6">
-        <div className="flex items-end justify-between mb-10">
-          <h2 className="text-2xl sm:text-3xl font-bold">{title}</h2>
-        </div>
+        {title.trim() && (
+          <div className="flex items-end justify-between mb-10">
+            <h2 className="text-2xl sm:text-3xl font-bold">{title}</h2>
+          </div>
+        )}
+
+        {/* The lead (e.g. the chairman) is the same card as everyone else, centred on its own row just above the grid. */}
+        {lead && (
+          <div className="flex justify-center mb-5">
+            <div className="w-full sm:w-[calc(50%-0.625rem)] md:w-[calc(33.333%-0.8333rem)] lg:w-[calc(25%-0.9375rem)]">
+              <MemberCard m={lead} i={0} lang={lang} />
+            </div>
+          </div>
+        )}
 
         {chiefs.length > 0 && (
           <div className="mx-auto mb-5 grid w-full max-w-4xl grid-cols-1 gap-5 sm:grid-cols-3 auto-rows-fr">
@@ -198,9 +209,9 @@ export function TeamSectionPage({
         <>
           {(filter === "all" || filter === "board") && (
             <>
-              {chairman && filter === "board" && <FeaturedMember m={chairman} lang={lang} />}
               <Section
                 title={"\n"}
+                lead={filter === "board" ? chairman : undefined}
                 members={filter === "board" ? boardRest : board}
                 lang={lang}
               />
