@@ -412,9 +412,10 @@ export const deleteApplication = createServerFn({ method: "POST" })
 
 // CVs are personal data: never served from a public URL. Admins and HR get a short-lived signed
 // download link (60 s) generated through their own session, so storage RLS still applies.
+// `inline` = a 10-minute link that opens in the browser (PDF preview); otherwise a 60-second download link.
 export const getCvUrl = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { path: string }) => z.object({ path: z.string().min(1).max(300) }).parse(d))
+  .inputValidator((d: unknown) => z.object({ path: z.string().min(1).max(300), inline: z.boolean().optional() }).parse(d))
   .handler(async ({ data, context }) => {
     await assertRole(context.supabase, context.userId, ["hr"]);
     const safe = data.path
@@ -422,9 +423,9 @@ export const getCvUrl = createServerFn({ method: "POST" })
       .filter((s) => s && s !== "." && s !== "..")
       .join("/");
     const filename = safe.split("/").pop() ?? "cv";
-    const { data: signed, error } = await context.supabase.storage
-      .from("cvs")
-      .createSignedUrl(safe, 60, { download: filename });
+    const { data: signed, error } = data.inline
+      ? await context.supabase.storage.from("cvs").createSignedUrl(safe, 600)
+      : await context.supabase.storage.from("cvs").createSignedUrl(safe, 60, { download: filename });
     if (error || !signed?.signedUrl) throw new Error(error?.message ?? "Could not create a download link");
     return { url: signed.signedUrl };
   });

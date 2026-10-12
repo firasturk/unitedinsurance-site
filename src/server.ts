@@ -49,7 +49,8 @@ const CSP = [
   "img-src 'self' data: blob: https://*.supabase.co",
   "media-src 'self' blob:",
   "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://challenges.cloudflare.com https://cloudflareinsights.com",
-  "frame-src https://challenges.cloudflare.com https://maps.google.com https://www.google.com",
+  // *.supabase.co: CV previews in the admin panel (signed, short-lived URLs)
+  "frame-src https://challenges.cloudflare.com https://maps.google.com https://www.google.com https://*.supabase.co",
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",
