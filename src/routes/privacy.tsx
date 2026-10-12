@@ -24,7 +24,7 @@ const SECTIONS: Record<"en" | "ar", { updated: string; intro: string; sections: 
   en: {
     updated: "Last updated: October 2026",
     intro:
-      "United Insurance Company PLC (“United Insurance”, “we”) respects your privacy. This policy explains what personal data this website collects, why, and the choices you have. It applies to unitedjo.com only; insurance policies and claims are governed by their own terms and by the regulations of the Central Bank of Jordan.",
+      "United Insurance Company PLC respects your privacy. This policy explains what personal data this website collects, why, and the choices you have. It applies to unitedjo.com only; insurance policies and claims are governed by their own terms and by the regulations of the Central Bank of Jordan.",
     sections: [
       {
         h: "1. Data you give us",
@@ -74,7 +74,7 @@ const SECTIONS: Record<"en" | "ar", { updated: string; intro: string; sections: 
   ar: {
     updated: "آخر تحديث: تشرين الأول 2026",
     intro:
-      "تحترم الشركة المتحدة للتأمين م.ع.م («المتحدة للتأمين»، «نحن») خصوصيتك. توضح هذه السياسة البيانات الشخصية التي يجمعها هذا الموقع، وسبب جمعها، والخيارات المتاحة لك. وتنطبق على موقع unitedjo.com فقط؛ أما وثائق التأمين والمطالبات فتحكمها شروطها الخاصة وتعليمات البنك المركزي الأردني.",
+      "تحترم الشركة المتحدة للتأمين م.ع.م خصوصيتك. توضح هذه السياسة البيانات الشخصية التي يجمعها هذا الموقع، وسبب جمعها، والخيارات المتاحة لك. وتنطبق على موقع unitedjo.com فقط؛ أما وثائق التأمين والمطالبات فتحكمها شروطها الخاصة وتعليمات البنك المركزي الأردني.",
     sections: [
       {
         h: "1. البيانات التي تقدّمها لنا",
