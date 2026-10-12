@@ -85,7 +85,8 @@ export async function sendComplaintReceipt(opts: { to: string; reference: string
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ from, to: [opts.to], subject, text }),
+      // Replies to the receipt go to the complaints inbox, not to the no-reply website sender.
+      body: JSON.stringify({ from, to: [opts.to], subject, text, reply_to: "Complaints@unitedjo.com" }),
     });
     return res.ok;
   } catch {
