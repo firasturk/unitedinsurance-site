@@ -2,20 +2,35 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 
+// Roles: "admin" sees and manages everything; "hr" only sees job applications (and their CVs).
+export type AdminRole = "admin" | "hr";
+
+async function hasRole(supabase: any, userId: string, role: AdminRole): Promise<boolean> {
+  const { data, error } = await supabase.rpc("has_role", { _user_id: userId, _role: role });
+  return !error && !!data;
+}
+
 async function assertAdmin(supabase: any, userId: string) {
-  const { data, error } = await supabase.rpc("has_role", { _user_id: userId, _role: "admin" });
-  if (error || !data) throw new Error("Forbidden: admin role required");
+  if (!(await hasRole(supabase, userId, "admin"))) throw new Error("Forbidden: admin role required");
+}
+
+/** Allows any of the given roles (an admin always passes). */
+async function assertRole(supabase: any, userId: string, roles: AdminRole[]) {
+  for (const r of new Set<AdminRole>(["admin", ...roles])) if (await hasRole(supabase, userId, r)) return;
+  throw new Error("Forbidden: insufficient role");
 }
 
 export const meIsAdmin = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-    const { data, error } = await context.supabase.rpc("has_role", {
-      _user_id: context.userId,
-      _role: "admin",
-    });
-    if (error) return false;
-    return !!data;
+  .handler(async ({ context }) => hasRole(context.supabase, context.userId, "admin"));
+
+/** The signed-in user's admin-panel role, or null when they have none. */
+export const meRole = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }): Promise<AdminRole | null> => {
+    if (await hasRole(context.supabase, context.userId, "admin")) return "admin";
+    if (await hasRole(context.supabase, context.userId, "hr")) return "hr";
+    return null;
   });
 
 // ===== Articles =====
@@ -364,7 +379,7 @@ export const deleteVacancy = createServerFn({ method: "POST" })
 export const listApplications = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin(context.supabase, context.userId);
+    await assertRole(context.supabase, context.userId, ["hr"]);
     const { data, error } = await context.supabase
       .from("job_applications")
       .select("*")
@@ -379,7 +394,7 @@ export const updateApplicationStatus = createServerFn({ method: "POST" })
     z.object({ id: z.string().uuid(), status: z.enum(["new", "reviewing", "shortlisted", "rejected", "hired"]) }).parse(d),
   )
   .handler(async ({ data, context }) => {
-    await assertAdmin(context.supabase, context.userId);
+    await assertRole(context.supabase, context.userId, ["hr"]);
     const { error } = await context.supabase.from("job_applications").update({ status: data.status }).eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
@@ -389,19 +404,19 @@ export const deleteApplication = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
-    await assertAdmin(context.supabase, context.userId);
+    await assertRole(context.supabase, context.userId, ["hr"]);
     const { error } = await context.supabase.from("job_applications").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
 
-// CVs are personal data: never served from a public URL. Admins get a short-lived signed
+// CVs are personal data: never served from a public URL. Admins and HR get a short-lived signed
 // download link (60 s) generated through their own session, so storage RLS still applies.
 export const getCvUrl = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { path: string }) => z.object({ path: z.string().min(1).max(300) }).parse(d))
   .handler(async ({ data, context }) => {
-    await assertAdmin(context.supabase, context.userId);
+    await assertRole(context.supabase, context.userId, ["hr"]);
     const safe = data.path
       .split("/")
       .filter((s) => s && s !== "." && s !== "..")

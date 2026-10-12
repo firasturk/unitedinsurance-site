@@ -1,7 +1,8 @@
 import { createFileRoute, Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { meIsAdmin } from "@/lib/admin.functions";
+import { useEffect } from "react";
+import { meRole, type AdminRole } from "@/lib/admin.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { LayoutDashboard, Newspaper, Users, Home, FileText, LogOut, ShieldAlert, ArrowLeft, Shield, Handshake, Briefcase, Inbox, MailOpen, MessageSquareWarning } from "lucide-react";
@@ -10,7 +11,8 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminLayout,
 });
 
-const NAV: { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean }[] = [
+// `roles` limits an entry to those roles; entries without it are admin-only.
+const NAV: { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean; roles?: AdminRole[] }[] = [
   { to: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/admin/services", label: "Insurance Services", icon: Shield },
   { to: "/admin/partners", label: "Reinsurance Partners", icon: Handshake },
@@ -20,7 +22,7 @@ const NAV: { to: string; label: string; icon: typeof LayoutDashboard; exact?: bo
   { to: "/admin/forms", label: "Forms (PDF)", icon: FileText },
   { to: "/admin/agents", label: "Agents", icon: Handshake },
   { to: "/admin/vacancies", label: "Vacancies", icon: Briefcase },
-  { to: "/admin/applications", label: "Applications", icon: Inbox },
+  { to: "/admin/applications", label: "Applications", icon: Inbox, roles: ["admin", "hr"] },
   { to: "/admin/messages", label: "Contact Messages", icon: MailOpen },
   { to: "/admin/complaints", label: "Complaints", icon: MessageSquareWarning },
 ];
@@ -28,12 +30,20 @@ const NAV: { to: string; label: string; icon: typeof LayoutDashboard; exact?: bo
 
 function AdminLayout() {
   const navigate = useNavigate();
-  const fetchIsAdmin = useServerFn(meIsAdmin);
-  const { data: isAdmin, isLoading } = useQuery({
-    queryKey: ["me-is-admin"],
-    queryFn: () => fetchIsAdmin(),
+  const fetchRole = useServerFn(meRole);
+  const { data: role, isLoading } = useQuery({
+    queryKey: ["me-role"],
+    queryFn: () => fetchRole(),
   });
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const nav = role ? NAV.filter((n) => (n.roles ? n.roles.includes(role) : role === "admin")) : [];
+  const allowed = nav.some((n) => (n.exact ? pathname === n.to : pathname.startsWith(n.to)));
+  const home = nav[0]?.to;
+
+  // A limited role landing anywhere outside its own pages goes to its first page.
+  useEffect(() => {
+    if (role && !allowed && home) navigate({ to: home, replace: true });
+  }, [role, allowed, home, navigate]);
 
   async function signOut() {
     await supabase.auth.signOut();
@@ -44,7 +54,7 @@ function AdminLayout() {
     return <div className="min-h-screen grid place-items-center text-muted-foreground">Loading…</div>;
   }
 
-  if (!isAdmin) {
+  if (!role) {
     return (
       <div className="min-h-screen grid place-items-center px-6">
         <div className="max-w-md text-center rounded-3xl border border-border bg-card p-10 shadow-elevated">
@@ -65,11 +75,11 @@ function AdminLayout() {
     <div className="min-h-screen flex bg-secondary/30 text-left" dir="ltr" lang="en">
       <aside className="w-64 shrink-0 border-r border-border bg-card flex flex-col">
         <div className="p-5 border-b border-border">
-          <div className="text-xs font-semibold tracking-widest uppercase text-[var(--royal)]">Admin</div>
+          <div className="text-xs font-semibold tracking-widest uppercase text-[var(--royal)]">{role === "hr" ? "HR" : "Admin"}</div>
           <div className="font-bold text-lg leading-tight mt-0.5">United Insurance CMS</div>
         </div>
         <nav className="flex-1 p-3 space-y-1">
-          {NAV.map((n) => {
+          {nav.map((n) => {
             const active = n.exact ? pathname === n.to : pathname.startsWith(n.to);
             const Icon = n.icon;
             return (
@@ -97,7 +107,7 @@ function AdminLayout() {
       </aside>
 
       <main className="flex-1 min-w-0">
-        <Outlet />
+        {allowed ? <Outlet /> : null}
       </main>
     </div>
   );
