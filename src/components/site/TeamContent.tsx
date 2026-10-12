@@ -115,7 +115,7 @@ function FeaturedMember({ m, lang }: { m: TeamRow; lang: "en" | "ar" }) {
             className={
               withPhoto
                 ? "w-full max-w-xs rounded-3xl bg-card border border-border p-6 shadow-soft"
-                : "w-full max-w-2xl rounded-3xl bg-card border border-[var(--royal)]/25 p-10 sm:p-12 shadow-soft text-center"
+                : "w-full max-w-xl rounded-3xl bg-card border border-[var(--royal)]/25 p-8 sm:p-10 shadow-soft text-center"
             }
           >
             {withPhoto ? (
@@ -136,8 +136,9 @@ function FeaturedMember({ m, lang }: { m: TeamRow; lang: "en" | "ar" }) {
               </>
             ) : (
               <>
-                <div className="font-bold text-2xl sm:text-3xl leading-snug text-center">{name}</div>
-                <div className="text-base text-muted-foreground mt-2.5 leading-snug text-center">{role}</div>
+                {/* Only a step above the other board cards (text-base sm:text-lg), not a headline */}
+                <div className="font-bold text-lg sm:text-xl leading-snug text-center">{name}</div>
+                <div className="text-sm text-muted-foreground mt-2 leading-snug text-center">{role}</div>
               </>
             )}
           </motion.div>
