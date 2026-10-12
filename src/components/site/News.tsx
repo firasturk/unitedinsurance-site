@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { formatDate } from "@/lib/dates";
 import { ArrowUpRight } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { Pic } from "./Pic";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useLang } from "@/lib/i18n";
@@ -44,9 +45,9 @@ export function News({ initial, limit = 6 }: { initial?: ArticleCard[]; limit?: 
                 params={{ slug: n.slug }}
                 className="group flex h-full flex-col rounded-3xl overflow-hidden bg-card border border-border shadow-soft hover:shadow-elevated transition-all hover:-translate-y-1"
               >
-                <div className="relative aspect-[16/10] overflow-hidden bg-secondary">
+                <div className="card-media relative aspect-[16/10] overflow-hidden bg-secondary">
                   {n.cover_url && (
-                    <img
+                    <Pic
                       src={n.cover_url}
                       alt={lang === "ar" ? n.title_ar : n.title_en}
                       loading="lazy"

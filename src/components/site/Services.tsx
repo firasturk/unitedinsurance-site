@@ -50,7 +50,7 @@ export function Services({ initial }: { initial?: InsuranceServiceRow[] }) {
               >
                 {/* the whole card is the link; the "learn more" line below is just its visual cue */}
                 <Link to="/insurance/$type" params={{ type: s.slug }} className="block h-full outline-none" aria-label={title}>
-                <div className="relative aspect-[16/11] overflow-hidden bg-secondary">
+                <div className="card-media relative aspect-[16/11] overflow-hidden bg-secondary">
                   {s.image_url && (
                     <Pic
                       src={s.image_url}

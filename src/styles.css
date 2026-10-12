@@ -164,6 +164,15 @@
 @utility animate-pulse-glow { animation: pulse-glow 4s ease-in-out infinite; }
 @utility animate-marquee { animation: marquee 40s linear infinite; }
 
+/* Lazy images (see Pic.tsx): invisible until their bytes arrive, then a short fade — no pop-in
+   while scrolling. Keeps the hover scale transition on the same element. */
+.pic-fade { transition-property: opacity, transform; transition-duration: 0.4s, 0.5s; transition-timing-function: ease; }
+.pic-fade[data-loaded="false"] { opacity: 0; }
+/* Images that scale on hover inside rounded, clipped cards: keep them on their own GPU layer so
+   the browser doesn't re-rasterise (flash) them when the card is scrolled or hovered. */
+.card-media { isolation: isolate; transform: translateZ(0); -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+.card-media img { will-change: transform; -webkit-backface-visibility: hidden; backface-visibility: hidden; }
+
 /* People who asked their OS for less motion get static UI (decorative loops stop, transitions shorten). */
 @media (prefers-reduced-motion: reduce) {
   .animate-float, .animate-pulse-glow, .animate-marquee { animation: none !important; }
