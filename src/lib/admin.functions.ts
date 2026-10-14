@@ -289,6 +289,16 @@ const agentNewsInput = z.object({
   published: z.boolean().default(true),
 });
 
+// Admin list: every notice, published or not (the public page uses listAgentNews, which hides drafts).
+export const listAgentNewsAdmin = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { data, error } = await context.supabase.from("agent_news").select("*").order("sort_order", { ascending: true });
+    if (error) throw new Error(error.message);
+    return data ?? [];
+  });
+
 export const upsertAgentNews = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => agentNewsInput.parse(d))

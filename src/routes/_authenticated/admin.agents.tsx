@@ -8,8 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { listAgentNews, getSiteContent } from "@/lib/public.functions";
-import { upsertAgentNews, deleteAgentNews, upsertSiteContent } from "@/lib/admin.functions";
+import { getSiteContent } from "@/lib/public.functions";
+import { upsertAgentNews, deleteAgentNews, upsertSiteContent, listAgentNewsAdmin } from "@/lib/admin.functions";
 import { uploadToBucket } from "@/lib/admin-upload";
 import { Pencil, Trash2, Plus, FileUp, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
@@ -33,7 +33,7 @@ const empty: N = { date: "", title_en: "", title_ar: "", body_en: "", body_ar: "
 
 function AgentsAdmin() {
   const qc = useQueryClient();
-  const list = useServerFn(listAgentNews);
+  const list = useServerFn(listAgentNewsAdmin);
   const save = useServerFn(upsertAgentNews);
   const del = useServerFn(deleteAgentNews);
   const getContent = useServerFn(getSiteContent);
