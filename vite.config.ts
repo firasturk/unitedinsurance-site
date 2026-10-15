@@ -15,13 +15,21 @@ export default defineConfig({
   nitro: {
     cloudflare: {
       // Merged into the generated .output/server/wrangler.json on every build.
-      // Only PUBLIC values live here; SUPABASE_SERVICE_ROLE_KEY is a Secret set in the
-      // Cloudflare dashboard (Settings → Variables and Secrets) and is never committed.
+      // Only PUBLIC values live here; secrets (SUPABASE_SERVICE_ROLE_KEY, RESEND_API_KEY,
+      // TURNSTILE_SECRET_KEY) are set as *Secrets* in the Cloudflare dashboard and never committed.
+      //
+      // IMPORTANT: every deploy replaces the Worker's plain-text variables with this list, so a
+      // plain "Variable" added in the dashboard disappears on the next deploy (that is how the
+      // NOTIFY_* values were lost once). Add plain-text settings HERE; use the dashboard only for
+      // Secrets, which deploys never touch.
       wrangler: {
         name: "united-insurance",
         vars: {
           SUPABASE_URL: "https://rdbbhkvzcpdyctscdhvu.supabase.co",
           SUPABASE_PUBLISHABLE_KEY: "sb_publishable_gyzdwQsKYUtUT7FmWvm53w_QaRCXEAP",
+          // Form-submission notifications (sent through Resend; domain verified there).
+          NOTIFY_EMAIL: "uic@unitedjo.com",
+          NOTIFY_FROM: "United Insurance <website@unitedjo.com>",
         },
       },
     },

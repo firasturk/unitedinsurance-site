@@ -1,12 +1,25 @@
 import process from "node:process";
 
 // Email notifications for form submissions, sent through Resend (https://resend.com).
-// Active only when both secrets exist in Cloudflare (Settings → Variables and Secrets):
-//   RESEND_API_KEY   — API key from the Resend dashboard
-//   NOTIFY_EMAIL     — inbox that receives submissions (comma-separated for several)
-// Optional:
-//   NOTIFY_FROM      — sender, e.g. "United Insurance <website@unitedjo.com>" (domain must be verified in Resend)
-// When not configured, submissions are still saved to the database and nothing is sent.
+// Needs RESEND_API_KEY (a Secret in Cloudflare → Settings → Variables and Secrets).
+//   NOTIFY_EMAIL — inbox that receives submissions (comma-separated for several)
+//   NOTIFY_FROM  — sender address (its domain must be verified in Resend)
+// Both are plain-text vars set in vite.config.ts (deploys overwrite dashboard variables, so they
+// must not live only in the dashboard); the defaults below are the same values as a last resort.
+// Without the API key, submissions are still saved to the database and nothing is sent.
+
+const DEFAULT_TO = "uic@unitedjo.com";
+const DEFAULT_FROM = "United Insurance <website@unitedjo.com>";
+
+function notifyTo() {
+  return (process.env.NOTIFY_EMAIL || DEFAULT_TO)
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+function notifyFrom() {
+  return process.env.NOTIFY_FROM || DEFAULT_FROM;
+}
 
 type Notification = {
   subject: string;
@@ -21,15 +34,17 @@ function escapeHtml(s: string) {
 }
 
 export function notificationsConfigured() {
-  return Boolean(process.env.RESEND_API_KEY && process.env.NOTIFY_EMAIL);
+  return Boolean(process.env.RESEND_API_KEY);
 }
 
 /** Sends the notification; never throws (a failed email must not fail the submission). Returns true when sent. */
 export async function sendNotification(n: Notification): Promise<boolean> {
   const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.NOTIFY_EMAIL;
-  if (!apiKey || !to) return false;
-  const from = process.env.NOTIFY_FROM || "United Insurance Website <onboarding@resend.dev>";
+  if (!apiKey) {
+    console.error("[notify] RESEND_API_KEY missing — notification not sent:", n.subject);
+    return false;
+  }
+  const from = notifyFrom();
 
   const text = n.lines.map(([k, v]) => `${k}: ${v}`).join("\n");
   const html = `<div style="font-family:Arial,sans-serif;font-size:14px;line-height:1.6">
@@ -51,7 +66,7 @@ export async function sendNotification(n: Notification): Promise<boolean> {
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         from,
-        to: to.split(",").map((s) => s.trim()).filter(Boolean),
+        to: notifyTo(),
         subject: n.subject,
         text,
         html,
@@ -72,8 +87,11 @@ export async function sendNotification(n: Notification): Promise<boolean> {
 /** Sends a confirmation to the person who submitted a complaint (their reference number). Never throws. */
 export async function sendComplaintReceipt(opts: { to: string; reference: string; lang: "ar" | "en"; name: string }) {
   const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) return false;
-  const from = process.env.NOTIFY_FROM || "United Insurance <onboarding@resend.dev>";
+  if (!apiKey) {
+    console.error("[notify] RESEND_API_KEY missing — complaint receipt not sent:", opts.reference);
+    return false;
+  }
+  const from = notifyFrom();
   const ar = opts.lang === "ar";
   const subject = ar
     ? `استلمنا شكواك — الرقم المرجعي ${opts.reference}`
@@ -88,8 +106,10 @@ export async function sendComplaintReceipt(opts: { to: string; reference: string
       // Replies to the receipt go to the complaints inbox, not to the no-reply website sender.
       body: JSON.stringify({ from, to: [opts.to], subject, text, reply_to: "Complaints@unitedjo.com" }),
     });
+    if (!res.ok) console.error("[notify] receipt Resend error", res.status, await res.text().catch(() => ""));
     return res.ok;
-  } catch {
+  } catch (err) {
+    console.error("[notify] receipt failed", err);
     return false;
   }
 }
