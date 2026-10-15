@@ -1,0 +1,44 @@
+# Temporary one-off probe (TLS versions + DNS records) run from GitHub's network; the branch is deleted afterwards.
+name: probe
+on:
+  push:
+    branches: ["probe/**"]
+permissions:
+  contents: write
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Probe
+        shell: bash
+        run: |
+          set +e
+          {
+            echo "## openssl: $(openssl version)"
+            for v in tls1 tls1_1 tls1_2 tls1_3; do
+              echo "=== $v"
+              echo | timeout 20 openssl s_client -connect unitedjo.com:443 -servername unitedjo.com -$v -cipher 'ALL:@SECLEVEL=0' 2>&1 \
+                | grep -iE "Protocol *:|Cipher *:|alert|handshake failure|wrong version|no protocols|unsupported|error|Verify return" | head -8
+            done
+            echo "## curl"
+            for v in 1.0 1.1 1.2 1.3; do
+              echo "--- tls-max $v: $(curl -sS -o /dev/null -w '%{http_code}' --tlsv$v --tls-max $v https://unitedjo.com/ 2>&1 | tail -1)"
+            done
+            echo "## DNS (1.1.1.1)"
+            for r in "resend._domainkey.unitedjo.com TXT" "send.unitedjo.com MX" "send.unitedjo.com TXT" "_dmarc.unitedjo.com TXT" "unitedjo.com TXT" "unitedjo.com MX" "unitedjo.com A" "www.unitedjo.com CNAME" "www.unitedjo.com A"; do
+              set -- $r; echo "--- $1 $2"; dig +short @1.1.1.1 "$1" "$2"
+            done
+            echo "## DNS (8.8.8.8) DKIM"
+            dig +short @8.8.8.8 resend._domainkey.unitedjo.com TXT
+            echo "## HTTP headers"
+            curl -sSI https://unitedjo.com/ | head -25
+          } > probe-results.txt 2>&1
+          cat probe-results.txt
+      - name: Save results
+        run: |
+          git config user.name "probe-bot"
+          git config user.email "probe-bot@users.noreply.github.com"
+          git add probe-results.txt
+          git commit -m "probe results" -q
+          git push origin HEAD:${GITHUB_REF_NAME}
