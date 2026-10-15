@@ -1,0 +1,70 @@
+## openssl: OpenSSL 3.0.13 30 Jan 2024 (Library: OpenSSL 3.0.13 30 Jan 2024)
+=== tls1
+40976B6BE97F0000:error:0A00042E:SSL routines:ssl3_read_bytes:tlsv1 alert protocol version:../ssl/record/rec_layer_s3.c:1599:SSL alert number 70
+    Protocol  : TLSv1
+    Cipher    : 0000
+    Verify return code: 0 (ok)
+=== tls1_1
+4097A25DF37F0000:error:0A00042E:SSL routines:ssl3_read_bytes:tlsv1 alert protocol version:../ssl/record/rec_layer_s3.c:1599:SSL alert number 70
+    Protocol  : TLSv1.1
+    Cipher    : 0000
+    Verify return code: 0 (ok)
+=== tls1_2
+verify return:1
+verify return:1
+verify return:1
+    Protocol  : TLSv1.2
+    Cipher    : ECDHE-ECDSA-CHACHA20-POLY1305
+    Verify return code: 0 (ok)
+=== tls1_3
+verify return:1
+verify return:1
+verify return:1
+Verify return code: 0 (ok)
+## curl
+--- tls-max 1.0: 000
+--- tls-max 1.1: 000
+--- tls-max 1.2: 200
+--- tls-max 1.3: 200
+## DNS (1.1.1.1)
+--- resend._domainkey.unitedjo.com TXT
+"p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCb55Ko8Yevo3bFJE8hXIffCksZJwkovkC7VO2AhGFRyeepxQP/hsz8fxHrnpsHQAHKz0gTtbfD29rN7Tn4xf9DS2VvOessTUOWKyOzYoXVmRUwbYbb0DnWt4hZ4ge+yXZqvmRNFPenWShHH89K51neb82gb3qCVAEeB0AiwrP62QIDAQAB"
+--- send.unitedjo.com MX
+send.forge.rmta.net.
+10 feedback.forge.rmta.net.
+--- send.unitedjo.com TXT
+send.forge.rmta.net.
+"v=spf1 ip4:52.3.252.119 ip4:44.222.39.36 ip4:199.249.231.0/24 ~all"
+--- _dmarc.unitedjo.com TXT
+"v=DMARC1; p=quarantine; pct=100; sp=quarantine; rua=mailto:8531fc94@inbox.ondmarc.com,mailto:alaa.jbour@unitedjo.com; ruf=mailto:8531fc94@inbox.ondmarc.com,mailto:alaa.jbour@unitedjo.com; adkim=r; aspf=r; fo=1; rf=afrf; ri=3600"
+--- unitedjo.com TXT
+"google-site-verification=KYePTfo0_CC-fg7PRz64yzETjm_2aW5ykqaDwSlXg3Q"
+"v=spf1 include:_spf.google.com include:_u.unitedjo.com._spf.smart.ondmarc.com ~all"
+--- unitedjo.com MX
+1 smtp.google.com.
+--- unitedjo.com A
+104.21.78.205
+172.67.137.116
+--- www.unitedjo.com CNAME
+--- www.unitedjo.com A
+104.21.78.205
+172.67.137.116
+## DNS (8.8.8.8) DKIM
+"p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCb55Ko8Yevo3bFJE8hXIffCksZJwkovkC7VO2AhGFRyeepxQP/hsz8fxHrnpsHQAHKz0gTtbfD29rN7Tn4xf9DS2VvOessTUOWKyOzYoXVmRUwbYbb0DnWt4hZ4ge+yXZqvmRNFPenWShHH89K51neb82gb3qCVAEeB0AiwrP62QIDAQAB"
+## HTTP headers
+HTTP/2 200 
+date: Thu, 15 Oct 2026 14:14:35 GMT
+content-type: text/html; charset=utf-8
+strict-transport-security: max-age=31536000
+content-security-policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://challenges.cloudflare.com https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https://*.supabase.co; media-src 'self' blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://challenges.cloudflare.com https://cloudflareinsights.com; frame-src https://challenges.cloudflare.com https://maps.google.com https://www.google.com https://*.supabase.co; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'; upgrade-insecure-requests
+cross-origin-opener-policy: same-origin
+permissions-policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+referrer-policy: strict-origin-when-cross-origin
+x-content-type-options: nosniff
+x-frame-options: DENY
+report-to: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=FWYD2RWysZWM8Dr%2FUH%2BIs%2FLUFdRLpMeeLbVRVwYFtS7qYPa9nZg13yO0j9mGAvrOJzo0DlTlmZ8CTf%2F5HLnkpjQoIP5depErvUEznppeYwcUTvzHw9KIStKSxqabwBs%3D"}]}
+nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+server: cloudflare
+cf-ray: a4af6e4c6a60f090-DFW
+alt-svc: h3=":443"; ma=86400
+
