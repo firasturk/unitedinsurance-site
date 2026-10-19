@@ -33,6 +33,17 @@ type Form = {
   published: boolean;
 };
 
+/** "Haddadin interview with MEIR" → "haddadin-interview-with-meir" (Arabic-only titles give an empty string). */
+function slugify(s: string) {
+  return s
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 120);
+}
+
 const empty: Form = {
   slug: "",
   date: new Date().toISOString().slice(0, 10),
@@ -132,21 +143,45 @@ function ArticlesAdmin() {
   }
 
   async function handleSave() {
+    // Plain-language checks before the request, so a missing field never looks like a hung save.
+    const title_en = form.title_en.trim();
+    const title_ar = form.title_ar.trim();
+    if (!title_en || !title_ar) {
+      toast.error("Please fill in both titles (English and Arabic).");
+      return;
+    }
+    // The slug (address of the page) is derived from the English title when left empty.
+    const slug = (form.slug.trim() || slugify(title_en) || `article-${Date.now()}`).toLowerCase();
+    if (!/^[a-z0-9-]+$/.test(slug)) {
+      toast.error("The slug may only contain lowercase letters, numbers and hyphens.");
+      return;
+    }
+    if (form.slug !== slug) setForm((f) => ({ ...f, slug }));
+
     setSaving(true);
     try {
       await save({
         data: {
           ...form,
+          slug,
+          title_en,
+          title_ar,
           body_en: form.body_en.split(/\n\n+/).map((s) => s.trim()).filter(Boolean),
           body_ar: form.body_ar.split(/\n\n+/).map((s) => s.trim()).filter(Boolean),
         },
       });
-      toast.success("Saved");
+      toast.success(form.published ? "Saved and published" : "Saved as draft");
       setOpen(false);
       qc.invalidateQueries({ queryKey: ["adm-articles-list"] });
       qc.invalidateQueries({ queryKey: ["pub-articles"] });
     } catch (err: any) {
-      toast.error(err?.message ?? "Save failed");
+      const msg: string = err?.message ?? "Save failed";
+      toast.error(
+        /duplicate key|articles_slug/i.test(msg)
+          ? `An article with the slug “${slug}” already exists — change the slug.`
+          : `Save failed: ${msg}`,
+        { duration: 8000 },
+      );
     } finally {
       setSaving(false);
     }
@@ -216,7 +251,10 @@ function ArticlesAdmin() {
           </DialogHeader>
 
           <div className="grid grid-cols-2 gap-4">
-            <div><Label>Slug</Label><Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder="my-article-slug" /></div>
+            <div>
+              <Label>Slug <span className="text-muted-foreground font-normal">(page address — filled from the English title if left empty)</span></Label>
+              <Input value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} placeholder={slugify(form.title_en) || "my-article-slug"} />
+            </div>
             <div><Label>Date</Label><Input type="date" value={form.date} onChange={(e) => setForm({ ...form, date: e.target.value })} /></div>
             <div><Label>Category</Label><Input value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} /></div>
             <div className="flex items-end gap-3">
