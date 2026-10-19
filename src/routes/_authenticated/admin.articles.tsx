@@ -10,7 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { listArticlesAdmin, upsertArticle, deleteArticle } from "@/lib/admin.functions";
 import { uploadToBucket } from "@/lib/admin-upload";
-import { Pencil, Trash2, Plus, ImageUp } from "lucide-react";
+import { Pencil, Trash2, Plus, ImageUp, FileUp, X } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin/articles")({
@@ -23,6 +23,7 @@ type Form = {
   date: string;
   category: string;
   cover_url: string | null;
+  attachment_url: string | null; // original document (PDF) offered for download on the article page
   title_en: string;
   title_ar: string;
   excerpt_en: string;
@@ -37,6 +38,7 @@ const empty: Form = {
   date: new Date().toISOString().slice(0, 10),
   category: "Press",
   cover_url: null,
+  attachment_url: null,
   title_en: "",
   title_ar: "",
   excerpt_en: "",
@@ -56,6 +58,7 @@ function ArticlesAdmin() {
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState<Form>(empty);
   const [uploading, setUploading] = useState(false);
+  const [uploadingAttachment, setUploadingAttachment] = useState(false);
   const [saving, setSaving] = useState(false);
 
   function openNew() {
@@ -70,6 +73,7 @@ function ArticlesAdmin() {
       date: a.date,
       category: a.category,
       cover_url: a.cover_url,
+      attachment_url: a.attachment_url ?? null,
       title_en: a.title_en,
       title_ar: a.title_ar,
       excerpt_en: a.excerpt_en,
@@ -81,9 +85,16 @@ function ArticlesAdmin() {
     setOpen(true);
   }
 
+  const MAX_ATTACHMENT_MB = 25;
+
   async function handleCoverUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
+    e.target.value = ""; // so picking the same file again re-triggers onChange
     if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("The cover must be an image (JPG/PNG). To publish a PDF, use “Attachment (PDF)” below.");
+      return;
+    }
     setUploading(true);
     try {
       const url = await uploadToBucket("articles", file);
@@ -93,6 +104,30 @@ function ArticlesAdmin() {
       toast.error(err?.message ?? "Upload failed");
     } finally {
       setUploading(false);
+    }
+  }
+
+  async function handleAttachmentUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    if (file.type !== "application/pdf" && !/\.pdf$/i.test(file.name)) {
+      toast.error("Only PDF files can be attached.");
+      return;
+    }
+    if (file.size > MAX_ATTACHMENT_MB * 1024 * 1024) {
+      toast.error(`The PDF is too large (max ${MAX_ATTACHMENT_MB} MB).`);
+      return;
+    }
+    setUploadingAttachment(true);
+    try {
+      const url = await uploadToBucket("articles", file);
+      setForm((f) => ({ ...f, attachment_url: url }));
+      toast.success("PDF attached");
+    } catch (err: any) {
+      toast.error(err?.message ?? "Upload failed");
+    } finally {
+      setUploadingAttachment(false);
     }
   }
 
@@ -201,6 +236,30 @@ function ArticlesAdmin() {
                 {uploading ? "Uploading…" : "Upload cover"}
                 <input type="file" accept="image/*" className="hidden" onChange={handleCoverUpload} disabled={uploading} />
               </label>
+            </div>
+          </div>
+
+          <div>
+            <Label>Attachment (PDF)</Label>
+            <p className="text-xs text-muted-foreground mt-0.5">Optional — the original article or press release. Visitors get a “Read the full article (PDF)” button on the page.</p>
+            <div className="flex items-center gap-3 mt-2">
+              {form.attachment_url ? (
+                <>
+                  <a href={form.attachment_url} target="_blank" rel="noopener" className="inline-flex items-center gap-2 text-sm text-[var(--royal)] font-medium hover:underline">
+                    <FileUp className="h-4 w-4" />
+                    {decodeURIComponent(form.attachment_url.split("/").pop() ?? "attachment.pdf")}
+                  </a>
+                  <Button type="button" variant="ghost" size="sm" onClick={() => setForm({ ...form, attachment_url: null })} aria-label="Remove attachment">
+                    <X className="h-4 w-4" />
+                  </Button>
+                </>
+              ) : (
+                <label className="inline-flex items-center gap-2 cursor-pointer text-sm border border-border rounded-md px-3 py-2 hover:bg-secondary">
+                  <FileUp className="h-4 w-4" />
+                  {uploadingAttachment ? "Uploading…" : "Attach PDF"}
+                  <input type="file" accept="application/pdf,.pdf" className="hidden" onChange={handleAttachmentUpload} disabled={uploadingAttachment} />
+                </label>
+              )}
             </div>
           </div>
 

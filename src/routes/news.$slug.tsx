@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { formatDate } from "@/lib/dates";
 import { motion } from "framer-motion";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, FileText, Download } from "lucide-react";
 import { SiteLayout } from "@/components/site/Layout";
 import { useLang } from "@/lib/i18n";
 import { getArticleBySlug, listLatestArticles } from "@/lib/public.functions";
@@ -99,6 +99,24 @@ function ArticlePage() {
       <section className="py-20">
         <div className="mx-auto max-w-3xl px-6">
           <p className="text-lg leading-relaxed text-muted-foreground border-l-4 rtl:border-l-0 rtl:border-r-4 border-[var(--royal)] pl-5 rtl:pl-0 rtl:pr-5">{excerpt}</p>
+          {article.attachment_url && (
+            // The original document (a magazine spread, a press release) attached from the dashboard.
+            <a
+              href={article.attachment_url}
+              target="_blank"
+              rel="noopener"
+              className="group mt-8 flex items-center gap-4 rounded-2xl border border-border bg-card p-4 shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-elevated"
+            >
+              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-[var(--royal)]/10 text-[var(--royal)]">
+                <FileText className="h-6 w-6" strokeWidth={1.75} />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block font-semibold text-foreground">{t("news.attachment")}</span>
+                <span className="block text-sm text-muted-foreground">{t("news.attachmentNote")}</span>
+              </span>
+              <Download className="h-5 w-5 shrink-0 text-muted-foreground transition-colors group-hover:text-[var(--royal)]" />
+            </a>
+          )}
           <div className="mt-10 space-y-6">
             {body.map((p: string, i: number) => <p key={i} className="text-base leading-[1.85] text-foreground">{p}</p>)}
           </div>

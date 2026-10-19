@@ -9,6 +9,8 @@ export type ArticleRow = {
   date: string;
   category: string;
   cover_url: string | null;
+  /** Original document (e.g. the magazine PDF) offered for download on the article page. */
+  attachment_url: string | null;
   title_en: string;
   title_ar: string;
   excerpt_en: string;

@@ -56,6 +56,7 @@ export type Database = {
       articles: {
         Row: {
           body_ar: string[]
+          attachment_url: string | null
           body_en: string[]
           category: string
           cover_url: string | null
@@ -72,6 +73,7 @@ export type Database = {
         }
         Insert: {
           body_ar?: string[]
+          attachment_url?: string | null
           body_en?: string[]
           category?: string
           cover_url?: string | null
@@ -88,6 +90,7 @@ export type Database = {
         }
         Update: {
           body_ar?: string[]
+          attachment_url?: string | null
           body_en?: string[]
           category?: string
           cover_url?: string | null

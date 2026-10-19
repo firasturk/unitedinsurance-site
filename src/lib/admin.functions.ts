@@ -40,6 +40,7 @@ const articleInput = z.object({
   date: z.string().min(4).max(20),
   category: z.string().min(1).max(50),
   cover_url: z.string().max(500).nullable().optional(),
+  attachment_url: z.string().max(500).nullable().optional(),
   title_en: z.string().min(1).max(300),
   title_ar: z.string().min(1).max(300),
   excerpt_en: z.string().max(2000).default(""),

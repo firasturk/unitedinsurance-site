@@ -43,7 +43,7 @@ export const dict: Dict = {
   "hero.cta2": { en: "Explore Services", ar: "اكتشف خدماتنا" },
   "hero.stat1": { en: "54 years", ar: "٥٤ عاماً" },
   "hero.stat1l": { en: "Years of experience", ar: "من الخبرة" },
-  "hero.stat2": { en: "+ 100,000", ar: "+ ١٠٠،٠٠٠" },
+  "hero.stat2": { en: "100,000+", ar: "+ ١٠٠،٠٠٠" },
   "hero.stat2l": { en: "Active Policies", ar: "وثيقة فعالة" },
   "hero.stat3": { en: "A+ rated", ar: "تصنيف +A" },
   "hero.stat3l": { en: "financial strength", ar: "ملاءة مالية" },
@@ -109,6 +109,8 @@ export const dict: Dict = {
   "news.related": { en: "Related articles", ar: "مقالات ذات صلة" },
   "news.published": { en: "Published on", ar: "نُشر في" },
   "news.all": { en: "All articles", ar: "جميع المقالات" },
+  "news.attachment": { en: "Read the full article (PDF)", ar: "اقرأ المقال كاملاً (PDF)" },
+  "news.attachmentNote": { en: "Original publication", ar: "النسخة الأصلية من المنشور" },
 
 
   // partners
