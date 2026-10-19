@@ -75,7 +75,7 @@ export function About({ showTitle = true }: { showTitle?: boolean }) {
                 <div className="h-px bg-white/20" />
                 <div className="mt-6">
                   <div>
-                  <div className="text-2xl font-bold">+ 100,000</div>
+                  <div className="text-2xl font-bold">{t("hero.stat2")}</div>
                   <div className="mt-1 text-xs text-white/72">{t("hero.stat2l")}</div>
                   </div>
                 </div>
