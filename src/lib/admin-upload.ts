@@ -42,7 +42,11 @@ export async function uploadToBucket(
 ): Promise<string> {
   const prepared = bucket === "forms" ? file : await optimizeImage(file);
   const ext = prepared.name.split(".").pop()?.toLowerCase() ?? "bin";
-  const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+  // Documents keep a readable name after the unique prefix ("<stamp>-<rand>--my-file.pdf"), so the
+  // media route can offer the download as "my-file.pdf"; images stay anonymous.
+  const base = prepared.name.replace(/\.[^.]+$/, "").normalize("NFKD").replace(/[^A-Za-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 60);
+  const readable = ext === "pdf" && base ? `--${base}` : "";
+  const path = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}${readable}.${ext}`;
   const { error } = await supabase.storage.from(bucket).upload(path, prepared, {
     cacheControl: "31536000",
     upsert: false,

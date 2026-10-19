@@ -55,7 +55,8 @@ export const Route = createFileRoute("/api/public/media/$")({
         }
 
         const mime = mimeFor(path, data.type);
-        const filename = (path.split("/").pop() ?? "file").replace(/["\r\n]/g, "");
+        // "1792443348610-t6swsc--MEIR-October-2026.pdf" → downloads as "MEIR-October-2026.pdf"
+        const filename = (path.split("/").pop() ?? "file").replace(/["\r\n]/g, "").replace(/^\d{10,}-[a-z0-9]{4,8}--/, "");
         // Documents download; images/video display inline. A sandboxing CSP keeps any
         // uploaded SVG/HTML-like content from running script on this origin.
         const disposition = mime === "application/pdf" || mime === "application/octet-stream" ? "attachment" : "inline";
