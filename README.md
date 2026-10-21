@@ -69,6 +69,19 @@ npx supabase link --project-ref <your-project-ref>
 npx supabase db push
 ```
 
+> **New tables (from 30 Oct 2026):** Supabase no longer grants Data API access to tables created in
+> `public` automatically. Every migration that creates a table must also grant it, in the same file,
+> or the site gets "permission denied" when it reads the table:
+>
+> ```sql
+> GRANT SELECT, INSERT, UPDATE, DELETE ON public.<table> TO anon, authenticated, service_role;
+> -- and for serial/identity columns:
+> GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO anon, authenticated, service_role;
+> ```
+>
+> Row Level Security still decides what each role may actually see; the grant only opens the door.
+> Tables that already exist are unaffected.
+
 ### 3.4 Create storage buckets
 
 Create these **private** buckets in Supabase → Storage (no public access):
