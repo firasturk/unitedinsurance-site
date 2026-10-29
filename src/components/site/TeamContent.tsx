@@ -85,10 +85,14 @@ function Section({ title, members, lang, lead }: { title: string; members: TeamR
           </div>
         )}
 
+        {/* Chiefs (C-level) sit on their own row, each a third of the narrower band wide and centred
+            whatever their number — a 3-column grid would leave two of them hugging one side. */}
         {chiefs.length > 0 && (
-          <div className="mx-auto mb-5 grid w-full max-w-4xl grid-cols-1 gap-5 sm:grid-cols-3 auto-rows-fr">
+          <div className="mx-auto mb-5 flex w-full max-w-4xl flex-wrap justify-center gap-5">
             {chiefs.map((m, i) => (
-              <MemberCard key={m.id} m={m} i={i} lang={lang} />
+              <div key={m.id} className="w-full sm:w-[calc(33.333%-0.8333rem)]">
+                <MemberCard m={m} i={i} lang={lang} />
+              </div>
             ))}
           </div>
         )}
