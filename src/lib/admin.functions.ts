@@ -353,7 +353,7 @@ const vacancyInput = z.object({
 export const listAllVacancies = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    await assertAdmin(context.supabase, context.userId);
+    await assertRole(context.supabase, context.userId, ["hr"]);
     const { data, error } = await context.supabase
       .from("job_vacancies")
       .select("*")
@@ -366,7 +366,7 @@ export const upsertVacancy = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: unknown) => vacancyInput.parse(d))
   .handler(async ({ data, context }) => {
-    await assertAdmin(context.supabase, context.userId);
+    await assertRole(context.supabase, context.userId, ["hr"]);
     const { id, ...rest } = data;
     const payload = { ...rest, closing_date: rest.closing_date || null };
     const op = id
@@ -381,7 +381,7 @@ export const deleteVacancy = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data, context }) => {
-    await assertAdmin(context.supabase, context.userId);
+    await assertRole(context.supabase, context.userId, ["hr"]);
     const { error } = await context.supabase.from("job_vacancies").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
     return { ok: true };

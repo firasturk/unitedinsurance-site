@@ -21,7 +21,7 @@ const NAV: { to: string; label: string; icon: typeof LayoutDashboard; exact?: bo
   { to: "/admin/homepage", label: "Homepage", icon: Home },
   { to: "/admin/forms", label: "Forms (PDF)", icon: FileText },
   { to: "/admin/agents", label: "Agents", icon: Handshake },
-  { to: "/admin/vacancies", label: "Vacancies", icon: Briefcase },
+  { to: "/admin/vacancies", label: "Vacancies", icon: Briefcase, roles: ["admin", "hr"] },
   { to: "/admin/applications", label: "Applications", icon: Inbox, roles: ["admin", "hr"] },
   { to: "/admin/messages", label: "Contact Messages", icon: MailOpen },
   { to: "/admin/complaints", label: "Complaints", icon: MessageSquareWarning },
