@@ -54,7 +54,8 @@ function CareersPage() {
   const [type, setType] = useState("");
   const [loc, setLoc] = useState("");
 
-  const t = (v: VacancyRow, key: string) => (v as any)[`${key}_${lang === "ar" ? "ar" : "en"}`] as string;
+  // Arabic falls back to English so a vacancy posted in English only still reads on the Arabic site.
+  const t = (v: VacancyRow, key: string) => (((v as any)[`${key}_${lang === "ar" ? "ar" : "en"}`] as string) || ((v as any)[`${key}_en`] as string)) ?? "";
 
   const options = (key: string) =>
     Array.from(new Set(vacancies.map((v) => t(v, key)).filter(Boolean)));

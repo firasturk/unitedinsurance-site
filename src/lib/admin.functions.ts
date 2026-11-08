@@ -327,8 +327,8 @@ export const deleteAgentNews = createServerFn({ method: "POST" })
 const vacancyInput = z.object({
   id: z.string().uuid().optional(),
   slug: z.string().min(1).max(120),
-  title_en: z.string().min(1).max(200),
-  title_ar: z.string().min(1).max(200),
+  title_en: z.string().min(1, "English title is required").max(200),
+  title_ar: z.string().max(200).default(""), // optional — the site shows the English title when empty
   department_en: z.string().max(120).default(""),
   department_ar: z.string().max(120).default(""),
   level_en: z.string().max(120).default(""),

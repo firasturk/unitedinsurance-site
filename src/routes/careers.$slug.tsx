@@ -19,12 +19,12 @@ export const Route = createFileRoute("/careers/$slug")({
     const v = loaderData?.vacancy;
     const lang = match.context.lang;
     if (!v) return pageHead({ lang, path: `/careers/${match.params.slug}`, title: { en: "Vacancy", ar: "وظيفة شاغرة" }, description: "", noindex: true });
-    const title = lang === "ar" ? v.title_ar : v.title_en;
-    const summary = lang === "ar" ? v.summary_ar : v.summary_en;
+    const title = (lang === "ar" && v.title_ar) || v.title_en;
+    const summary = (lang === "ar" && v.summary_ar) || v.summary_en;
     return pageHead({
       lang,
       path: `/careers/${v.slug}`,
-      title: { en: `${v.title_en} — Careers`, ar: `${v.title_ar} — الوظائف` },
+      title: { en: `${v.title_en} — Careers`, ar: `${v.title_ar || v.title_en} — الوظائف` },
       description: summary || (lang === "ar" ? "تفاصيل الوظيفة والمهام والمؤهلات — قدّم طلبك عبر الموقع." : "Job details, responsibilities and qualifications — apply online with your CV."),
       type: "article",
       jsonLd: [
@@ -70,7 +70,14 @@ function VacancyPage() {
   const { lang } = useLang();
   const L = (en: string, ar: string) => (lang === "ar" ? ar : en);
 
-  const t = (v: VacancyRow, key: string) => (v as any)[`${key}_${lang === "ar" ? "ar" : "en"}`];
+  // Arabic falls back to English (string or list) so an English-only posting still reads on the Arabic site.
+  const t = (v: VacancyRow, key: string) => {
+    const ar = (v as any)[`${key}_ar`];
+    const en = (v as any)[`${key}_en`];
+    const pick = lang === "ar" ? ar : en;
+    const empty = pick == null || pick === "" || (Array.isArray(pick) && pick.length === 0);
+    return empty ? en : pick;
+  };
 
   const lists = [
     { title: L("Key responsibilities", "المهام الرئيسية"), items: t(vacancy, "responsibilities") as string[] },

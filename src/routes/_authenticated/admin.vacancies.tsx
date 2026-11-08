@@ -78,6 +78,7 @@ function VacanciesAdmin() {
 
   const { data = [], isLoading } = useQuery({ queryKey: ["admin-vacancies"], queryFn: () => list() });
   const [open, setOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [form, setForm] = useState<Form>(empty);
 
   function openNew() {
@@ -114,12 +115,41 @@ function VacanciesAdmin() {
     setOpen(true);
   }
 
+  const slugFromTitle = (title: string) =>
+    title.toLowerCase().normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 120);
+
+  /** Turns a server/zod error into one readable line ("title_en: English title is required"). */
+  function readableError(err: any): string {
+    const msg: string = err?.message ?? "";
+    try {
+      const issues = JSON.parse(msg);
+      if (Array.isArray(issues)) return issues.map((i: any) => `${(i.path ?? []).join(".")}: ${i.message}`).join(" · ");
+    } catch {
+      /* not a zod payload */
+    }
+    if (/row-level security|permission denied/i.test(msg)) return "Your account is not allowed to save vacancies — ask the site administrator to grant the HR role access.";
+    if (/duplicate key|job_vacancies_slug/i.test(msg)) return "A vacancy with this slug (URL) already exists — change the slug.";
+    return msg || "Save failed";
+  }
+
   async function handleSave() {
+    const title_en = form.title_en.trim();
+    if (!title_en) {
+      toast.error("Title (EN) is required.");
+      return;
+    }
+    const slug = (form.slug.trim() || slugFromTitle(title_en) || `vacancy-${Date.now()}`).toLowerCase();
+    if (!/^[a-z0-9-]+$/.test(slug)) {
+      toast.error("The slug (URL) may only contain lowercase letters, numbers and hyphens.");
+      return;
+    }
+    setSaving(true);
     try {
       await save({
         data: {
           ...form,
-          slug: form.slug.trim() || form.title_en.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, ""),
+          title_en,
+          slug,
           responsibilities_en: toLines(form.responsibilities_en),
           responsibilities_ar: toLines(form.responsibilities_ar),
           qualifications_en: toLines(form.qualifications_en),
@@ -129,11 +159,13 @@ function VacanciesAdmin() {
           closing_date: form.closing_date || null,
         },
       });
-      toast.success("Saved");
+      toast.success(form.published ? "Saved and published" : "Saved as draft");
       setOpen(false);
       qc.invalidateQueries({ queryKey: ["admin-vacancies"] });
     } catch (err: any) {
-      toast.error(err?.message ?? "Save failed");
+      toast.error(readableError(err), { duration: 9000 });
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -197,8 +229,8 @@ function VacanciesAdmin() {
         <DialogContent className="max-w-3xl max-h-[88vh] overflow-y-auto">
           <DialogHeader><DialogTitle>{form.id ? "Edit vacancy" : "New vacancy"}</DialogTitle></DialogHeader>
           <div className="grid sm:grid-cols-2 gap-4">
-            {field("Title (EN)", "title_en")}
-            {field("العنوان (AR)", "title_ar", "rtl")}
+            {field("Title (EN) *", "title_en")}
+            {field("العنوان (AR) — اختياري، يظهر الإنجليزي إذا تُرك فارغاً", "title_ar", "rtl")}
             {field("Department (EN)", "department_en")}
             {field("القسم (AR)", "department_ar", "rtl")}
             {field("Level (EN)", "level_en")}
@@ -215,7 +247,7 @@ function VacanciesAdmin() {
             {area("المؤهلات (AR) — سطر لكل بند", "qualifications_ar", "rtl")}
             {area("Skills (EN) — one per line", "skills_en")}
             {area("المهارات (AR) — سطر لكل بند", "skills_ar", "rtl")}
-            {field("Slug (URL)", "slug")}
+            {field("Slug (URL) — filled from the English title if left empty", "slug")}
             <div className="space-y-1.5">
               <Label>Closing date</Label>
               <Input type="date" value={form.closing_date} onChange={(e) => setForm({ ...form, closing_date: e.target.value })} />
@@ -231,7 +263,7 @@ function VacanciesAdmin() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-            <Button onClick={handleSave}>Save</Button>
+            <Button onClick={handleSave} disabled={saving}>{saving ? "Saving…" : "Save"}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
