@@ -4,7 +4,6 @@ import { SiteLayout } from "@/components/site/Layout";
 import { PageHero } from "@/components/site/PageHero";
 import { ApplyDialog } from "@/components/site/ApplyDialog";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { useLang } from "@/lib/i18n";
 import { getVacancyBySlug, type VacancyRow } from "@/lib/public.functions";
 import { pageHead } from "@/lib/seo";
@@ -79,11 +78,12 @@ function VacancyPage() {
     return empty ? en : pick;
   };
 
+  // Skills are a checklist like the two sections above (they used to be pill badges).
   const lists = [
     { title: L("Key responsibilities", "المهام الرئيسية"), items: t(vacancy, "responsibilities") as string[] },
     { title: L("Qualifications", "المؤهلات"), items: t(vacancy, "qualifications") as string[] },
+    { title: L("Skills", "المهارات"), items: t(vacancy, "skills") as string[] },
   ];
-  const skills = (t(vacancy, "skills") as string[]) ?? [];
 
   return (
     <SiteLayout>
@@ -125,16 +125,6 @@ function VacancyPage() {
                     </ul>
                   </div>
                 ),
-            )}
-            {skills.length > 0 && (
-              <div>
-                <h2 className="text-xl font-bold">{L("Skills", "المهارات")}</h2>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {skills.map((s) => (
-                    <Badge key={s} variant="secondary" className="rounded-full">{s}</Badge>
-                  ))}
-                </div>
-              </div>
             )}
           </div>
 
