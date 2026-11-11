@@ -315,7 +315,7 @@ function renderTiles(){
 function renderV(){if(!$("switch"))return;document.body.className="v-"+S.v;document.querySelectorAll("#switch button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===S.v));$("swl").textContent=S.lang==="ar"?"التصميم":"Design"}
 const _rf=renderFilters; renderFilters=function(){_rf();renderTiles()};
 function render(){renderV();renderStatic();renderFilters();renderResults()}
-$("switch").addEventListener("click",e=>{const b=e.target.closest("[data-v]");if(!b)return;S.v=b.dataset.v;renderV()});
+$("switch")&&$("switch").addEventListener("click",e=>{const b=e.target.closest("[data-v]");if(!b)return;S.v=b.dataset.v;renderV()});
 $("tiles").addEventListener("click",e=>{const b=e.target.closest("[data-c]");if(!b)return;const c=+b.dataset.c;S.city=S.city===c?-1:c;S.area=-1;S.shown=30;renderFilters();renderResults()});
 
 $("tabs").addEventListener("click",e=>{const b=e.target.closest("[data-tab]");if(!b)return;S.tab=b.dataset.tab;S.group="all";S.spec=-1;S.shown=30;render()});
