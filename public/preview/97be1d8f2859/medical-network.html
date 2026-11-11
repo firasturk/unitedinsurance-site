@@ -140,6 +140,28 @@ html[dir="rtl"] select{background-position:20px 55%,25px 55%}
 .v-c .card{border-radius:16px;border-top:4px solid var(--stripe,var(--royal))}
 .v-c .ico{background:transparent;border:1px solid var(--line);color:var(--stripe,var(--royal))}
 .v-c .kind{color:var(--stripe,var(--royal))}
+
+/* ===== Jordan map in the header ===== */
+.hero-grid{display:grid;gap:8px;align-items:center}
+@media(min-width:860px){.hero-grid{grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:32px}}
+.map{position:relative;max-width:100%;--pin:#8fb0ff}
+.map svg{display:block;width:100%;height:auto;max-height:340px;overflow:visible}
+@media(max-width:859px){.map svg{max-height:240px}}
+.land{fill:currentColor;fill-opacity:.07;stroke:currentColor;stroke-opacity:.45;stroke-width:1.4;stroke-linejoin:round}
+.grid-dots{fill:currentColor;opacity:.12}
+.pin{cursor:pointer;outline:none}
+.pin .dot{fill:var(--pin);stroke:#fff;stroke-width:1.6;transition:r .2s}
+.pin .ring{fill:none;stroke:var(--pin);stroke-width:1.6;transform-box:fill-box;transform-origin:center;animation:pulse 2.4s ease-out infinite}
+.pin .lbl{font-size:13px;font-weight:700;fill:currentColor;paint-order:stroke;stroke:var(--navy-deep);stroke-width:4px;stroke-linejoin:round;opacity:0;transition:opacity .2s;pointer-events:none}
+.pin .cnt{font-size:11px;font-weight:600;fill:currentColor;opacity:0;paint-order:stroke;stroke:var(--navy-deep);stroke-width:4px;pointer-events:none;font-variant-numeric:tabular-nums}
+.pin:hover .lbl,.pin:focus-visible .lbl,.pin.on .lbl,.pin:hover .cnt,.pin.on .cnt,.pin:focus-visible .cnt{opacity:1}
+.pin.on .dot{fill:#fff;stroke:var(--pin);stroke-width:3}
+.map.has-on .pin:not(.on) .ring{animation:none;opacity:0}
+.maphint{font-size:12.5px;opacity:.7;text-align:center;margin-top:4px}
+@keyframes pulse{0%{transform:scale(1);opacity:.85}80%,100%{transform:scale(3.2);opacity:0}}
+.v-c .map{--pin:var(--royal)}
+.v-c .pin .lbl,.v-c .pin .cnt{stroke:var(--bg)}
+@media (prefers-reduced-motion:reduce){.pin .ring{animation:none;opacity:.35}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
@@ -150,9 +172,14 @@ html[dir="rtl"] select{background-position:20px 55%,25px 55%}
       <span class="brand" id="brand"></span>
       <button class="lang" id="lang" type="button"></button>
     </div>
-    <h1 id="title"></h1>
-    <p class="sub" id="sub"></p>
-    <div class="stats" id="stats"></div>
+    <div class="hero-grid">
+      <div>
+        <h1 id="title"></h1>
+        <p class="sub" id="sub"></p>
+        <div class="stats" id="stats"></div>
+      </div>
+      <div class="map" id="map"></div>
+    </div>
   </div>
 </header>
 
@@ -313,7 +340,36 @@ function renderTiles(){
    .map(([i,c])=>`<button class="tile" type="button" data-c="${i}" aria-pressed="${S.city===i}"><b>${esc(c[L])}</b><span>${fmt(cc.get(i))}</span></button>`).join("");
 }
 function renderV(){if(!$("switch"))return;document.body.className="v-"+S.v;document.querySelectorAll("#switch button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===S.v));$("swl").textContent=S.lang==="ar"?"التصميم":"Design"}
-const _rf=renderFilters; renderFilters=function(){_rf();renderTiles()};
+
+// ---- header map: one pulsing pin per governorate, sized by the number of providers ----
+const JO={"w": 380.2, "h": 425, "d": "M73.3 65.6L73.9 65.3L74.2 65.1L74.8 65.3L75.1 65.6L76.0 66.6L84.9 68.7L85.9 69.2L87.4 70.7L87.7 70.7L88.9 70.7L89.3 70.9L89.3 71.5L89.3 72.2L88.9 72.7L88.6 72.5L89.6 73.6L90.2 74.2L91.1 74.6L92.3 74.4L94.2 74.6L94.8 75.6L94.5 77.3L94.5 79.1L95.4 80.8L99.1 86.7L99.7 87.9L99.7 88.3L100.0 88.4L100.9 88.4L102.2 88.4L105.2 87.9L105.9 88.1L106.8 88.4L107.4 88.4L107.7 88.3L108.6 87.4L109.2 87.2L110.2 87.7L112.9 90.6L118.5 94.3L125.9 101.4L127.1 102.1L128.9 102.6L133.5 103.1L135.1 104.0L138.2 104.3L149.9 105.6L152.9 108.0L154.5 107.2L156.3 107.2L161.8 108.7L162.8 108.7L164.0 108.3L177.8 99.1L190.8 90.6L200.3 84.5L215.1 75.2L221.8 71.0L229.5 66.0L244.3 56.7L258.7 47.4L269.8 40.6L284.6 31.3L292.0 27.0L310.1 15.6L331.0 2.8L335.0 17.2L338.7 30.0L341.5 40.6L345.5 54.8L349.5 69.5L355.3 90.3L348.6 92.5L348.6 92.6L348.6 92.8L352.9 107.2L353.5 108.7L354.4 109.2L370.4 104.6L372.3 105.8L373.5 108.9L375.3 115.6L373.2 118.6L362.7 127.4L362.7 128.1L362.1 128.4L360.3 129.8L350.1 139.2L347.3 140.6L337.5 143.3L318.4 148.9L299.0 154.4L280.0 160.0L263.7 164.7L260.6 165.6L244.6 170.3L239.4 171.8L218.4 178.3L197.2 184.5L179.4 189.9L176.0 190.9L187.1 203.1L198.1 215.1L198.5 215.2L209.2 227.2L220.6 239.2L220.6 239.5L220.9 239.9L221.2 240.2L221.5 240.6L230.8 251.7L240.3 262.8L249.5 274.0L259.1 285.0L263.4 290.0L263.4 290.2L263.1 290.2L262.7 290.5L256.3 294.1L246.1 300.0L236.6 305.2L234.8 306.9L233.5 308.8L231.1 314.9L228.0 322.5L225.2 329.5L221.5 338.8L219.7 340.5L209.5 342.7L198.1 345.1L185.8 347.6L173.5 350.3L166.2 351.8L158.5 353.5L156.3 354.7L154.2 356.9L149.5 365.0L145.5 371.9L140.3 381.1L134.8 390.5L128.3 396.1L118.2 404.5L109.2 412.1L100.0 420.1L97.9 420.9L95.4 421.1L86.5 419.4L76.6 417.7L71.7 416.8L61.6 415.0L49.0 412.8L37.3 410.8L23.7 408.4L13.6 406.5L4.4 404.9L5.3 404.0L5.9 394.9L6.5 392.4L8.4 388.1L8.4 386.6L6.5 384.8L5.3 384.8L5.3 384.4L5.3 384.3L5.3 384.1L4.7 384.1L5.0 381.4L5.6 379.2L6.8 377.3L7.7 374.8L8.0 369.2L8.7 366.7L12.7 355.7L13.0 353.7L13.3 347.6L13.9 344.2L14.2 343.4L14.5 342.6L14.8 341.7L14.8 340.5L16.0 336.6L19.4 331.1L21.0 327.7L21.0 324.5L19.1 318.4L19.1 315.5L19.7 313.8L20.7 308.6L21.3 307.4L21.9 306.2L22.2 305.2L22.5 303.9L22.2 302.4L21.0 300.3L20.7 299.3L20.7 297.0L21.9 292.9L22.5 290.5L26.2 278.2L31.1 268.1L31.7 265.6L32.0 263.0L32.3 262.0L33.0 260.8L33.6 260.0L35.1 258.6L35.7 257.8L36.0 255.6L35.7 253.2L36.0 251.0L37.3 248.7L38.2 247.7L40.7 245.5L41.6 243.6L41.6 240.6L41.9 237.5L45.9 229.6L46.5 226.7L45.9 224.0L44.7 221.5L43.7 219.6L42.8 216.9L42.5 214.2L43.4 211.9L44.7 209.7L44.7 207.5L44.0 206.8L45.6 203.9L47.1 199.9L47.7 197.7L47.7 196.7L47.7 190.9L47.7 190.7L47.7 190.9L47.7 190.7L47.7 190.6L48.3 183.1L49.6 175.9L51.4 171.5L53.6 166.4L56.3 163.4L54.5 158.0L54.5 157.3L55.4 156.1L53.3 148.0L53.6 147.2L54.2 147.0L54.8 146.8L55.1 146.3L55.1 145.5L54.8 144.5L54.5 143.6L54.5 142.3L54.2 141.1L53.3 138.9L53.3 134.2L53.6 132.5L55.1 131.3L54.2 130.1L54.2 128.9L55.7 126.4L55.1 125.9L55.1 125.2L55.7 124.9L56.3 124.6L56.3 123.7L56.0 122.5L56.3 121.0L57.6 116.3L56.3 116.3L56.3 115.6L56.6 115.3L57.0 115.1L57.6 114.8L56.6 113.6L56.3 111.7L56.6 109.9L57.0 108.7L56.0 107.2L56.0 104.1L55.7 103.3L55.7 102.4L56.3 102.4L56.3 103.3L57.0 103.3L56.6 102.3L56.3 101.6L56.0 100.9L55.7 100.4L55.4 100.1L55.1 99.1L56.0 98.9L56.3 98.6L56.3 98.2L55.7 97.7L55.7 97.0L56.3 97.0L56.3 96.5L56.0 96.5L55.7 96.4L57.0 95.7L56.3 95.0L57.0 94.7L57.6 94.3L57.6 93.7L57.0 93.5L57.0 93.3L56.6 93.1L56.3 93.0L56.6 92.3L57.0 91.6L57.3 91.1L58.2 90.8L58.2 90.3L57.3 89.4L57.3 88.9L56.6 88.1L56.0 88.1L55.7 88.1L55.7 87.4L57.0 87.4L56.6 86.7L56.3 84.7L57.0 85.4L57.3 84.4L57.6 84.0L57.6 84.4L57.6 84.5L57.9 84.5L58.2 84.0L57.6 82.7L57.3 80.1L57.0 79.3L57.0 78.5L57.6 78.5L57.6 78.0L56.6 77.4L56.3 76.8L56.3 75.9L56.6 75.6L57.3 75.2L57.9 74.6L59.4 72.9L61.0 71.9L62.8 72.0L64.3 71.4L67.1 68.8L71.7 66.0L73.3 65.6Z", "pins": {"Amman": [88, 145], "Al-Zarqa": [101.7, 133], "Irbid": [81.2, 85], "Al-Balqa": [70.9, 136], "kerak": [68.4, 222], "Aqaba": [9.4, 387], "Madaba": [76, 168], "Al-Mafraq": [111.9, 106], "Maan": [70.9, 321], "Jerash": [85.4, 112], "Al-Tafila": [59.8, 256], "Ajlun": [72.6, 107]}};
+function renderMap(){
+  const L=S.lang==="ar"?1:0, cc=count(base("city"),r=>r.ci), max=Math.max(1,...cc.values());
+  // big governorates drawn last so small ones stay clickable on top? draw big first, small on top
+  const order=D.cities.map((c,i)=>i).filter(i=>JO.pins[CKEY[i]]).sort((a,b)=>(cc.get(b)||0)-(cc.get(a)||0));
+  // labels for the crowded north go to the side so they do not collide
+  const side={Amman:1,"Al-Zarqa":1,"Al-Mafraq":1,Jerash:1,Irbid:1};
+  let dots="";for(let x=10;x<JO.w;x+=16)for(let y=10;y<JO.h;y+=16)dots+=`M${x} ${y}h.01`;
+  const pins=order.map(i=>{
+    const [x,y]=JO.pins[CKEY[i]], n=cc.get(i)||0, r=4+7*Math.sqrt(n/max), on=S.city===i;
+    const right=side[CKEY[i]]?1:(x<JO.w/2?1:-1), lx=x+right*(r+6), anchor=right>0?"start":"end";
+    return `<g class="pin${on?" on":""}" tabindex="0" role="button" data-c="${i}" aria-label="${esc(D.cities[i][L])} ${fmt(n)}">
+      <circle class="ring" cx="${x}" cy="${y}" r="${r}" style="animation-delay:${(i%6)*.35}s"></circle>
+      <circle class="dot" cx="${x}" cy="${y}" r="${r}"></circle>
+      <text class="lbl" x="${lx}" y="${y-2}" text-anchor="${anchor}">${esc(D.cities[i][L])}</text>
+      <text class="cnt" x="${lx}" y="${y+12}" text-anchor="${anchor}">${fmt(n)}</text></g>`;}).join("");
+  $("map").classList.toggle("has-on",S.city>=0);
+  $("map").innerHTML=`<svg viewBox="-30 -10 ${JO.w+60} ${JO.h+20}" role="img" aria-label="${S.lang==="ar"?"خريطة الأردن":"Map of Jordan"}">
+    <defs><clipPath id="jo"><path d="${JO.d}"/></clipPath></defs>
+    <path class="land" d="${JO.d}"/>
+    <path class="grid-dots" d="${dots}" clip-path="url(#jo)" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+    ${pins}</svg><div class="maphint">${S.lang==="ar"?"اضغط على المحافظة لعرض مزوّديها":"Tap a governorate to see its providers"}</div>`;
+}
+const CKEY=D.cities.map(c=>({Zarqa:"Al-Zarqa",Balqa:"Al-Balqa",Karak:"kerak",Mafraq:"Al-Mafraq","Ma'an":"Maan",Tafila:"Al-Tafila",Ajloun:"Ajlun"}[c[0]]||c[0]));
+function pickCity(c){S.city=S.city===c?-1:c;S.area=-1;S.shown=30;renderFilters();renderResults()}
+$("map").addEventListener("click",e=>{const g=e.target.closest("[data-c]");if(g)pickCity(+g.dataset.c)});
+$("map").addEventListener("keydown",e=>{const g=e.target.closest("[data-c]");if(g&&(e.key==="Enter"||e.key===" ")){e.preventDefault();pickCity(+g.dataset.c)}});
+const _rf=renderFilters; renderFilters=function(){_rf();renderTiles();renderMap()};
 function render(){renderV();renderStatic();renderFilters();renderResults()}
 $("switch")&&$("switch").addEventListener("click",e=>{const b=e.target.closest("[data-v]");if(!b)return;S.v=b.dataset.v;renderV()});
 $("tiles").addEventListener("click",e=>{const b=e.target.closest("[data-c]");if(!b)return;const c=+b.dataset.c;S.city=S.city===c?-1:c;S.area=-1;S.shown=30;renderFilters();renderResults()});
