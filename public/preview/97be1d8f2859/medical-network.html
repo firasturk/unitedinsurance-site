@@ -196,8 +196,8 @@ html[dir="rtl"] .mlabel.e{flex-direction:row-reverse}
 .s1head{text-align:center;margin-top:6px}
 .s1head h1{margin:6px 0 4px}
 .s1sub{margin:0;opacity:.75;font-size:15px}
-.scene1 .map{flex:1;width:100%;display:flex;flex-direction:column;justify-content:center}
-.scene1 .mapbox{width:min(100%,980px,calc((100dvh - 330px) * 1.55));max-width:none}
+.scene1 .map{flex:1;width:100%;display:flex;flex-direction:column;justify-content:flex-start;padding-top:clamp(8px,2vh,20px)}
+.scene1 .mapbox{width:min(100%,980px,calc((100dvh - 350px) * 1.55));max-width:none}
 .allbtn{border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;border-radius:999px;padding:10px 22px;cursor:pointer;font-weight:600}
 .allbtn:hover{background:rgba(255,255,255,.16)}
 .scene1.leave{animation:sceneOut .5s ease forwards}
@@ -250,9 +250,9 @@ html[lang="ar"] .s2title{font-family:var(--f-ar);font-weight:800}
 @media (prefers-reduced-motion:reduce){.wx *{animation:none!important}}
 
 /* scene 1: provider counter + weather beside each governorate */
-.s1count{margin-top:22px;font-size:15px;opacity:0;animation:fadeIn .6s ease 3.3s forwards;display:flex;flex-direction:column;align-items:center;gap:2px}
+.s1count{margin-top:clamp(28px,5vh,56px);font-size:17px;font-weight:700;opacity:0;animation:fadeIn .6s ease 3.3s forwards;display:flex;flex-direction:column;align-items:center;gap:2px}
 .s1count b{font-family:var(--f-ar);font-size:clamp(32px,4.5vw,46px);font-weight:800;line-height:1.1;color:#8fb0ff;font-variant-numeric:tabular-nums}
-.s1count span{opacity:.85}
+.s1count span{opacity:.9;font-weight:700}
 .mlabel .wxs{display:inline-flex;align-items:center;gap:3px;font-family:var(--f-en);font-size:clamp(11px,1vw,13px);opacity:0;animation:fadeIn .6s ease forwards;font-variant-numeric:tabular-nums}
 .mlabel .wxs svg{width:20px;height:20px;overflow:visible}
 .mlabel .wxs .sun{fill:#ffcf5a}.mlabel .wxs .rays{stroke:#ffcf5a;stroke-width:3;stroke-linecap:round;transform-origin:24px 24px;animation:spin 14s linear infinite}
