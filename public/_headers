@@ -6,3 +6,6 @@
   X-Content-Type-Options: nosniff
 /favicon.ico
   Cache-Control: public, max-age=604800
+/preview/*
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
