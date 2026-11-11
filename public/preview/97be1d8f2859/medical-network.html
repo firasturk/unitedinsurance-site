@@ -30,7 +30,7 @@ button,input,select{font:inherit;color:inherit}
 :focus-visible{outline:2px solid var(--royal);outline-offset:2px}
 
 .hero{background:radial-gradient(120% 140% at 85% 0%,#1d3a8f 0%,transparent 55%),linear-gradient(180deg,var(--navy),var(--navy-deep));color:#fff}
-.hero .wrap{padding-block:40px 92px}
+.hero .wrap{padding-block:22px 92px}
 .top{display:flex;justify-content:space-between;align-items:center;gap:12px}
 .brand{font-size:13px;letter-spacing:.04em;opacity:.8}
 .lang{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);color:#fff;border-radius:999px;padding:6px 14px;cursor:pointer;font-size:13px}
@@ -183,48 +183,74 @@ html[dir="rtl"] .mlabel.e{flex-direction:row-reverse}
 
 /* opening animation: the map starts large in the middle of the screen, pins pop in, then it settles into the header */
 
-/* ===== opening: full-screen map that draws itself, then settles into the header ===== */
-.splash{position:fixed;inset:0;z-index:4;background:radial-gradient(90% 70% at 70% 10%,#1d3a8f 0%,transparent 60%),linear-gradient(180deg,var(--navy),var(--navy-deep));display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:calc(22px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(22px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));color:#fff;pointer-events:none}
-.splash .st{font-size:13px;letter-spacing:.06em;opacity:0;animation:fadeIn .8s ease .3s both}
-.splash .st b{display:block;font-size:clamp(22px,4vw,34px);letter-spacing:0;font-weight:800;margin-top:4px}
-.splash .skip{pointer-events:auto;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;border-radius:999px;padding:8px 18px;cursor:pointer;font-size:13px;opacity:0;animation:fadeIn .6s ease 1s both}
-.splash.out{animation:fadeOut .9s ease both}
-body.intro .hero-grid>div:first-child,body.intro .panel,body.intro #results,body.intro .top{opacity:0}
-body.outro .hero-grid>div:first-child,body.outro .panel,body.outro #results,body.outro .top{animation:fadeUp .7s ease .35s both}
-.map.intro{z-index:5;transform:translate(var(--dx),var(--dy)) scale(var(--s))}
-.map.intro .land{stroke-dasharray:2600;stroke-dashoffset:2600;fill-opacity:0;animation:drawIn 2.8s cubic-bezier(.45,0,.2,1) .5s forwards,fillIn .9s ease 2.9s forwards}
-.map.intro .grid-dots{opacity:0;animation:dotsIn 1s ease 2.6s forwards}
+
+/* ===== two scenes: 1) full-screen map, 2) information page ===== */
+.scene1{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;gap:6px;
+  background:radial-gradient(90% 70% at 70% 0%,#1d3a8f 0%,transparent 60%),linear-gradient(180deg,var(--navy),var(--navy-deep));color:#fff;
+  padding-block:18px 22px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.s1top{width:100%;max-width:1180px;display:flex;justify-content:space-between;align-items:center}
+.s1head{text-align:center;margin-top:6px}
+.s1head h1{margin:6px 0 4px}
+.s1sub{margin:0;opacity:.75;font-size:15px}
+.scene1 .map{flex:1;width:100%;display:flex;flex-direction:column;justify-content:center}
+.scene1 .mapbox{width:min(100%,980px,calc((100dvh - 230px) * 1.55));max-width:none}
+.allbtn{border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;border-radius:999px;padding:10px 22px;cursor:pointer;font-weight:600}
+.allbtn:hover{background:rgba(255,255,255,.16)}
+.scene1.leave{animation:sceneOut .5s ease forwards}
+#scene2.enter{animation:fadeUp .55s ease both}
+@keyframes sceneOut{to{opacity:0;transform:scale(.97)}}
+.back{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);color:#fff;border-radius:999px;padding:7px 14px;cursor:pointer;font-size:14px;font-weight:600}
+.back:hover{background:rgba(255,255,255,.2)}
+.s2title{font-family:var(--f-display);font-size:clamp(28px,4.5vw,42px);line-height:1.15;margin:20px 0 6px}
+html[lang="ar"] .s2title{font-family:var(--f-ar);font-weight:800}
+.mlabel b{font-size:clamp(14px,1.6vw,18px)}
+.mlabel span{font-size:clamp(11px,1.1vw,13px)}
+.lead{stroke-opacity:.35;stroke-dasharray:2 3}
+.lead.on,.pin:hover~.lead{stroke-dasharray:none}
+.lend{fill:currentColor;opacity:.55}
+@media(max-width:600px){.mlabel{padding:3px 4px}.mlabel b{font-size:13px}}
+.map.intro .land{stroke-dasharray:2600;stroke-dashoffset:2600;fill-opacity:0;animation:drawIn 3.2s cubic-bezier(.45,0,.2,1) .3s forwards,fillIn .9s ease 3.1s forwards}
+.map.intro .grid-dots{opacity:0;animation:dotsIn 1s ease 2.8s forwards}
 .map.intro .pin{opacity:0;animation:popIn .5s cubic-bezier(.3,1.6,.5,1) forwards;transform-box:fill-box;transform-origin:center}
-.map.intro .lead,.map.intro .mlabel,.map.intro .maphint{opacity:0;animation:fadeIn .6s ease forwards}
-.map.settle{transition:transform 1.3s cubic-bezier(.65,0,.25,1);transform:none}
+.map.intro .lead,.map.intro .lend,.map.intro .mlabel{opacity:0;animation:fadeIn .6s ease forwards}
+.s1head,.allbtn,.s1top{animation:fadeIn .8s ease both}
+.allbtn{animation-delay:4.4s}
 @keyframes drawIn{to{stroke-dashoffset:0}}
 @keyframes fillIn{to{fill-opacity:.07}}
 @keyframes dotsIn{to{opacity:.12}}
 @keyframes popIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes fadeOut{to{opacity:0}}
 @keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.map.intro *,.scene1 *,.scene1.leave,#scene2.enter{animation:none!important;opacity:1!important;stroke-dasharray:none!important}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
 </head><body>
+<section class="scene1" id="scene1">
+  <div class="s1top">
+    <span class="brand" id="brand"></span>
+    <button class="lang" id="lang" type="button"></button>
+  </div>
+  <div class="s1head">
+    <h1 id="title"></h1>
+    <p class="s1sub" id="s1sub"></p>
+  </div>
+  <div class="map" id="map"></div>
+  <button class="allbtn" id="allbtn" type="button"></button>
+</section>
+
+<div id="scene2" hidden>
 <header class="hero">
   <div class="wrap">
     <div class="top">
-      <span class="brand" id="brand"></span>
-      <button class="lang" id="lang" type="button"></button>
+      <button class="back" id="back" type="button"></button>
+      <button class="lang" id="lang2" type="button"></button>
     </div>
-    <div class="hero-grid">
-      <div>
-        <h1 id="title"></h1>
-        <p class="sub" id="sub"></p>
-        <div class="stats" id="stats"></div>
-      </div>
-      <div class="map" id="map"></div>
-    </div>
+    <h2 class="s2title" id="s2title"></h2>
+    <p class="sub" id="sub"></p>
+    <div class="stats" id="stats"></div>
   </div>
 </header>
-
 <main class="wrap">
   <section class="panel" aria-label="search">
     <div class="tabs" role="tablist" id="tabs"></div>
@@ -251,6 +277,7 @@ body.outro .hero-grid>div:first-child,body.outro .panel,body.outro #results,body
   </div>
   <p class="note" id="note"></p>
 </main>
+</div>
 <div class="toast" id="toast"></div>
 
 
@@ -285,13 +312,13 @@ const T={
    allCities:"كل المحافظات",allAreas:"كل المناطق",allSpecs:"كل التخصصات",results:n=>`<b>${n}</b> نتيجة`,reset:"مسح الفلاتر",more:"عرض المزيد",
    call:"اتصال",copy:"نسخ",copied:"تم نسخ الرقم",nophone:"لا يوجد رقم هاتف",empty:"لا توجد نتائج مطابقة",emptyHint:"جرّب كلمة أخرى أو امسح الفلاتر.",
    providers:n=>`${n} مزوّد خدمة`,cities:"12 محافظة",upd:"آخر تحديث: تشرين الثاني 2026",lang:"English",
-   note:"تُحدَّث الشبكة شهرياً. يُرجى التأكد من المزوّد قبل الزيارة."},
+   note:"تُحدَّث الشبكة شهرياً. يُرجى التأكد من المزوّد قبل الزيارة.",s1sub:"اختر محافظتك لعرض الأطباء والمستشفيات والصيدليات المعتمدة",all:"عرض كل المحافظات",back:"الخريطة",allTitle:"كل المحافظات"},
  en:{brand:"United Insurance",title:"Medical Network",sub:"Find doctors, hospitals, labs and pharmacies in the United Insurance network across every governorate of Jordan.",
    tabMed:"Doctors & centers",tabPh:"Pharmacies",q:"Search by name, specialty or area",qPh:"Search by pharmacy name or area",
    allCities:"All governorates",allAreas:"All areas",allSpecs:"All specialties",results:n=>`<b>${n}</b> results`,reset:"Clear filters",more:"Show more",
    call:"Call",copy:"Copy",copied:"Number copied",nophone:"No phone listed",empty:"No matching providers",emptyHint:"Try another word or clear the filters.",
    providers:n=>`${n} providers`,cities:"12 governorates",upd:"Updated November 2026",lang:"العربية",
-   note:"The network is updated monthly. Please confirm with the provider before visiting."}};
+   note:"The network is updated monthly. Please confirm with the provider before visiting.",s1sub:"Choose your governorate to see approved doctors, hospitals and pharmacies",all:"Show all governorates",back:"Map",allTitle:"All governorates"}};
 
 // normalise Arabic/English for search
 const norm=s=>(s||"").toLowerCase().replace(/[أإآا]/g,"ا").replace(/ة/g,"ه").replace(/ى/g,"ي").replace(/[ًٌٍَُِّْـ]/g,"").replace(/[^\p{L}\p{N}]+/gu," ").trim();
@@ -321,7 +348,10 @@ function count(list,f){const m=new Map();for(const r of list){const k=f(r);m.set
 
 function renderStatic(){
   const t=T[S.lang]; document.documentElement.lang=S.lang; document.documentElement.dir=S.lang==="ar"?"rtl":"ltr";
-  $("brand").textContent=t.brand; $("title").textContent=t.title; $("sub").textContent=t.sub; $("lang").textContent=t.lang;
+  $("brand").textContent=t.brand; $("title").textContent=t.title; $("sub").textContent=t.sub; $("lang").textContent=t.lang; $("lang2").textContent=t.lang;
+  $("s1sub").textContent=t.s1sub; $("allbtn").textContent=t.all;
+  $("back").innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" ${P} style="transform:${S.lang==="ar"?"scaleX(-1)":"none"}"><path d="M15 18l-6-6 6-6"/></svg>${t.back}`;
+  $("s2title").textContent=`${t.title} — ${S.city>=0?D.cities[S.city][S.lang==="ar"?1:0]:t.allTitle}`;
   $("stats").innerHTML=[t.providers(fmt(rows.length)),t.cities,t.upd].map(s=>`<span class="stat">${s}</span>`).join("");
   const nMed=rows.filter(r=>r.g!=="pharmacy").length, nPh=rows.length-nMed;
   $("tabs").innerHTML=`<button class="tab" role="tab" data-tab="med" aria-selected="${S.tab==="med"}">${ICON.doctor}${t.tabMed} <span class="n">${fmt(nMed)}</span></button>
@@ -402,8 +432,9 @@ function renderMap(){
   const leads=[],pins=[],labels=[];
   for(const i of order){
     const [x,y]=JO.pins[CKEY[i]], n=cc.get(i)||0, r=4.5+8*Math.sqrt(n/max), on=S.city===i?" on":"", yy=ly[i], east=sideOf[i];
-    const d=east?`M${x+r} ${y} L${RX-26} ${yy} L${RX-4} ${yy}`:`M${x-r} ${y} L${Math.min(x-r-8,LX+34)} ${y} L${LX+16} ${yy} L${LX+4} ${yy}`;
-    leads.push(`<path class="lead${on}" d="${d}"></path>`);
+    // straight run from the pin to an elbow beside the name, then level into the name; order is kept, so lines never cross
+    const ex=east?RX-30:LX+30, tx=east?RX-6:LX+6;
+    leads.push(`<path class="lead${on}" d="M${x} ${y} L${ex} ${yy} L${tx} ${yy}"></path><circle class="lend" cx="${tx}" cy="${yy}" r="2"></circle>`);
     pins.push(`<g class="pin${on}" tabindex="0" role="button" data-c="${i}" aria-label="${esc(D.cities[i][L])}">
       <circle class="hit" cx="${x}" cy="${y}" r="${Math.max(r,11)}"></circle>
       <circle class="ring" cx="${x}" cy="${y}" r="${r}" style="animation-delay:${(i%6)*.35}s"></circle>
@@ -415,11 +446,18 @@ function renderMap(){
     <defs><clipPath id="jo"><path d="${JO.d}"/></clipPath></defs>
     <path class="land" d="${JO.d}"/>
     <path class="grid-dots" d="${dots}" clip-path="url(#jo)" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
-    ${leads.join("")}${pins.join("")}</svg>${labels.join("")}</div>
-    <div class="maphint">${S.lang==="ar"?"اضغط على اسم المحافظة أو الدبوس لعرض مزوّديها":"Tap a governorate name or pin to see its providers"}</div>`;
+    ${leads.join("")}${pins.join("")}</svg>${labels.join("")}</div>`;
 }
 const CKEY=D.cities.map(c=>({Zarqa:"Al-Zarqa",Balqa:"Al-Balqa",Karak:"kerak",Mafraq:"Al-Mafraq","Ma'an":"Maan",Tafila:"Al-Tafila",Ajloun:"Ajlun"}[c[0]]||c[0]));
-function pickCity(c){S.city=S.city===c?-1:c;S.area=-1;S.shown=30;renderFilters();renderResults()}
+function show(scene){
+  const one=$("scene1"), two=$("scene2");
+  if(scene===2){one.classList.add("leave");setTimeout(()=>{one.hidden=true;one.classList.remove("leave");two.hidden=false;two.classList.remove("enter");void two.offsetWidth;two.classList.add("enter");scrollTo(0,0)},420)}
+  else{two.hidden=true;one.hidden=false;scrollTo(0,0)}
+}
+function pickCity(c){S.city=c;S.area=-1;S.spec=-1;S.group="all";S.q="";$("q").value="";S.shown=30;render();show(2)}
+$("allbtn").addEventListener("click",()=>pickCity(-1));
+$("back").addEventListener("click",()=>show(1));
+$("lang2").addEventListener("click",()=>$("lang").click());
 $("map").addEventListener("click",e=>{const g=e.target.closest("[data-c]");if(g)pickCity(+g.dataset.c)});
 $("map").addEventListener("keydown",e=>{const g=e.target.closest("[data-c]");if(g&&(e.key==="Enter"||e.key===" ")){e.preventDefault();pickCity(+g.dataset.c)}});
 const _rf=renderFilters; renderFilters=function(){_rf();renderTiles();renderMap()};
@@ -429,7 +467,7 @@ $("tiles").addEventListener("click",e=>{const b=e.target.closest("[data-c]");if(
 
 $("tabs").addEventListener("click",e=>{const b=e.target.closest("[data-tab]");if(!b)return;S.tab=b.dataset.tab;S.group="all";S.spec=-1;S.shown=30;render()});
 $("chips").addEventListener("click",e=>{const b=e.target.closest("[data-g]");if(!b)return;S.group=b.dataset.g;S.spec=-1;S.shown=30;renderFilters();renderResults()});
-$("city").addEventListener("change",e=>{S.city=+e.target.value;S.area=-1;S.shown=30;renderFilters();renderResults()});
+$("city").addEventListener("change",e=>{S.city=+e.target.value;S.area=-1;S.shown=30;renderStatic();renderFilters();renderResults()});
 $("area").addEventListener("change",e=>{S.area=+e.target.value;if(S.area>=0)S.city=D.areas[S.area][0];S.shown=30;renderFilters();renderResults()});
 $("spec").addEventListener("change",e=>{S.spec=+e.target.value;S.shown=30;renderFilters();renderResults()});
 let tm;$("q").addEventListener("input",e=>{clearTimeout(tm);tm=setTimeout(()=>{S.q=e.target.value;S.shown=30;renderFilters();renderResults()},150)});
@@ -441,32 +479,15 @@ $("grid").addEventListener("click",e=>{const b=e.target.closest("[data-copy]");i
   (navigator.clipboard?navigator.clipboard.writeText(n):Promise.reject()).then(done).catch(()=>{const s=getSelection(),rg=document.createRange();rg.selectNodeContents(b.closest(".phone").querySelector(".num"));s.removeAllRanges();s.addRange(rg)})});
 render();
 
-// opening: full-screen map draws itself, then moves into the header (first load only)
+// first view: the map draws itself, pins pop in north to south, then names
 (function intro(){
   if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
-  const m=$("map"), r=m.querySelector(".mapbox").getBoundingClientRect(); if(!r.width)return;
-  const vw=innerWidth, vh=innerHeight, availH=vh-170, availW=vw-24;
-  const sc=Math.max(1,Math.min(availW/r.width, availH/r.height, 2.6));
-  m.style.setProperty("--s",sc.toFixed(3));
-  m.style.setProperty("--dx",(vw/2-(r.left+r.width/2))+"px");
-  m.style.setProperty("--dy",(vh/2+8-(r.top+r.height/2)+scrollY*0)+"px");
-  const sp=document.createElement("div"); sp.className="splash";
-  sp.innerHTML=`<div class="st">${T[S.lang].brand}<b>${T[S.lang].title}</b></div><button class="skip" type="button">${S.lang==="ar"?"تخطّي":"Skip"}</button>`;
-  document.body.appendChild(sp); document.body.classList.add("intro"); m.classList.add("intro");
-  // stagger pins top-to-bottom, then their lines and names
+  const m=$("map"); m.classList.add("intro");
   const pins=[...m.querySelectorAll(".pin")].sort((x,y)=>x.querySelector(".dot").cy.baseVal.value-y.querySelector(".dot").cy.baseVal.value);
-  pins.forEach((p,k)=>p.style.animationDelay=(2.5+k*.09)+"s");
-  m.querySelectorAll(".lead").forEach((l,k)=>l.style.animationDelay=(3.3+k*.05)+"s");
-  m.querySelectorAll(".mlabel").forEach((l,k)=>l.style.animationDelay=(3.4+k*.05)+"s");
-  m.querySelector(".maphint").style.animationDelay="5s";
-  let done=false, timers=[];
-  const finish=()=>{if(done)return;done=true;timers.forEach(clearTimeout);
-    m.classList.add("settle"); requestAnimationFrame(()=>m.classList.remove("intro"));
-    sp.classList.add("out"); document.body.classList.remove("intro"); document.body.classList.add("outro");
-    setTimeout(()=>{sp.remove();m.classList.remove("settle");document.body.classList.remove("outro");
-      m.querySelectorAll("[style*='animation-delay']").forEach(el=>el.style.animationDelay="")},1600)};
-  timers.push(setTimeout(finish,5600));
-  sp.querySelector(".skip").addEventListener("click",finish);
+  pins.forEach((p,k)=>p.style.animationDelay=(2.6+k*.09)+"s");
+  m.querySelectorAll(".lead,.lend").forEach((l,k)=>l.style.animationDelay=(3.5+k*.025)+"s");
+  m.querySelectorAll(".mlabel").forEach((l,k)=>l.style.animationDelay=(3.6+k*.05)+"s");
+  setTimeout(()=>m.classList.remove("intro"),5200);
 })();
 })();
 </script>
