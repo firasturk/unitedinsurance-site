@@ -171,7 +171,11 @@ html[dir="rtl"] .mlabel.e{flex-direction:row-reverse}
 .map.has-on .mlabel:not(.on):hover{opacity:1}
 .v-c .mlabel:hover{background:var(--chip)}
 .v-c .mlabel.on{color:#fff}
-.pin.on .dot{fill:#fff;stroke:var(--pin);stroke-width:3}
+.pin .dot{fill:#fff;stroke:var(--pin);stroke-width:1.6}
+.pin .emb{fill:#14286b;pointer-events:none}
+.pin:hover .dot{stroke-width:2.6}
+.pin.on .emb{fill:#fff}
+.pin.on .dot{fill:#2f55d4;stroke:#fff;stroke-width:2.4}
 .map.has-on .pin:not(.on) .ring{animation:none;opacity:0}
 .maphint{font-size:12.5px;opacity:.7;text-align:center;margin-top:4px}
 @keyframes pulse{0%{transform:scale(1);opacity:.85}80%,100%{transform:scale(3.2);opacity:0}}
@@ -431,19 +435,22 @@ function renderMap(){
   const pct=(v,o,w)=>((v-o)/w*100).toFixed(3)+"%";
   const leads=[],pins=[],labels=[];
   for(const i of order){
-    const [x,y]=JO.pins[CKEY[i]], n=cc.get(i)||0, r=4.5+8*Math.sqrt(n/max), on=S.city===i?" on":"", yy=ly[i], east=sideOf[i];
+    const [x,y]=JO.pins[CKEY[i]], n=cc.get(i)||0, r=8+6*Math.sqrt(n/max), on=S.city===i?" on":"", yy=ly[i], east=sideOf[i];
     // straight run from the pin to an elbow beside the name, then level into the name; order is kept, so lines never cross
     const ex=east?RX-30:LX+30, tx=east?RX-6:LX+6;
     leads.push(`<path class="lead${on}" d="M${x} ${y} L${ex} ${yy} L${tx} ${yy}"></path><circle class="lend" cx="${tx}" cy="${yy}" r="2"></circle>`);
     pins.push(`<g class="pin${on}" tabindex="0" role="button" data-c="${i}" aria-label="${esc(D.cities[i][L])}">
       <circle class="hit" cx="${x}" cy="${y}" r="${Math.max(r,11)}"></circle>
       <circle class="ring" cx="${x}" cy="${y}" r="${r}" style="animation-delay:${(i%6)*.35}s"></circle>
-      <circle class="dot" cx="${x}" cy="${y}" r="${r}"></circle></g>`);
+      <circle class="dot" cx="${x}" cy="${y}" r="${r}"></circle>
+      <use class="emb" href="#emb" x="${x-r*.5}" y="${y-r*.55}" width="${r}" height="${r*1.1}"></use></g>`);
     labels.push(`<button type="button" class="mlabel ${east?"e":"w"}${on}" data-c="${i}" style="left:${pct(east?RX:LX,VX,VW)};top:${pct(yy,VY,VH)}"><b>${esc(D.cities[i][L])}</b><span>${fmt(n)}</span></button>`);
   }
   $("map").classList.toggle("has-on",S.city>=0);
   $("map").innerHTML=`<div class="mapbox"><svg viewBox="${VX} ${VY} ${VW} ${VH}" role="img" aria-label="${S.lang==="ar"?"خريطة الأردن":"Map of Jordan"}">
-    <defs><clipPath id="jo"><path d="${JO.d}"/></clipPath></defs>
+    <defs><clipPath id="jo"><path d="${JO.d}"/></clipPath>
+      <symbol id="emb" viewBox="0 0 100 110"><rect x="44" y="0" width="12" height="10"/><rect x="44" y="13" width="12" height="97"/>
+        <path d="M40 12Q2 30 0 57Q2 84 40 108Q20 82 20 57Q20 32 40 12Z"/><path d="M60 12Q98 30 100 57Q98 84 60 108Q80 82 80 57Q80 32 60 12Z"/></symbol></defs>
     <path class="land" d="${JO.d}"/>
     <path class="grid-dots" d="${dots}" clip-path="url(#jo)" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
     ${leads.join("")}${pins.join("")}</svg>${labels.join("")}</div>`;
