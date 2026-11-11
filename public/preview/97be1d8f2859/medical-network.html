@@ -22,6 +22,7 @@
   --navy:#101c40; --navy-deep:#0a1230; --royal:#7b97ff; --royal-soft:#1c2850; --ok:#3ccf98; --chip:#1a2442;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25); color-scheme:dark}
 *{box-sizing:border-box}
+html,body{overflow-x:clip}
 body{background:var(--bg);color:var(--fg);font-family:var(--f-ar);font-size:15px;line-height:1.6}
 html[lang="en"] body{font-family:var(--f-en)}
 .wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
@@ -162,6 +163,23 @@ html[dir="rtl"] select{background-position:20px 55%,25px 55%}
 .v-c .map{--pin:var(--royal)}
 .v-c .pin .lbl,.v-c .pin .cnt{stroke:var(--bg)}
 @media (prefers-reduced-motion:reduce){.pin .ring{animation:none;opacity:.35}}
+
+/* selected governorate: larger name */
+.pin.on .lbl{font-size:20px;font-weight:800;stroke-width:5px}
+.pin.on .cnt{font-size:14px}
+/* opening animation: the map starts large in the middle of the screen, pins pop in, then it settles into the header */
+.map.intro{z-index:5;animation:mapSettle 1.3s cubic-bezier(.65,0,.25,1) 1.1s both}
+.map.intro .land{animation:drawIn 1s ease-out both;stroke-dasharray:3000;stroke-dashoffset:3000}
+.map.intro .pin{animation:popIn .45s cubic-bezier(.3,1.6,.5,1) both;transform-box:fill-box;transform-origin:center}
+.map.intro .maphint{animation:fadeUp .5s ease 2.4s both}
+.intro-hide{animation:fadeUp .6s ease 2s both}
+@keyframes mapSettle{from{transform:translate(var(--dx,0),var(--dy,0)) scale(var(--s,1.6))}to{transform:none}}
+@keyframes drawIn{to{stroke-dashoffset:0}}
+@keyframes popIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.map.intro .land{fill-opacity:0;transition:fill-opacity .8s .6s}
+.map.intro.filled .land{fill-opacity:.07}
+@media (prefers-reduced-motion:reduce){.map.intro,.map.intro *,.intro-hide{animation:none!important;stroke-dasharray:none!important}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
@@ -387,6 +405,22 @@ $("grid").addEventListener("click",e=>{const b=e.target.closest("[data-copy]");i
   const done=()=>{const el=$("toast");el.textContent=T[S.lang].copied;el.classList.add("on");setTimeout(()=>el.classList.remove("on"),1400)};
   (navigator.clipboard?navigator.clipboard.writeText(n):Promise.reject()).then(done).catch(()=>{const s=getSelection(),rg=document.createRange();rg.selectNodeContents(b.closest(".phone").querySelector(".num"));s.removeAllRanges();s.addRange(rg)})});
 render();
+
+// opening animation (first load only)
+(function intro(){
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  const m=$("map"), r=m.getBoundingClientRect(); if(!r.width)return;
+  const vw=innerWidth, vh=Math.min(innerHeight,900);
+  const s=Math.min(1.9,(vh*.8)/r.height,(vw*.85)/r.width);
+  m.style.setProperty("--s",Math.max(1.15,s).toFixed(2));
+  m.style.setProperty("--dx",(vw/2-(r.left+r.width/2))+"px");
+  m.style.setProperty("--dy",(vh/2-(r.top+r.height/2))+"px");
+  m.classList.add("intro");
+  m.querySelectorAll(".pin").forEach((p,i)=>p.style.animationDelay=(.45+i*.06)+"s");
+  document.querySelectorAll(".hero-grid > div:first-child, .panel, #results").forEach(el=>el.classList.add("intro-hide"));
+  requestAnimationFrame(()=>m.classList.add("filled"));
+  setTimeout(()=>{m.classList.remove("intro","filled");document.querySelectorAll(".intro-hide").forEach(el=>el.classList.remove("intro-hide"))},3200);
+})();
 })();
 </script>
 
