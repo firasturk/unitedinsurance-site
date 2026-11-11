@@ -328,19 +328,9 @@ export const submitJobApplication = createServerFn({ method: "POST" })
     } as any);
     if (error) throw new Error(error.message);
 
-    const { sendNotification } = await import("./notify.server");
-    await sendNotification({
-      subject: `New job application — ${vacancy?.title_en ?? "Talent Pool"}`,
-      replyTo: data.email,
-      lines: [
-        ["Vacancy", vacancy?.title_en ?? "Talent Pool"],
-        ["Name", data.full_name],
-        ["Email", data.email],
-        ["Phone", data.phone || "—"],
-        ["Cover note", data.cover_note || "—"],
-        ["CV", "Download from Admin → Applications"],
-      ],
-    });
+    // Applications live in the dashboard only (Admin → Applications, where HR reviews them and
+    // previews the CV); no e-mail is sent for them. Contact, quote and complaint e-mails are
+    // unchanged.
     return { ok: true };
   });
 
