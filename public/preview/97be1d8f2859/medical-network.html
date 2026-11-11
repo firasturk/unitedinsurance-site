@@ -384,7 +384,7 @@ var renderFilters=function(){
     const sc=count(base("spec"),r=>r.si);
     const lab=s=>L?fixAr(s[1]):(SPEC_EN[s[0]]||s[0]);
     $("spec").innerHTML=`<option value="-1">${t.allSpecs}</option>`+D.specs.map((s,i)=>[i,s]).filter(([i])=>sc.get(i)).sort((a,b)=>lab(a[1]).localeCompare(lab(b[1]),S.lang))
-      .map(([i,s])=>`<option value="${i}" ${S.spec===i?"selected":""}>${esc(lab(s))} (${fmt(sc.get(i))})</option>`).join("");
+      .map(([i,s])=>`<option value="${i}" ${S.spec===i?"selected":""}>${esc(lab(s))}</option>`).join("");
   }
 }
 function card(r){
