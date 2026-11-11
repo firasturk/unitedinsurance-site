@@ -248,6 +248,30 @@ html[lang="ar"] .s2title{font-family:var(--f-ar);font-weight:800}
 @keyframes fall{from{transform:translateY(-4px);opacity:0}30%{opacity:1}to{transform:translateY(8px);opacity:0}}
 @keyframes flash{0%,100%{opacity:0}8%,14%{opacity:1}11%{opacity:.2}}
 @media (prefers-reduced-motion:reduce){.wx *{animation:none!important}}
+
+/* scene 1: provider counter + weather beside each governorate */
+.s1count{margin-top:8px;font-size:15px;opacity:0;animation:fadeIn .6s ease 3.3s forwards}
+.s1count b{font-family:var(--f-en);font-size:clamp(22px,3vw,30px);font-weight:700;color:#8fb0ff;font-variant-numeric:tabular-nums;margin-inline-end:6px}
+.mlabel .wxs{display:inline-flex;align-items:center;gap:3px;font-family:var(--f-en);font-size:clamp(11px,1vw,13px);opacity:0;animation:fadeIn .6s ease forwards;font-variant-numeric:tabular-nums}
+.mlabel .wxs svg{width:20px;height:20px;overflow:visible}
+.mlabel .wxs .sun{fill:#ffcf5a}.mlabel .wxs .rays{stroke:#ffcf5a;stroke-width:3;stroke-linecap:round;transform-origin:24px 24px;animation:spin 14s linear infinite}
+.mlabel .wxs .moon{fill:#dfe6ff}.mlabel .wxs .cloud{fill:#e8eefc}.mlabel .wxs .cloud2{fill:#b9c6e8}
+.mlabel .wxs .drop{stroke:#8fb0ff;stroke-width:2.6;stroke-linecap:round;animation:fall 1s linear infinite}
+.mlabel .wxs .flake{fill:#fff;animation:fall 2.2s linear infinite}.mlabel .wxs .bolt{fill:#ffcf5a;animation:flash 2.6s steps(1) infinite}
+.mlabel .wxs .fog{stroke:#c9d4f0;stroke-width:3;stroke-linecap:round}
+@media(max-width:600px){.mlabel .wxs svg{width:15px;height:15px}.mlabel{gap:4px}}
+/* scene 2: quick filters */
+.quick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:22px}
+.qbtn{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--surface);border-radius:16px;padding:12px 14px;cursor:pointer;color:var(--fg);text-align:start;min-width:0;transition:border-color .2s,transform .2s,box-shadow .2s}
+.qbtn:hover{border-color:var(--q);transform:translateY(-1px);box-shadow:var(--shadow)}
+.qbtn .qi{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:color-mix(in oklab,var(--q) 14%,transparent);color:var(--q)}
+.qbtn b{display:block;font-size:15px}
+.qbtn span{display:block;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.qbtn[aria-pressed="true"]{border-color:var(--q);background:color-mix(in oklab,var(--q) 9%,var(--surface))}
+@media(max-width:560px){.qbtn{flex-direction:column;align-items:center;text-align:center;padding:10px 6px;gap:6px}.qbtn b{font-size:13.5px}}
+/* WhatsApp share */
+.btn.wa{color:#1a9f53;border-color:color-mix(in oklab,#25d366 45%,var(--line))}
+.btn.wa svg{width:16px;height:16px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 
@@ -260,6 +284,7 @@ html[lang="ar"] .s2title{font-family:var(--f-ar);font-weight:800}
   <div class="s1head">
     <h1 id="title"></h1>
     <p class="s1sub" id="s1sub"></p>
+    <div class="s1count" id="s1count"></div>
   </div>
   <div class="map" id="map"></div>
   <button class="allbtn" id="allbtn" type="button"></button>
@@ -297,6 +322,7 @@ html[lang="ar"] .s2title{font-family:var(--f-ar);font-weight:800}
 
   <div id="results">
   <div class="tiles" id="tiles"></div>
+  <div class="quick" id="quick"></div>
   <div class="bar">
     <div class="count" id="count"></div>
     <button class="reset" id="reset" type="button"></button>
@@ -341,13 +367,13 @@ const T={
    allCities:"كل المحافظات",allAreas:"كل المناطق",allSpecs:"كل التخصصات",results:n=>`<b>${n}</b> نتيجة`,reset:"مسح الفلاتر",more:"عرض المزيد",
    call:"اتصال",copy:"نسخ",copied:"تم نسخ الرقم",nophone:"لا يوجد رقم هاتف",empty:"لا توجد نتائج مطابقة",emptyHint:"جرّب كلمة أخرى أو امسح الفلاتر.",
    providers:n=>`${n} مزوّد خدمة`,cities:"12 محافظة",upd:"آخر تحديث: تشرين الثاني 2026",lang:"English",
-   note:"تُحدَّث الشبكة شهرياً. يُرجى التأكد من المزوّد قبل الزيارة.",s1sub:"اختر محافظتك لعرض الأطباء والمستشفيات والصيدليات المعتمدة",all:"عرض كل المحافظات",back:"الخريطة",allTitle:"كل المحافظات"},
+   note:"تُحدَّث الشبكة شهرياً. يُرجى التأكد من المزوّد قبل الزيارة.",share:"مشاركة",qHosp:"مستشفيات",qEr:"طوارئ",qPh:"صيدليات",count1:"مزوّد خدمة معتمد في الشبكة",waHead:"من الشبكة الطبية — المتحدة للتأمين",s1sub:"اختر محافظتك لعرض الأطباء والمستشفيات والصيدليات المعتمدة",all:"عرض كل المحافظات",back:"الخريطة",allTitle:"كل المحافظات"},
  en:{brand:"United Insurance",title:"Medical Network",sub:"Find doctors, hospitals, labs and pharmacies in the United Insurance network across every governorate of Jordan.",
    tabMed:"Doctors & centers",tabPh:"Pharmacies",q:"Search by name, specialty or area",qPh:"Search by pharmacy name or area",
    allCities:"All governorates",allAreas:"All areas",allSpecs:"All specialties",results:n=>`<b>${n}</b> results`,reset:"Clear filters",more:"Show more",
    call:"Call",copy:"Copy",copied:"Number copied",nophone:"No phone listed",empty:"No matching providers",emptyHint:"Try another word or clear the filters.",
    providers:n=>`${n} providers`,cities:"12 governorates",upd:"Updated November 2026",lang:"العربية",
-   note:"The network is updated monthly. Please confirm with the provider before visiting.",s1sub:"Choose your governorate to see approved doctors, hospitals and pharmacies",all:"Show all governorates",back:"Map",allTitle:"All governorates"}};
+   note:"The network is updated monthly. Please confirm with the provider before visiting.",share:"Share",qHosp:"Hospitals",qEr:"Emergency",qPh:"Pharmacies",count1:"approved providers in the network",waHead:"From the United Insurance medical network",s1sub:"Choose your governorate to see approved doctors, hospitals and pharmacies",all:"Show all governorates",back:"Map",allTitle:"All governorates"}};
 
 // normalise Arabic/English for search
 const norm=s=>(s||"").toLowerCase().replace(/[أإآا]/g,"ا").replace(/ة/g,"ه").replace(/ى/g,"ي").replace(/[ًٌٍَُِّْـ]/g,"").replace(/[^\p{L}\p{N}]+/gu," ").trim();
@@ -422,13 +448,23 @@ function card(r){
   const street=(L?r.adrAr:r.adrEn).split("/").map(s=>s.trim()).filter(Boolean).slice(2).join(" / ");
   const bld=L?r.bAr:r.bEn;
   const detail=[street,bld].filter(Boolean).join(L?" · ":" · ");
-  const phone=r.ph?`<span class="num">${r.ph}</span><span class="acts"><button class="btn" type="button" data-copy="${r.ph}">${t.copy}</button><a class="btn call" href="tel:${r.ph}">${t.call}</a></span>`:`<span class="nophone">${t.nophone}</span>`;
+  const msg=[t.waHead,"",name,kind,area+(detail?" — "+detail:""),r.ph?("📞 "+r.ph):""].filter(x=>x!=="").join("\n");
+  const wa=`<a class="btn wa" href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener" aria-label="${t.share}"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2c0 1.3.9 2.5 1 2.7.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>${t.share}</a>`;
+  const phone=r.ph?`<span class="num">${r.ph}</span><span class="acts">${wa}<button class="btn" type="button" data-copy="${r.ph}">${t.copy}</button><a class="btn call" href="tel:${r.ph}">${t.call}</a></span>`:`<span class="nophone">${t.nophone}</span><span class="acts">${wa}</span>`;
   return `<article class="card" style="--stripe:${STRIPE[r.g]}"><div class="head"><span class="ico">${ICON[r.g]}</span><div style="min-width:0"><h3 class="name">${esc(name)}</h3><div class="kind">${esc(kind)}</div></div></div>
    <div class="loc">${PIN}<div><span class="area">${esc(area)}</span>${detail?`<br>${esc(detail)}`:""}</div></div>
    <div class="phone">${phone}</div></article>`;
 }
+function renderQuick(){
+  const t=T[S.lang];
+  const inCity=r=>(S.city<0||r.ci===S.city)&&(S.area<0||r.ai===S.area);
+  const n=g=>rows.filter(r=>r.g===g&&inCity(r)).length;
+  const Q=[["hospital",t.qHosp,"#c2410c","med"],["emergency",t.qEr,"#dc2626","med"],["pharmacy",t.qPh,"#0f9d6b","ph"]];
+  $("quick").innerHTML=Q.map(([g,label,col,tab])=>{const on=(g==="pharmacy"?S.tab==="ph":S.tab==="med"&&S.group===g);
+    return `<button class="qbtn" type="button" data-q="${g}" style="--q:${col}" aria-pressed="${on}"><span class="qi">${ICON[g]}</span><span style="min-width:0"><b>${label}</b><span>${fmt(n(g))}</span></span></button>`}).join("");
+}
 function renderResults(){
-  const t=T[S.lang], list=base();
+  const t=T[S.lang], list=base(); renderQuick();
   // doctors and facilities first by type, then name
   $("count").innerHTML=t.results(fmt(list.length));
   $("reset").hidden=!(S.q||S.city>=0||S.area>=0||S.spec>=0||S.group!=="all");
@@ -479,6 +515,7 @@ function renderMap(){
     <path class="land" d="${JO.d}"/>
     <path class="grid-dots" d="${dots}" clip-path="url(#jo)" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
     ${leads.join("")}${pins.join("")}</svg>${labels.join("")}</div>`;
+  if(typeof paintMapWx==="function")paintMapWx();
 }
 const CKEY=D.cities.map(c=>({Zarqa:"Al-Zarqa",Balqa:"Al-Balqa",Karak:"kerak",Mafraq:"Al-Mafraq","Ma'an":"Maan",Tafila:"Al-Tafila",Ajloun:"Ajlun"}[c[0]]||c[0]));
 
@@ -524,6 +561,24 @@ function renderWx(){
     el.hidden=false; el.style.animation="none"; void el.offsetWidth; el.style.animation="";
   });
 }
+function paintMapWx(){
+  document.querySelectorAll("#map .mlabel").forEach(b=>{
+    const d=WX[CKEY[+b.dataset.c]]; if(!d||!d.current||b.querySelector(".wxs"))return;
+    const sp=document.createElement("span"); sp.className="wxs";
+    sp.innerHTML=wxIcon(wxKind(d.current.weather_code,d.current.is_day))+Math.round(d.current.temperature_2m)+"°";
+    if($("map").classList.contains("intro"))sp.style.animationDelay="4.4s";
+    b.appendChild(sp);
+  });
+}
+function countUp(){
+  const el=$("s1count"), total=rows.length, t=T[S.lang];
+  el.innerHTML=`<b>0</b>${t.count1}`; const b=el.querySelector("b");
+  const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(reduce){b.textContent=fmt(total);return}
+  setTimeout(()=>{const t0=performance.now(),dur=1600;
+    const step=now=>{const k=Math.min(1,(now-t0)/dur), e=1-Math.pow(1-k,3); b.textContent=fmt(Math.round(total*e)); if(k<1)requestAnimationFrame(step)};
+    requestAnimationFrame(step)},3300);
+}
 function show(scene){
   const one=$("scene1"), two=$("scene2");
   if(scene===2){one.classList.add("leave");setTimeout(()=>{one.hidden=true;one.classList.remove("leave");two.hidden=false;two.classList.remove("enter");void two.offsetWidth;two.classList.add("enter");scrollTo(0,0)},420)}
@@ -531,6 +586,9 @@ function show(scene){
 }
 function pickCity(c){S.city=c;S.area=-1;S.spec=-1;S.group="all";S.q="";$("q").value="";S.shown=30;render();renderWx();show(2)}
 $("allbtn").addEventListener("click",()=>pickCity(-1));
+$("quick").addEventListener("click",e=>{const b=e.target.closest("[data-q]");if(!b)return;const g=b.dataset.q;
+  if(g==="pharmacy"){S.tab="ph";S.group="all"}else{S.tab="med";S.group=S.group===g?"all":g}
+  S.spec=-1;S.shown=30;renderStatic();renderFilters();renderResults();$("count").scrollIntoView({behavior:"smooth",block:"start"})});
 $("back").addEventListener("click",()=>show(1));
 $("lang2").addEventListener("click",()=>$("lang").click());
 $("map").addEventListener("click",e=>{const g=e.target.closest("[data-c]");if(g)pickCity(+g.dataset.c)});
@@ -548,12 +606,13 @@ $("spec").addEventListener("change",e=>{S.spec=+e.target.value;S.shown=30;render
 let tm;$("q").addEventListener("input",e=>{clearTimeout(tm);tm=setTimeout(()=>{S.q=e.target.value;S.shown=30;renderFilters();renderResults()},150)});
 $("reset").addEventListener("click",()=>{S.q="";$("q").value="";S.city=-1;S.area=-1;S.spec=-1;S.group="all";S.shown=30;renderFilters();renderResults()});
 $("more").addEventListener("click",()=>{S.shown+=30;renderResults()});
-$("lang").addEventListener("click",()=>{S.lang=S.lang==="ar"?"en":"ar";try{localStorage.setItem("net-lang",S.lang)}catch(e){};render();if(typeof renderWx==="function")renderWx()});
+$("lang").addEventListener("click",()=>{S.lang=S.lang==="ar"?"en":"ar";try{localStorage.setItem("net-lang",S.lang)}catch(e){};render();if(typeof renderWx==="function")renderWx();const c=$("s1count").querySelector("b");$("s1count").innerHTML=`<b>${fmt(rows.length)}</b>${T[S.lang].count1}`});
 $("grid").addEventListener("click",e=>{const b=e.target.closest("[data-copy]");if(!b)return;const n=b.dataset.copy;
   const done=()=>{const el=$("toast");el.textContent=T[S.lang].copied;el.classList.add("on");setTimeout(()=>el.classList.remove("on"),1400)};
   (navigator.clipboard?navigator.clipboard.writeText(n):Promise.reject()).then(done).catch(()=>{const s=getSelection(),rg=document.createRange();rg.selectNodeContents(b.closest(".phone").querySelector(".num"));s.removeAllRanges();s.addRange(rg)})});
 render();
 
+loadWx().then(paintMapWx); countUp();
 // first view: the map draws itself, pins pop in north to south, then names
 (function intro(){
   if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
