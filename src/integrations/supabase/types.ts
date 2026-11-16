@@ -441,6 +441,36 @@ export type Database = {
           },
         ]
       }
+      medical_network: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          data: Json
+          file_name: string | null
+          id: string
+          period: string
+          stats: Json
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          data: Json
+          file_name?: string | null
+          id?: string
+          period: string
+          stats?: Json
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          data?: Json
+          file_name?: string | null
+          id?: string
+          period?: string
+          stats?: Json
+        }
+        Relationships: []
+      }
       job_vacancies: {
         Row: {
           closing_date: string | null

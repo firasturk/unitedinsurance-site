@@ -5,7 +5,7 @@ import { useEffect } from "react";
 import { meRole, type AdminRole } from "@/lib/admin.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { LayoutDashboard, Newspaper, Users, Home, FileText, LogOut, ShieldAlert, ArrowLeft, Shield, Handshake, Briefcase, Inbox, MailOpen, MessageSquareWarning } from "lucide-react";
+import { LayoutDashboard, Newspaper, Users, Home, FileText, LogOut, ShieldAlert, ArrowLeft, Shield, Handshake, Briefcase, Inbox, MailOpen, MessageSquareWarning, MapPin } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminLayout,
@@ -21,6 +21,7 @@ const NAV: { to: string; label: string; icon: typeof LayoutDashboard; exact?: bo
   { to: "/admin/homepage", label: "Homepage", icon: Home },
   { to: "/admin/forms", label: "Forms (PDF)", icon: FileText },
   { to: "/admin/agents", label: "Agents", icon: Handshake },
+  { to: "/admin/medical-network", label: "Medical Network", icon: MapPin },
   { to: "/admin/vacancies", label: "Vacancies", icon: Briefcase, roles: ["admin", "hr"] },
   { to: "/admin/applications", label: "Applications", icon: Inbox, roles: ["admin", "hr"] },
   { to: "/admin/messages", label: "Contact Messages", icon: MailOpen },

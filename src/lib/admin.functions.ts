@@ -510,3 +510,86 @@ export const deleteComplaint = createServerFn({ method: "POST" })
     if (error) throw new Error(error.message);
     return { ok: true };
   });
+
+// ===== Medical network (monthly NatHealth workbook) =====
+// The workbook is parsed in the browser (src/lib/medical-network.ts); the server only checks the
+// shape, stores the snapshot and keeps the last 12 months.
+const networkInput = z.object({
+  period: z.string().regex(/^\d{4}-\d{2}$/),
+  fileName: z.string().max(200).optional(),
+  data: z.object({
+    updated: z.string(),
+    cities: z.array(z.tuple([z.string(), z.string()])).min(1).max(50),
+    areas: z.array(z.tuple([z.number().int(), z.string(), z.string()])).min(1).max(2000),
+    specs: z.array(z.tuple([z.string(), z.string()])).max(500),
+    rows: z.array(z.array(z.union([z.string(), z.number()])).length(12)).min(100).max(50000),
+  }),
+  stats: z.record(z.string(), z.unknown()),
+});
+
+export const listMedicalNetworkUploads = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { data, error } = await context.supabase
+      .from("medical_network")
+      .select("id, period, stats, file_name, created_at")
+      .order("created_at", { ascending: false })
+      .limit(12);
+    if (error) throw new Error(error.message);
+    return data ?? [];
+  });
+
+/** The live snapshot's rows' keys, so the dashboard can show what changed before publishing. */
+export const currentMedicalNetworkKeys = createServerFn({ method: "GET" })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { data, error } = await context.supabase
+      .from("medical_network")
+      .select("data")
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    const rows = ((data?.data as any)?.rows ?? []) as unknown[][];
+    return rows.map((r) => String(r[11] ?? ""));
+  });
+
+export const publishMedicalNetwork = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: unknown) => networkInput.parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { error } = await context.supabase.from("medical_network").insert({
+      period: data.period,
+      data: data.data as any,
+      stats: data.stats as any,
+      file_name: data.fileName ?? null,
+      created_by: context.userId,
+    });
+    if (error) throw new Error(error.message);
+    // keep the newest 12 snapshots
+    const { data: old } = await context.supabase
+      .from("medical_network")
+      .select("id")
+      .order("created_at", { ascending: false })
+      .range(12, 200);
+    if (old?.length) await context.supabase.from("medical_network").delete().in("id", old.map((o) => o.id));
+    return { ok: true };
+  });
+
+/** Make an older snapshot the live one again (re-inserts it as the newest). */
+export const restoreMedicalNetwork = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { id: string }) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data, context }) => {
+    await assertAdmin(context.supabase, context.userId);
+    const { data: row, error } = await context.supabase.from("medical_network").select("*").eq("id", data.id).single();
+    if (error || !row) throw new Error(error?.message ?? "Not found");
+    const { error: e2 } = await context.supabase.from("medical_network").insert({
+      period: row.period, data: row.data, stats: row.stats, file_name: row.file_name, created_by: context.userId,
+    });
+    if (e2) throw new Error(e2.message);
+    return { ok: true };
+  });

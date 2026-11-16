@@ -91,7 +91,11 @@ export default {
         return withSecurityHeaders(Response.redirect(url.toString(), 301));
       }
       // Old Joomla URLs (/index.php/en/…) still show up in Google: send them to the new pages.
-      const legacy = legacyRedirect(url.pathname);
+      // the client-review link of the medical network page now points at the live page
+    if (url.pathname.startsWith("/preview/97be1d8f2859/")) {
+      return withSecurityHeaders(Response.redirect(new URL("/medical-network", url.origin).toString(), 301));
+    }
+    const legacy = legacyRedirect(url.pathname);
       if (legacy) {
         return withSecurityHeaders(Response.redirect(new URL(legacy, url.origin).toString(), 301));
       }

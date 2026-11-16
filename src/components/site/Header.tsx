@@ -9,7 +9,8 @@ import { useLang } from "@/lib/i18n";
 
 type NavItem =
   | { k: string; to: string; children?: { k: string; to: string; hash?: string }[] }
-  | { k: string; to: string; hash?: string };
+  | { k: string; to: string; hash?: string }
+  | { k: string; to: string; href: true }; // standalone page outside the app router (plain <a>)
 
 const navKeys: NavItem[] = [
   { k: "nav.home", to: "/" },
@@ -23,6 +24,7 @@ const navKeys: NavItem[] = [
     ],
   },
   { k: "nav.insurance", to: "/insurance" },
+  { k: "nav.network", to: "/medical-network", href: true },
   { k: "nav.reports", to: "/reports" },
   {
     k: "nav.governance",
@@ -117,6 +119,14 @@ export function Header() {
                   </div>
                 </div>
               </div>
+            ) : "href" in n ? (
+              <a
+                key={n.to}
+                href={lang === "en" ? `/en${n.to}` : n.to}
+                className="px-2 py-1.5 text-[11px] font-medium text-foreground/80 hover:text-foreground hover:bg-white/30 rounded-full transition-colors whitespace-nowrap 2xl:px-2.5 2xl:text-xs"
+              >
+                {t(n.k)}
+              </a>
             ) : (
               <Link
                 key={n.to}
@@ -190,6 +200,11 @@ export function Header() {
               <nav className="flex flex-col gap-1.5">
                 {navKeys.map(n => (
                   <div key={n.to}>
+                    {"href" in n ? (
+                      <a href={lang === "en" ? `/en${n.to}` : n.to} className="block px-3 py-3 rounded-lg text-base font-medium bg-white/60 hover:bg-white/90 transition">
+                        {t(n.k)}
+                      </a>
+                    ) : (
                     <Link
                       to={n.to}
                       onClick={() => setOpen(false)}
@@ -199,6 +214,7 @@ export function Header() {
                     >
                       {t(n.k)}
                     </Link>
+                    )}
                     {"children" in n && n.children && (
                       <div className="ms-4 flex flex-col gap-1 mt-1">
                         {n.children.map(c => (

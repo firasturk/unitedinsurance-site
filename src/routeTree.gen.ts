@@ -45,11 +45,13 @@ import { Route as AuthenticatedAdminArticlesRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminComplaintsRouteImport } from './routes/_authenticated/admin.complaints'
 import { Route as AuthenticatedAdminFormsRouteImport } from './routes/_authenticated/admin.forms'
 import { Route as AuthenticatedAdminHomepageRouteImport } from './routes/_authenticated/admin.homepage'
+import { Route as AuthenticatedAdminMedicalNetworkRouteImport } from './routes/_authenticated/admin.medical-network'
 import { Route as AuthenticatedAdminMessagesRouteImport } from './routes/_authenticated/admin.messages'
 import { Route as AuthenticatedAdminPartnersRouteImport } from './routes/_authenticated/admin.partners'
 import { Route as AuthenticatedAdminServicesRouteImport } from './routes/_authenticated/admin.services'
 import { Route as AuthenticatedAdminTeamRouteImport } from './routes/_authenticated/admin.team'
 import { Route as AuthenticatedAdminVacanciesRouteImport } from './routes/_authenticated/admin.vacancies'
+import { Route as ApiPublicMedicalNetworkRouteImport } from './routes/api/public/medical-network'
 import { Route as ApiPublicMediaSplatRouteImport } from './routes/api/public/media/$'
 
 const IndexRoute = IndexRouteImport.update({
@@ -236,6 +238,12 @@ const AuthenticatedAdminHomepageRoute =
     path: '/homepage',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminMedicalNetworkRoute =
+  AuthenticatedAdminMedicalNetworkRouteImport.update({
+    id: '/medical-network',
+    path: '/medical-network',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminMessagesRoute =
   AuthenticatedAdminMessagesRouteImport.update({
     id: '/messages',
@@ -265,6 +273,11 @@ const AuthenticatedAdminVacanciesRoute =
     path: '/vacancies',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const ApiPublicMedicalNetworkRoute = ApiPublicMedicalNetworkRouteImport.update({
+  id: '/api/public/medical-network',
+  path: '/api/public/medical-network',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicMediaSplatRoute = ApiPublicMediaSplatRouteImport.update({
   id: '/api/public/media/$',
   path: '/api/public/media/$',
@@ -306,11 +319,13 @@ export interface FileRoutesByFullPath {
   '/admin/complaints': typeof AuthenticatedAdminComplaintsRoute
   '/admin/forms': typeof AuthenticatedAdminFormsRoute
   '/admin/homepage': typeof AuthenticatedAdminHomepageRoute
+  '/admin/medical-network': typeof AuthenticatedAdminMedicalNetworkRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/partners': typeof AuthenticatedAdminPartnersRoute
   '/admin/services': typeof AuthenticatedAdminServicesRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
   '/admin/vacancies': typeof AuthenticatedAdminVacanciesRoute
+  '/api/public/medical-network': typeof ApiPublicMedicalNetworkRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
@@ -344,11 +359,13 @@ export interface FileRoutesByTo {
   '/admin/complaints': typeof AuthenticatedAdminComplaintsRoute
   '/admin/forms': typeof AuthenticatedAdminFormsRoute
   '/admin/homepage': typeof AuthenticatedAdminHomepageRoute
+  '/admin/medical-network': typeof AuthenticatedAdminMedicalNetworkRoute
   '/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/admin/partners': typeof AuthenticatedAdminPartnersRoute
   '/admin/services': typeof AuthenticatedAdminServicesRoute
   '/admin/team': typeof AuthenticatedAdminTeamRoute
   '/admin/vacancies': typeof AuthenticatedAdminVacanciesRoute
+  '/api/public/medical-network': typeof ApiPublicMedicalNetworkRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
@@ -389,11 +406,13 @@ export interface FileRoutesById {
   '/_authenticated/admin/complaints': typeof AuthenticatedAdminComplaintsRoute
   '/_authenticated/admin/forms': typeof AuthenticatedAdminFormsRoute
   '/_authenticated/admin/homepage': typeof AuthenticatedAdminHomepageRoute
+  '/_authenticated/admin/medical-network': typeof AuthenticatedAdminMedicalNetworkRoute
   '/_authenticated/admin/messages': typeof AuthenticatedAdminMessagesRoute
   '/_authenticated/admin/partners': typeof AuthenticatedAdminPartnersRoute
   '/_authenticated/admin/services': typeof AuthenticatedAdminServicesRoute
   '/_authenticated/admin/team': typeof AuthenticatedAdminTeamRoute
   '/_authenticated/admin/vacancies': typeof AuthenticatedAdminVacanciesRoute
+  '/api/public/medical-network': typeof ApiPublicMedicalNetworkRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/api/public/media/$': typeof ApiPublicMediaSplatRoute
 }
@@ -434,11 +453,13 @@ export interface FileRouteTypes {
     | '/admin/complaints'
     | '/admin/forms'
     | '/admin/homepage'
+    | '/admin/medical-network'
     | '/admin/messages'
     | '/admin/partners'
     | '/admin/services'
     | '/admin/team'
     | '/admin/vacancies'
+    | '/api/public/medical-network'
     | '/admin/'
     | '/api/public/media/$'
   fileRoutesByTo: FileRoutesByTo
@@ -472,11 +493,13 @@ export interface FileRouteTypes {
     | '/admin/complaints'
     | '/admin/forms'
     | '/admin/homepage'
+    | '/admin/medical-network'
     | '/admin/messages'
     | '/admin/partners'
     | '/admin/services'
     | '/admin/team'
     | '/admin/vacancies'
+    | '/api/public/medical-network'
     | '/admin'
     | '/api/public/media/$'
   id:
@@ -516,11 +539,13 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/complaints'
     | '/_authenticated/admin/forms'
     | '/_authenticated/admin/homepage'
+    | '/_authenticated/admin/medical-network'
     | '/_authenticated/admin/messages'
     | '/_authenticated/admin/partners'
     | '/_authenticated/admin/services'
     | '/_authenticated/admin/team'
     | '/_authenticated/admin/vacancies'
+    | '/api/public/medical-network'
     | '/_authenticated/admin/'
     | '/api/public/media/$'
   fileRoutesById: FileRoutesById
@@ -545,6 +570,7 @@ export interface RootRouteChildren {
   WhistleblowerRoute: typeof WhistleblowerRoute
   NewsSlugRoute: typeof NewsSlugRoute
   NewsIndexRoute: typeof NewsIndexRoute
+  ApiPublicMedicalNetworkRoute: typeof ApiPublicMedicalNetworkRoute
   ApiPublicMediaSplatRoute: typeof ApiPublicMediaSplatRoute
 }
 
@@ -802,6 +828,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminHomepageRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/medical-network': {
+      id: '/_authenticated/admin/medical-network'
+      path: '/medical-network'
+      fullPath: '/admin/medical-network'
+      preLoaderRoute: typeof AuthenticatedAdminMedicalNetworkRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/messages': {
       id: '/_authenticated/admin/messages'
       path: '/messages'
@@ -837,6 +870,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminVacanciesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/api/public/medical-network': {
+      id: '/api/public/medical-network'
+      path: '/api/public/medical-network'
+      fullPath: '/api/public/medical-network'
+      preLoaderRoute: typeof ApiPublicMedicalNetworkRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/media/$': {
       id: '/api/public/media/$'
       path: '/api/public/media/$'
@@ -854,6 +894,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminComplaintsRoute: typeof AuthenticatedAdminComplaintsRoute
   AuthenticatedAdminFormsRoute: typeof AuthenticatedAdminFormsRoute
   AuthenticatedAdminHomepageRoute: typeof AuthenticatedAdminHomepageRoute
+  AuthenticatedAdminMedicalNetworkRoute: typeof AuthenticatedAdminMedicalNetworkRoute
   AuthenticatedAdminMessagesRoute: typeof AuthenticatedAdminMessagesRoute
   AuthenticatedAdminPartnersRoute: typeof AuthenticatedAdminPartnersRoute
   AuthenticatedAdminServicesRoute: typeof AuthenticatedAdminServicesRoute
@@ -869,6 +910,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminComplaintsRoute: AuthenticatedAdminComplaintsRoute,
   AuthenticatedAdminFormsRoute: AuthenticatedAdminFormsRoute,
   AuthenticatedAdminHomepageRoute: AuthenticatedAdminHomepageRoute,
+  AuthenticatedAdminMedicalNetworkRoute: AuthenticatedAdminMedicalNetworkRoute,
   AuthenticatedAdminMessagesRoute: AuthenticatedAdminMessagesRoute,
   AuthenticatedAdminPartnersRoute: AuthenticatedAdminPartnersRoute,
   AuthenticatedAdminServicesRoute: AuthenticatedAdminServicesRoute,
@@ -966,6 +1008,7 @@ const rootRouteChildren: RootRouteChildren = {
   WhistleblowerRoute: WhistleblowerRoute,
   NewsSlugRoute: NewsSlugRoute,
   NewsIndexRoute: NewsIndexRoute,
+  ApiPublicMedicalNetworkRoute: ApiPublicMedicalNetworkRoute,
   ApiPublicMediaSplatRoute: ApiPublicMediaSplatRoute,
 }
 export const routeTree = rootRouteImport

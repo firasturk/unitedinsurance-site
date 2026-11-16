@@ -29,6 +29,7 @@ export const dict: Dict = {
   "nav.complaints": { en: "Complaints", ar: "الشكاوى" },
   "nav.whistleblower": { en: "Whistleblower", ar: "الإبلاغ عن المخالفات" },
   "nav.agents": { en: "Agents", ar: "الوكلاء" },
+  "nav.network": { en: "Medical Network", ar: "الشبكة الطبية" },
   "nav.careers": { en: "Careers", ar: "الوظائف" },
   "nav.quote": { en: "Request a Quote", ar: "اطلب عرض سعر" },
 

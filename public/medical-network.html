@@ -1,0 +1,647 @@
+<!doctype html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><link rel="icon" href="/favicon.ico">
+<style>[hidden]{display:none!important}body{margin:0}img{max-width:100%}</style>
+<title>الشبكة الطبية — المتحدة للتأمين</title>
+<meta name="description" content="ابحث عن الأطباء والمستشفيات والمختبرات والصيدليات ضمن الشبكة الطبية لشركة نات هيلث المعتمدة لمؤمني الشركة المتحدة للتأمين في كل محافظات المملكة.">
+<link rel="alternate" hreflang="ar" href="https://unitedjo.com/medical-network"><link rel="alternate" hreflang="en" href="https://unitedjo.com/en/medical-network">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap">
+<style>
+/* Layout: brand navy band with the search panel overlapping it, then a filter rail + result cards — matches unitedjo.com */
+:root{
+  --bg:#f5f7fb; --surface:#ffffff; --line:#e3e8f2; --fg:#0f1a33; --muted:#5b6782;
+  --navy:#0e1f4d; --navy-deep:#09143a; --royal:#2f55d4; --royal-soft:#e9eefc; --ok:#0f9d6b;
+  --chip:#eef1f8; --shadow:0 1px 2px rgba(14,31,77,.06),0 8px 24px rgba(14,31,77,.06);
+  --f-ar:"Cairo",system-ui,sans-serif; --f-en:"Inter",system-ui,sans-serif; --f-display:"Poppins","Cairo",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0b1122; --surface:#121a31; --line:#232e4d; --fg:#e8ecf7; --muted:#9aa6c4;
+  --navy:#101c40; --navy-deep:#0a1230; --royal:#7b97ff; --royal-soft:#1c2850; --ok:#3ccf98; --chip:#1a2442;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0b1122; --surface:#121a31; --line:#232e4d; --fg:#e8ecf7; --muted:#9aa6c4;
+  --navy:#101c40; --navy-deep:#0a1230; --royal:#7b97ff; --royal-soft:#1c2850; --ok:#3ccf98; --chip:#1a2442;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25); color-scheme:dark}
+*{box-sizing:border-box}
+html,body{overflow-x:clip}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-ar);font-size:15px;line-height:1.6}
+html[lang="en"] body{font-family:var(--f-en)}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+button,input,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--royal);outline-offset:2px}
+
+.hero{background:radial-gradient(120% 140% at 85% 0%,#1d3a8f 0%,transparent 55%),linear-gradient(180deg,var(--navy),var(--navy-deep));color:#fff}
+.hero .wrap{padding-block:22px 92px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{font-size:13px;letter-spacing:.04em;opacity:.8}
+.lang{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);color:#fff;border-radius:999px;padding:6px 14px;cursor:pointer;font-size:13px}
+.lang:hover{background:rgba(255,255,255,.2)}
+h1{font-family:var(--f-display);font-size:clamp(30px,5vw,46px);line-height:1.15;margin:22px 0 8px;text-wrap:balance}
+html[lang="ar"] h1{font-family:var(--f-ar);font-weight:800}
+.sub{opacity:.82;margin:0;max-width:60ch}
+.stats{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.stat{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:4px 12px;font-size:13px;font-variant-numeric:tabular-nums}
+
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow);margin-top:-64px;padding:18px;position:relative}
+.tabs{display:inline-flex;background:var(--chip);border-radius:14px;padding:4px;gap:4px;flex-wrap:wrap}
+.tab{border:0;background:transparent;border-radius:11px;padding:9px 16px;cursor:pointer;font-weight:600;color:var(--muted);display:flex;gap:8px;align-items:center}
+.tab[aria-selected="true"]{background:var(--surface);color:var(--fg);box-shadow:0 1px 3px rgba(14,31,77,.12)}
+.tab .n{font-size:12px;font-weight:500;color:var(--muted);font-variant-numeric:tabular-nums}
+.searchrow{display:grid;grid-template-columns:1fr;gap:10px;margin-top:14px}
+@media(min-width:760px){.searchrow{grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr)}}
+.field{position:relative;min-width:0}
+.field svg{position:absolute;inset-inline-start:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
+.search{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:14px;padding:12px 14px;padding-inline-start:42px;font-size:15px}
+select{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:14px;padding:12px 14px;cursor:pointer;appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 20px) 55%,calc(100% - 15px) 55%;background-size:5px 5px;background-repeat:no-repeat}
+html[dir="rtl"] select{background-position:20px 55%,25px 55%}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 14px;cursor:pointer;font-size:14px;display:flex;align-items:center;gap:7px;color:var(--fg)}
+.chip:hover{border-color:var(--royal)}
+.chip[aria-pressed="true"]{background:var(--royal);border-color:var(--royal);color:#fff}
+.chip .c{font-size:12px;opacity:.7;font-variant-numeric:tabular-nums}
+.specrow{margin-top:12px;max-width:360px}
+
+.bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:26px 0 12px}
+.count{font-weight:600}
+.count b{color:var(--royal);font-variant-numeric:tabular-nums}
+.reset{border:0;background:none;color:var(--royal);cursor:pointer;font-weight:600;padding:4px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,330px),1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0;transition:border-color .2s,box-shadow .2s}
+.card:hover{border-color:color-mix(in oklab,var(--royal) 40%,var(--line));box-shadow:var(--shadow)}
+.head{display:flex;gap:12px;align-items:flex-start}
+.ico{flex:none;width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--royal-soft);color:var(--royal)}
+.name{font-weight:700;font-size:16px;line-height:1.35;margin:0;overflow-wrap:anywhere}
+.kind{font-size:13px;color:var(--royal);font-weight:600}
+.loc{display:flex;gap:8px;font-size:13.5px;color:var(--muted);align-items:flex-start}
+.loc svg{flex:none;margin-top:3px}
+.loc .area{color:var(--fg);font-weight:600}
+.phone{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:8px;border-top:1px dashed var(--line);padding-top:10px}
+.num{font-family:var(--f-en);font-variant-numeric:tabular-nums;direction:ltr;font-weight:600;letter-spacing:.02em;user-select:all}
+.acts{display:flex;gap:6px}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:6px 11px;cursor:pointer;font-size:13px;display:flex;gap:6px;align-items:center;text-decoration:none;color:var(--fg)}
+.btn.call{background:var(--royal);border-color:var(--royal);color:#fff}
+.btn:hover{filter:brightness(1.05)}
+.nophone{font-size:13px;color:var(--muted)}
+.more{display:flex;justify-content:center;margin:24px 0 8px}
+.more button{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:11px 26px;cursor:pointer;font-weight:600}
+.empty{text-align:center;padding:48px 16px;color:var(--muted);background:var(--surface);border:1px dashed var(--line);border-radius:18px}
+.empty b{display:block;color:var(--fg);font-size:17px;margin-bottom:4px}
+.note{font-size:13px;color:var(--muted);text-align:center;padding-block:28px 40px}
+.toast{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));left:50%;transform:translateX(-50%);background:var(--fg);color:var(--bg);padding:8px 16px;border-radius:999px;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.on{opacity:1}
+
+/* ===== design switcher ===== */
+.switch{position:fixed;z-index:20;bottom:calc(16px + env(safe-area-inset-bottom,0px));inset-inline-start:max(16px,env(safe-area-inset-left,0px));display:flex;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px;box-shadow:var(--shadow)}
+.switch span{font-size:12px;color:var(--muted);padding:6px 8px 6px 10px}
+.switch button{border:0;background:transparent;border-radius:999px;padding:6px 12px;cursor:pointer;font-weight:600;font-size:13px;color:var(--muted)}
+.switch button[aria-pressed="true"]{background:var(--royal);color:#fff}
+.tiles{display:none}
+
+/* ---- B: side filters + compact list ---- */
+@media(min-width:960px){
+ .v-b main.wrap{display:grid;grid-template-columns:330px minmax(0,1fr);gap:24px;align-items:start}
+ .v-b .panel{position:sticky;top:16px;margin-top:-64px}
+ .v-b .searchrow{grid-template-columns:1fr}
+ .v-b .chips{flex-direction:column;align-items:stretch}
+ .v-b .chip{justify-content:space-between;border-radius:12px}
+ .v-b .specrow{max-width:none}
+ .v-b #results{padding-top:0}
+ .v-b .bar{margin-top:0;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 16px}
+}
+.v-b .grid{grid-template-columns:1fr;gap:0;background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.v-b .card{border:0;border-radius:0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) auto;align-items:center;gap:16px;padding:14px 18px}
+.v-b .card:hover{box-shadow:none;background:var(--bg)}
+.v-b .phone{border:0;padding:0;margin:0;flex-direction:column;align-items:flex-end;gap:6px}
+.v-b .ico{width:36px;height:36px;border-radius:10px}
+.v-b .name{font-size:15px}
+@media(max-width:700px){.v-b .card{grid-template-columns:1fr}.v-b .phone{flex-direction:row;align-items:center;border-top:1px dashed var(--line);padding-top:10px}}
+
+/* ---- C: light header, governorate tiles, cards with a type stripe ---- */
+.v-c .hero{background:var(--bg);color:var(--fg)}
+.v-c .hero .wrap{padding-block:32px 24px}
+.v-c .brand{color:var(--royal);opacity:1;font-weight:700}
+.v-c .lang{background:var(--surface);color:var(--fg);border-color:var(--line)}
+.v-c .sub{color:var(--muted);opacity:1}
+.v-c .stat{background:var(--surface);border-color:var(--line);color:var(--muted)}
+.v-c .panel{margin-top:0;background:var(--navy);border-color:var(--navy);color:#fff}
+.v-c .panel .tabs{background:rgba(255,255,255,.1)}
+.v-c .panel .tab{color:rgba(255,255,255,.75)}
+.v-c .panel .tab[aria-selected="true"]{background:#fff;color:#0f1a33}
+.v-c .panel .tab[aria-selected="true"] .n{color:#5b6782}
+.v-c .panel .tab .n{color:rgba(255,255,255,.6)}
+.v-c .panel .search,.v-c .panel select{background-color:#fff;color:#0f1a33;border-color:transparent}
+.v-c .panel .chip{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.18);color:#fff}
+.v-c .panel .chip[aria-pressed="true"]{background:#fff;color:#0f1a33;border-color:#fff}
+.v-c .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,150px),1fr));gap:10px;margin-top:22px}
+.tile{border:1px solid var(--line);background:var(--surface);border-radius:16px;padding:14px;cursor:pointer;text-align:start;display:flex;flex-direction:column;gap:2px}
+.tile b{font-size:16px}
+.tile span{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.tile:hover{border-color:var(--royal)}
+.tile[aria-pressed="true"]{background:var(--royal);border-color:var(--royal);color:#fff}
+.tile[aria-pressed="true"] span{color:rgba(255,255,255,.8)}
+.v-c .card{border-radius:16px;border-top:4px solid var(--stripe,var(--royal))}
+.v-c .ico{background:transparent;border:1px solid var(--line);color:var(--stripe,var(--royal))}
+.v-c .kind{color:var(--stripe,var(--royal))}
+
+/* ===== Jordan map in the header ===== */
+.hero-grid{display:grid;gap:8px;align-items:center}
+@media(min-width:860px){.hero-grid{grid-template-columns:minmax(0,.9fr) minmax(0,1.3fr);gap:24px}}
+.map{position:relative;max-width:100%;--pin:#8fb0ff}
+.map svg{display:block;width:100%;height:auto;overflow:visible}
+.mapbox{max-width:640px;margin-inline:auto}
+@media(max-width:859px){.mapbox{max-width:520px}}
+.land{fill:currentColor;fill-opacity:.07;stroke:currentColor;stroke-opacity:.45;stroke-width:1.4;stroke-linejoin:round}
+.grid-dots{fill:currentColor;opacity:.12}
+.pin{cursor:pointer;outline:none}
+.pin .dot{fill:var(--pin);stroke:#fff;stroke-width:1.6;transition:r .2s}
+.pin .ring{fill:none;stroke:var(--pin);stroke-width:1.6;transform-box:fill-box;transform-origin:center;animation:pulse 2.4s ease-out infinite}
+.mapbox{position:relative}
+.pin .hit{fill:transparent}
+.lead{fill:none;stroke:currentColor;stroke-opacity:.3;stroke-width:1;transition:stroke-opacity .2s}
+.lead.on{stroke:var(--pin);stroke-opacity:1;stroke-width:1.6}
+.mlabel{position:absolute;transform:translate(-100%,-50%);display:flex;align-items:baseline;gap:6px;white-space:nowrap;border:0;background:transparent;color:inherit;cursor:pointer;padding:3px 8px;border-radius:999px;font-family:inherit;line-height:1.2;transition:background .2s,color .2s,font-size .2s}
+.mlabel.e{transform:translate(0,-50%)}
+html[dir="rtl"] .mlabel.e{flex-direction:row-reverse}
+.mlabel b{font-size:clamp(13px,1.35vw,16px);font-weight:700}
+.mlabel span{font-size:clamp(11px,1vw,13px);opacity:.65;font-variant-numeric:tabular-nums}
+.mlabel:hover{background:rgba(255,255,255,.1)}
+.mlabel.on{background:var(--pin);color:var(--navy-deep)}
+.mlabel.on b{font-size:clamp(16px,1.8vw,21px);font-weight:800}
+.mlabel.on span{opacity:.85}
+.map.has-on .mlabel:not(.on){opacity:.5}
+.map.has-on .mlabel:not(.on):hover{opacity:1}
+.v-c .mlabel:hover{background:var(--chip)}
+.v-c .mlabel.on{color:#fff}
+.pin .dot{fill:#fff;stroke:var(--pin);stroke-width:1.6}
+.pin .emb{fill:#14286b;pointer-events:none}
+.pin:hover .dot{stroke-width:2.6}
+.pin.on .emb{fill:#fff}
+.pin.on .dot{fill:#2f55d4;stroke:#fff;stroke-width:2.4}
+.map.has-on .pin:not(.on) .ring{animation:none;opacity:0}
+.maphint{font-size:12.5px;opacity:.7;text-align:center;margin-top:4px}
+@keyframes pulse{0%{transform:scale(1);opacity:.85}80%,100%{transform:scale(3.2);opacity:0}}
+.v-c .map{--pin:var(--royal)}
+
+@media (prefers-reduced-motion:reduce){.pin .ring{animation:none;opacity:.35}}
+
+/* selected governorate: larger name */
+
+/* opening animation: the map starts large in the middle of the screen, pins pop in, then it settles into the header */
+
+
+/* ===== two scenes: 1) full-screen map, 2) information page ===== */
+.scene1{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;gap:6px;
+  background:radial-gradient(90% 70% at 70% 0%,#1d3a8f 0%,transparent 60%),linear-gradient(180deg,var(--navy),var(--navy-deep));color:#fff;
+  padding-block:18px 22px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.s1top{width:100%;max-width:1180px;display:flex;justify-content:space-between;align-items:center}
+.s1head{text-align:center;margin-top:6px}
+.s1head h1{margin:6px 0 4px}
+.s1sub{margin:0;opacity:.75;font-size:15px}
+.scene1 .map{flex:1;width:100%;display:flex;flex-direction:column;justify-content:flex-start;padding-top:clamp(8px,2vh,20px)}
+.scene1 .mapbox{width:min(100%,980px,calc((100dvh - 350px) * 1.55));max-width:none}
+.allbtn{border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;border-radius:999px;padding:10px 22px;cursor:pointer;font-weight:600}
+.allbtn:hover{background:rgba(255,255,255,.16)}
+.scene1.leave{animation:sceneOut .5s ease forwards}
+#scene2.enter{animation:fadeUp .55s ease both}
+@keyframes sceneOut{to{opacity:0;transform:scale(.97)}}
+.back{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);color:#fff;border-radius:999px;padding:7px 14px;cursor:pointer;font-size:14px;font-weight:600}
+.back:hover{background:rgba(255,255,255,.2)}
+.s2title{font-family:var(--f-display);font-size:clamp(28px,4.5vw,42px);line-height:1.15;margin:20px 0 6px}
+html[lang="ar"] .s2title{font-family:var(--f-ar);font-weight:800}
+.mlabel b{font-size:clamp(14px,1.6vw,18px)}
+.mlabel span{font-size:clamp(11px,1.1vw,13px)}
+.lead{stroke-opacity:.32;stroke-width:1.1;stroke-dasharray:none;stroke-linecap:round}
+.lead.on,.pin:hover~.lead{stroke-dasharray:none}
+.lend{fill:currentColor;opacity:.55}
+@media(max-width:600px){.mlabel{padding:3px 4px}.mlabel b{font-size:13px}}
+.map.intro .land{stroke-dasharray:2600;stroke-dashoffset:2600;fill-opacity:0;animation:drawIn 3.2s cubic-bezier(.45,0,.2,1) .3s forwards,fillIn .9s ease 3.1s forwards}
+.map.intro .grid-dots{opacity:0;animation:dotsIn 1s ease 2.8s forwards}
+.map.intro .pin{opacity:0;animation:popIn .5s cubic-bezier(.3,1.6,.5,1) forwards;transform-box:fill-box;transform-origin:center}
+.map.intro .lead,.map.intro .lend,.map.intro .mlabel{opacity:0;animation:fadeIn .6s ease forwards}
+.s1head,.allbtn,.s1top{animation:fadeIn .8s ease both}
+.allbtn{animation-delay:4.4s}
+@keyframes drawIn{to{stroke-dashoffset:0}}
+@keyframes fillIn{to{fill-opacity:.07}}
+@keyframes dotsIn{to{opacity:.12}}
+@keyframes popIn{from{transform:scale(0);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.map.intro *,.scene1 *,.scene1.leave,#scene2.enter{animation:none!important;opacity:1!important;stroke-dasharray:none!important}}
+
+/* ===== weather card (scene 2) ===== */
+.s2row{display:flex;gap:16px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap}
+.s2main{min-width:0;flex:1 1 320px}
+.wx{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:10px 16px 10px 12px;animation:fadeUp .6s ease .25s both}
+.wx svg{width:54px;height:54px;flex:none;overflow:visible}
+.wx .t{font-family:var(--f-en);font-size:30px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
+.wx .d{font-size:13px;opacity:.8;margin-top:4px}
+.wx .hl{font-size:12px;opacity:.6;font-variant-numeric:tabular-nums}
+.wx .sun{fill:#ffcf5a}.wx .rays{stroke:#ffcf5a;stroke-width:3;stroke-linecap:round;transform-origin:24px 24px;animation:spin 14s linear infinite}
+.wx .moon{fill:#dfe6ff}
+.wx .cloud{fill:#e8eefc;animation:drift 5s ease-in-out infinite alternate}
+.wx .cloud2{fill:#b9c6e8;animation:drift 6s ease-in-out infinite alternate-reverse}
+.wx .drop{stroke:#8fb0ff;stroke-width:2.6;stroke-linecap:round;animation:fall 1s linear infinite}
+.wx .flake{fill:#fff;animation:fall 2.2s linear infinite}
+.wx .bolt{fill:#ffcf5a;animation:flash 2.6s steps(1) infinite}
+.wx .fog{stroke:#c9d4f0;stroke-width:3;stroke-linecap:round;animation:drift 3s ease-in-out infinite alternate}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes drift{from{transform:translateX(-2px)}to{transform:translateX(3px)}}
+@keyframes fall{from{transform:translateY(-4px);opacity:0}30%{opacity:1}to{transform:translateY(8px);opacity:0}}
+@keyframes flash{0%,100%{opacity:0}8%,14%{opacity:1}11%{opacity:.2}}
+@media (prefers-reduced-motion:reduce){.wx *{animation:none!important}}
+
+/* scene 1: provider counter + weather beside each governorate */
+.s1count{margin-top:clamp(28px,5vh,56px);font-size:17px;font-weight:700;opacity:0;animation:fadeIn .6s ease 3.3s forwards;display:flex;flex-direction:column;align-items:center;gap:2px}
+.s1count b{font-family:var(--f-ar);font-size:clamp(32px,4.5vw,46px);font-weight:800;line-height:1.1;color:#8fb0ff;font-variant-numeric:tabular-nums}
+.s1count span{opacity:.9;font-weight:700}
+.mlabel .wxs{display:inline-flex;align-items:center;gap:3px;font-family:var(--f-en);font-size:clamp(11px,1vw,13px);opacity:0;animation:fadeIn .6s ease forwards;font-variant-numeric:tabular-nums}
+.mlabel .wxs svg{width:20px;height:20px;overflow:visible}
+.mlabel .wxs .sun{fill:#ffcf5a}.mlabel .wxs .rays{stroke:#ffcf5a;stroke-width:3;stroke-linecap:round;transform-origin:24px 24px;animation:spin 14s linear infinite}
+.mlabel .wxs .moon{fill:#dfe6ff}.mlabel .wxs .cloud{fill:#e8eefc}.mlabel .wxs .cloud2{fill:#b9c6e8}
+.mlabel .wxs .drop{stroke:#8fb0ff;stroke-width:2.6;stroke-linecap:round;animation:fall 1s linear infinite}
+.mlabel .wxs .flake{fill:#fff;animation:fall 2.2s linear infinite}.mlabel .wxs .bolt{fill:#ffcf5a;animation:flash 2.6s steps(1) infinite}
+.mlabel .wxs .fog{stroke:#c9d4f0;stroke-width:3;stroke-linecap:round}
+@media(max-width:600px){.mlabel .wxs svg{width:15px;height:15px}.mlabel{gap:4px}}
+/* scene 2: quick filters */
+.quick{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:22px}
+.qbtn{display:flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--surface);border-radius:16px;padding:12px 14px;cursor:pointer;color:var(--fg);text-align:start;min-width:0;transition:border-color .2s,transform .2s,box-shadow .2s}
+.qbtn:hover{border-color:var(--q);transform:translateY(-1px);box-shadow:var(--shadow)}
+.qbtn .qi{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:color-mix(in oklab,var(--q) 14%,transparent);color:var(--q)}
+.qbtn b{display:block;font-size:15px}
+.qbtn span{display:block;font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.qbtn[aria-pressed="true"]{border-color:var(--q);background:color-mix(in oklab,var(--q) 9%,var(--surface))}
+@media(max-width:560px){.qbtn{flex-direction:column;align-items:center;text-align:center;padding:10px 6px;gap:6px}.qbtn b{font-size:13.5px}}
+/* WhatsApp share */
+.btn.wa{color:#1a9f53;border-color:color-mix(in oklab,#25d366 45%,var(--line))}
+.btn.wa svg{width:16px;height:16px}
+
+/* phones: bigger provider counter */
+@media(max-width:639px){.s1count b{font-size:52px}.s1count span{font-size:18px}}
+.brand.home{display:inline-flex;align-items:center;gap:9px;color:#fff;text-decoration:none;opacity:1;font-weight:700;font-size:14px;letter-spacing:0}
+.brand.home svg{width:20px;height:22px;fill:currentColor;flex:none}
+.brand.home:hover{opacity:.85}
+.topl{display:flex;align-items:center;gap:14px}
+@media(max-width:480px){#brand2 span{display:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+</head><body>
+<section class="scene1" id="scene1">
+  <div class="s1top">
+    <a class="brand home" id="brand" href="/"></a>
+    <button class="lang" id="lang" type="button"></button>
+  </div>
+  <div class="s1head">
+    <h1 id="title"></h1>
+    <p class="s1sub" id="s1sub"></p>
+    <div class="s1count" id="s1count"></div>
+  </div>
+  <div class="map" id="map"></div>
+  <button class="allbtn" id="allbtn" type="button"></button>
+</section>
+
+<div id="scene2" hidden>
+<header class="hero">
+  <div class="wrap">
+    <div class="top">
+      <div class="topl"><button class="back" id="back" type="button"></button><a class="brand home" id="brand2" href="/"></a></div>
+      <button class="lang" id="lang2" type="button"></button>
+    </div>
+    <div class="s2row">
+      <div class="s2main"><h2 class="s2title" id="s2title"></h2>
+      <p class="sub" id="sub"></p></div>
+      <div class="wx" id="wx" hidden></div>
+    </div>
+    <div class="stats" id="stats"></div>
+  </div>
+</header>
+<main class="wrap">
+  <section class="panel" aria-label="search">
+    <div class="tabs" role="tablist" id="tabs"></div>
+    <div class="searchrow">
+      <label class="field">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input class="search" id="q" type="search" autocomplete="off">
+      </label>
+      <select id="city" aria-label="city"></select>
+      <select id="area" aria-label="area"></select>
+    </div>
+    <div class="chips" id="chips"></div>
+    <div class="specrow" id="specwrap"><select id="spec" aria-label="specialty"></select></div>
+  </section>
+
+  <div id="results">
+  <div class="tiles" id="tiles"></div>
+  <div class="quick" id="quick"></div>
+  <div class="bar">
+    <div class="count" id="count"></div>
+    <button class="reset" id="reset" type="button"></button>
+  </div>
+  <div class="grid" id="grid"></div>
+  <div class="more"><button id="more" type="button"></button></div>
+  </div>
+  <p class="note" id="note"></p>
+</main>
+</div>
+<div class="toast" id="toast"></div>
+
+
+<script></script>
+<script>
+(async function(){
+let D=null;
+for(const u of ["/api/public/medical-network","/media/medical-network.json"]){try{const r=await fetch(u);if(r.ok){D=await r.json();if(D&&D.rows)break;D=null}}catch(e){}}
+if(!D){document.getElementById("s1sub").textContent=location.pathname.startsWith("/en")?"The network could not be loaded. Please try again later.":"تعذّر تحميل الشبكة الطبية، حاول مرة أخرى لاحقاً.";return}
+const SPEC_EN={"Obstetrics/Gynachologist":"Obstetrician / Gynecologist","G.P":"General Practitioner","E.N.T":"ENT Specialist","UroSurgeon":"Urologic Surgeon","Pediatric Gastoenterologist Hepatologist":"Pediatric Gastroenterologist & Hepatologist","Dermatologist/Venerologist":"Dermatologist","Infectionist / Epidemiologist":"Infectious Disease Specialist","Thoracic surgeon":"Thoracic Surgeon"};
+const fixAr=s=>s.replace(/^اخصائي/,'أخصائي');
+const GROUPS=[
+ ["all","الكل","All"],["doctor","الأطباء","Doctors"],["hospital","المستشفيات","Hospitals"],["emergency","الطوارئ","Emergency"],
+ ["lab","المختبرات","Labs"],["radiology","الأشعة","Radiology"],["physio","العلاج الطبيعي","Physiotherapy"],
+ ["optical","البصريات والسمعيات","Optical & hearing"],["center","مراكز طبية","Medical centers"],["supplier","لوازم طبية","Medical supplies"]];
+const KIND={doctor:["طبيب","Doctor"],hospital:["مستشفى","Hospital"],emergency:["مركز طوارئ","Emergency center"],lab:["مختبر تحاليل طبية","Medical lab"],radiology:["مركز أشعة","Radiology center"],physio:["مركز علاج طبيعي","Physiotherapy center"],optical:["بصريات وسمعيات","Optical & hearing"],center:["مركز طبي","Medical center"],supplier:["لوازم طبية","Medical supplies"],pharmacy:["صيدلية","Pharmacy"]};
+const EMB='<svg viewBox="0 0 100 110" aria-hidden="true"><rect x="44" y="0" width="12" height="10"/><rect x="44" y="13" width="12" height="97"/><path d="M40 12Q2 30 0 57Q2 84 40 108Q20 82 20 57Q20 32 40 12Z"/><path d="M60 12Q98 30 100 57Q98 84 60 108Q80 82 80 57Q80 32 60 12Z"/></svg>';
+const P='fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"';
+const ICON={
+ doctor:`<svg width="22" height="22" viewBox="0 0 24 24" ${P}><path d="M6 3v5a4 4 0 0 0 8 0V3"/><path d="M10 12v3a5 5 0 0 0 10 0v-2"/><circle cx="20" cy="11" r="2"/></svg>`,
+ hospital:`<svg width="22" height="22" viewBox="0 0 24 24" ${P}><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M12 7v6M9 10h6M9 21v-4h6v4"/></svg>`,
+ emergency:`<svg width="22" height="22" viewBox="0 0 24 24" ${P}><path d="M3 12h4l3-8 4 16 3-8h4"/></svg>`,
+ lab:`<svg width="22" height="22" viewBox="0 0 24 24" ${P}><path d="M9 3h6M10 3v6l-5 9a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-9V3"/><path d="M7.5 15h9"/></svg>`,
+ radiology:`<svg width="22" height="22" viewBox="0 0 24 24" ${P}><circle cx="12" cy="12" r="2"/><path d="M12 3a9 9 0 0 1 7.8 4.5L14 10.8M4.2 7.5A9 9 0 0 1 12 3M12 21a9 9 0 0 0 7.8-4.5L14 13.2M4.2 16.5 10 13.2M4.2 7.5 10 10.8"/></svg>`,
+ physio:`<svg width="22" height="22" viewBox="0 0 24 24" ${P}><circle cx="12" cy="4.5" r="2"/><path d="M5 10l7-2 7 2M12 8v6l-3 7M12 14l3 7"/></svg>`,
+ optical:`<svg width="22" height="22" viewBox="0 0 24 24" ${P}><circle cx="6.5" cy="14" r="3.5"/><circle cx="17.5" cy="14" r="3.5"/><path d="M10 14h4M3 13l2-6M21 13l-2-6"/></svg>`,
+ center:`<svg width="22" height="22" viewBox="0 0 24 24" ${P}><path d="M12 21s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.6-7 10-7 10z"/></svg>`,
+ supplier:`<svg width="22" height="22" viewBox="0 0 24 24" ${P}><path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/></svg>`,
+ pharmacy:`<svg width="22" height="22" viewBox="0 0 24 24" ${P}><rect x="3" y="8.5" width="18" height="7" rx="3.5" transform="rotate(-45 12 12)"/><path d="m8.5 8.5 7 7"/></svg>`};
+const STRIPE={doctor:'#2f55d4',hospital:'#c2410c',emergency:'#dc2626',lab:'#7c3aed',radiology:'#0891b2',physio:'#0f9d6b',optical:'#b45309',center:'#db2777',supplier:'#64748b',pharmacy:'#0f9d6b'};
+const PIN=`<svg width="15" height="15" viewBox="0 0 24 24" ${P}><path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>`;
+const T={
+ ar:{brand:"المتحدة للتأمين",title:"الشبكة الطبية",sub:"ابحث عن الأطباء والمستشفيات والمختبرات والصيدليات ضمن الشبكة الطبية لشركة نات هيلث (NatHealth)، المعتمدة لخدمة مؤمني الشركة المتحدة للتأمين في مختلف محافظات المملكة.",
+   tabMed:"الأطباء والمراكز",tabPh:"الصيدليات",q:"ابحث بالاسم أو التخصص أو المنطقة",qPh:"ابحث باسم الصيدلية أو المنطقة",
+   allCities:"كل المحافظات",allAreas:"كل المناطق",allSpecs:"كل التخصصات",results:n=>`<b>${n}</b> نتيجة`,reset:"مسح الفلاتر",more:"عرض المزيد",
+   call:"اتصال",copy:"نسخ",copied:"تم نسخ الرقم",nophone:"لا يوجد رقم هاتف",empty:"لا توجد نتائج مطابقة",emptyHint:"جرّب كلمة أخرى أو امسح الفلاتر.",
+   providers:n=>`${n} مزوّد خدمة`,cities:"12 محافظة",upd:"آخر تحديث: تشرين الثاني 2026",lang:"English",
+   note:"تُحدَّث الشبكة شهرياً. يُرجى التأكد من المزوّد قبل الزيارة.",share:"مشاركة",qHosp:"مستشفيات",qEr:"طوارئ",qPh:"صيدليات",count1:"مزوّد خدمة معتمد في الشبكة",waHead:"من الشبكة الطبية — المتحدة للتأمين",s1sub:"اختر محافظتك لعرض الأطباء والمستشفيات والصيدليات المعتمدة",all:"عرض كل المحافظات",back:"الخريطة",allTitle:"كل المحافظات"},
+ en:{brand:"United Insurance",title:"Medical Network",sub:"Find doctors, hospitals, laboratories, and pharmacies within the NatHealth medical network, approved to serve United Insurance Company’s insured members across all governorates of Jordan.",
+   tabMed:"Doctors & centers",tabPh:"Pharmacies",q:"Search by name, specialty or area",qPh:"Search by pharmacy name or area",
+   allCities:"All governorates",allAreas:"All areas",allSpecs:"All specialties",results:n=>`<b>${n}</b> results`,reset:"Clear filters",more:"Show more",
+   call:"Call",copy:"Copy",copied:"Number copied",nophone:"No phone listed",empty:"No matching providers",emptyHint:"Try another word or clear the filters.",
+   providers:n=>`${n} providers`,cities:"12 governorates",upd:"Updated November 2026",lang:"العربية",
+   note:"The network is updated monthly. Please confirm with the provider before visiting.",share:"Share",qHosp:"Hospitals",qEr:"Emergency",qPh:"Pharmacies",count1:"approved providers in the network",waHead:"From the United Insurance medical network",s1sub:"Choose your governorate to see approved doctors, hospitals and pharmacies",all:"Show all governorates",back:"Map",allTitle:"All governorates"}};
+
+// normalise Arabic/English for search
+const norm=s=>(s||"").toLowerCase().replace(/[أإآا]/g,"ا").replace(/ة/g,"ه").replace(/ى/g,"ي").replace(/[ًٌٍَُِّْـ]/g,"").replace(/[^\p{L}\p{N}]+/gu," ").trim();
+const rows=D.rows.map((r,i)=>{
+  const [en,ar,g,si,ci,ai,adrEn,adrAr,bEn,bAr,ph]=r;
+  const sp=si>=0?D.specs[si]:null, ct=D.cities[ci], a=D.areas[ai];
+  return {i,en,ar,g,si,ci,ai,adrEn,adrAr,bEn,bAr,ph,
+    key:norm([en,ar,sp&&sp[0],sp&&sp[1],ct[0],ct[1],a[1],a[2],adrEn,adrAr,bEn,bAr,KIND[g][0],KIND[g][1]].join(" "))};
+});
+const S={v:"a",lang:"ar",tab:"med",group:"all",city:-1,area:-1,spec:-1,q:"",shown:30};
+S.lang=location.pathname.startsWith("/en")?"en":"ar";
+const $=id=>document.getElementById(id);
+const fmt=n=>n.toLocaleString(S.lang==="ar"?"ar-JO":"en-US");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const inTab=r=>S.tab==="ph"?r.g==="pharmacy":r.g!=="pharmacy";
+
+function base(skip){ // rows matching every filter except `skip`
+  const qs=S.q?norm(S.q).split(" "):[];
+  return rows.filter(r=>inTab(r)
+    &&(skip==="group"||S.group==="all"||S.tab==="ph"||r.g===S.group)
+    &&(skip==="city"||S.city<0||r.ci===S.city)
+    &&(skip==="area"||S.area<0||r.ai===S.area)
+    &&(skip==="spec"||S.spec<0||r.si===S.spec)
+    &&qs.every(w=>r.key.includes(w)));
+}
+function count(list,f){const m=new Map();for(const r of list){const k=f(r);m.set(k,(m.get(k)||0)+1)}return m}
+
+function renderStatic(){
+  const t=T[S.lang]; document.documentElement.lang=S.lang; document.documentElement.dir=S.lang==="ar"?"rtl":"ltr";
+  $("brand").innerHTML=EMB+`<span>${t.brand}</span>`; $("brand2").innerHTML=EMB+`<span>${t.brand}</span>`; $("brand").href=$("brand2").href=S.lang==="en"?"/en":"/"; $("title").textContent=t.title; $("sub").textContent=t.sub; $("lang").textContent=t.lang; $("lang2").textContent=t.lang;
+  $("s1sub").textContent=t.s1sub; $("allbtn").textContent=t.all;
+  $("back").innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" ${P} style="transform:${S.lang==="ar"?"scaleX(-1)":"none"}"><path d="M15 18l-6-6 6-6"/></svg>${t.back}`;
+  $("s2title").textContent=`${t.title} — ${S.city>=0?D.cities[S.city][S.lang==="ar"?1:0]:t.allTitle}`;
+  $("stats").innerHTML=[t.providers(fmt(rows.length)),t.cities,t.upd].map(s=>`<span class="stat">${s}</span>`).join("");
+  const nMed=rows.filter(r=>r.g!=="pharmacy").length, nPh=rows.length-nMed;
+  $("tabs").innerHTML=`<button class="tab" role="tab" data-tab="med" aria-selected="${S.tab==="med"}">${ICON.doctor}${t.tabMed} <span class="n">${fmt(nMed)}</span></button>
+   <button class="tab" role="tab" data-tab="ph" aria-selected="${S.tab==="ph"}">${ICON.pharmacy}${t.tabPh} <span class="n">${fmt(nPh)}</span></button>`;
+  $("q").placeholder=S.tab==="ph"?t.qPh:t.q; $("reset").textContent=t.reset; $("more").textContent=t.more; $("note").textContent=t.note;
+}
+var renderFilters=function(){
+  const t=T[S.lang], L=S.lang==="ar"?1:0;
+  // governorates
+  const cc=count(base("city"),r=>r.ci);
+  $("city").innerHTML=`<option value="-1">${t.allCities}</option>`+D.cities.map((c,i)=>[i,c]).filter(([i])=>cc.get(i)).sort((a,b)=>cc.get(b[0])-cc.get(a[0]))
+    .map(([i,c])=>`<option value="${i}" ${S.city===i?"selected":""}>${esc(c[L])} (${fmt(cc.get(i))})</option>`).join("");
+  // areas (only inside the chosen governorate)
+  const ac=count(base("area"),r=>r.ai);
+  const areas=D.areas.map((a,i)=>[i,a]).filter(([i,a])=>ac.get(i)&&(S.city<0||a[0]===S.city)).sort((x,y)=>x[1][L+1].localeCompare(y[1][L+1],S.lang));
+  $("area").innerHTML=`<option value="-1">${t.allAreas}</option>`+areas.map(([i,a])=>`<option value="${i}" ${S.area===i?"selected":""}>${esc(a[L+1])}${S.city<0?" — "+esc(D.cities[a[0]][L]):""} (${fmt(ac.get(i))})</option>`).join("");
+  // type chips (medical tab only)
+  const gc=count(base("group"),r=>r.g); let total=0; gc.forEach(v=>total+=v);
+  $("chips").hidden=S.tab==="ph";
+  $("chips").innerHTML=GROUPS.filter(([k])=>k==="all"||gc.get(k)).map(([k,ar,en])=>
+    `<button class="chip" type="button" data-g="${k}" aria-pressed="${S.group===k}">${S.lang==="ar"?ar:en} <span class="c">${fmt(k==="all"?total:gc.get(k))}</span></button>`).join("");
+  // specialties (doctors only)
+  const showSpec=S.tab==="med"&&S.group==="doctor";
+  $("specwrap").hidden=!showSpec;
+  if(showSpec){
+    const sc=count(base("spec"),r=>r.si);
+    const lab=s=>L?fixAr(s[1]):(SPEC_EN[s[0]]||s[0]);
+    $("spec").innerHTML=`<option value="-1">${t.allSpecs}</option>`+D.specs.map((s,i)=>[i,s]).filter(([i])=>sc.get(i)).sort((a,b)=>lab(a[1]).localeCompare(lab(b[1]),S.lang))
+      .map(([i,s])=>`<option value="${i}" ${S.spec===i?"selected":""}>${esc(lab(s))}</option>`).join("");
+  }
+}
+function card(r){
+  const t=T[S.lang], L=S.lang==="ar";
+  const name=L?(r.ar||r.en):(r.en||r.ar);
+  const sp=r.si>=0?D.specs[r.si]:null;
+  const kind=sp?(L?fixAr(sp[1]):(SPEC_EN[sp[0]]||sp[0])):KIND[r.g][L?0:1];
+  const a=D.areas[r.ai], c=D.cities[r.ci];
+  const area=L?`${a[2]}، ${c[1]}`:`${a[1]}, ${c[0]}`;
+  const street=(L?r.adrAr:r.adrEn).split("/").map(s=>s.trim()).filter(Boolean).slice(2).join(" / ");
+  const bld=L?r.bAr:r.bEn;
+  const detail=[street,bld].filter(Boolean).join(L?" · ":" · ");
+  const msg=[t.waHead,"",name,kind,area+(detail?" — "+detail:""),r.ph?("📞 "+r.ph):""].filter(x=>x!=="").join("\n");
+  const wa=`<a class="btn wa" href="https://wa.me/?text=${encodeURIComponent(msg)}" target="_blank" rel="noopener" aria-label="${t.share}"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2c0 1.3.9 2.5 1 2.7.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.3-.2-.5-.3z"/></svg>${t.share}</a>`;
+  const phone=r.ph?`<span class="num">${r.ph}</span><span class="acts">${wa}<button class="btn" type="button" data-copy="${r.ph}">${t.copy}</button><a class="btn call" href="tel:${r.ph}">${t.call}</a></span>`:`<span class="nophone">${t.nophone}</span><span class="acts">${wa}</span>`;
+  return `<article class="card" style="--stripe:${STRIPE[r.g]}"><div class="head"><span class="ico">${ICON[r.g]}</span><div style="min-width:0"><h3 class="name">${esc(name)}</h3><div class="kind">${esc(kind)}</div></div></div>
+   <div class="loc">${PIN}<div><span class="area">${esc(area)}</span>${detail?`<br>${esc(detail)}`:""}</div></div>
+   <div class="phone">${phone}</div></article>`;
+}
+function renderQuick(){
+  const t=T[S.lang];
+  const inCity=r=>(S.city<0||r.ci===S.city)&&(S.area<0||r.ai===S.area);
+  const n=g=>rows.filter(r=>r.g===g&&inCity(r)).length;
+  const Q=[["hospital",t.qHosp,"#c2410c","med"],["emergency",t.qEr,"#dc2626","med"],["pharmacy",t.qPh,"#0f9d6b","ph"]];
+  $("quick").innerHTML=Q.map(([g,label,col,tab])=>{const on=(g==="pharmacy"?S.tab==="ph":S.tab==="med"&&S.group===g);
+    return `<button class="qbtn" type="button" data-q="${g}" style="--q:${col}" aria-pressed="${on}"><span class="qi">${ICON[g]}</span><span style="min-width:0"><b>${label}</b><span>${fmt(n(g))}</span></span></button>`}).join("");
+}
+function renderResults(){
+  const t=T[S.lang], list=base(); renderQuick();
+  // doctors and facilities first by type, then name
+  $("count").innerHTML=t.results(fmt(list.length));
+  $("reset").hidden=!(S.q||S.city>=0||S.area>=0||S.spec>=0||S.group!=="all");
+  $("grid").innerHTML=list.length?list.slice(0,S.shown).map(card).join(""):`<div class="empty" style="grid-column:1/-1"><b>${t.empty}</b>${t.emptyHint}</div>`;
+  $("more").parentElement.hidden=list.length<=S.shown;
+}
+function renderTiles(){
+  const L=S.lang==="ar"?1:0, cc=count(base("city"),r=>r.ci);
+  $("tiles").innerHTML=D.cities.map((c,i)=>[i,c]).filter(([i])=>cc.get(i)).sort((a,b)=>cc.get(b[0])-cc.get(a[0]))
+   .map(([i,c])=>`<button class="tile" type="button" data-c="${i}" aria-pressed="${S.city===i}"><b>${esc(c[L])}</b><span>${fmt(cc.get(i))}</span></button>`).join("");
+}
+function renderV(){if(!$("switch"))return;document.body.className="v-"+S.v;document.querySelectorAll("#switch button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===S.v));$("swl").textContent=S.lang==="ar"?"التصميم":"Design"}
+
+// ---- header map: one pulsing pin per governorate, sized by the number of providers ----
+const JO={"w": 380.2, "h": 425, "d": "M73.3 65.6L73.9 65.3L74.2 65.1L74.8 65.3L75.1 65.6L76.0 66.6L84.9 68.7L85.9 69.2L87.4 70.7L87.7 70.7L88.9 70.7L89.3 70.9L89.3 71.5L89.3 72.2L88.9 72.7L88.6 72.5L89.6 73.6L90.2 74.2L91.1 74.6L92.3 74.4L94.2 74.6L94.8 75.6L94.5 77.3L94.5 79.1L95.4 80.8L99.1 86.7L99.7 87.9L99.7 88.3L100.0 88.4L100.9 88.4L102.2 88.4L105.2 87.9L105.9 88.1L106.8 88.4L107.4 88.4L107.7 88.3L108.6 87.4L109.2 87.2L110.2 87.7L112.9 90.6L118.5 94.3L125.9 101.4L127.1 102.1L128.9 102.6L133.5 103.1L135.1 104.0L138.2 104.3L149.9 105.6L152.9 108.0L154.5 107.2L156.3 107.2L161.8 108.7L162.8 108.7L164.0 108.3L177.8 99.1L190.8 90.6L200.3 84.5L215.1 75.2L221.8 71.0L229.5 66.0L244.3 56.7L258.7 47.4L269.8 40.6L284.6 31.3L292.0 27.0L310.1 15.6L331.0 2.8L335.0 17.2L338.7 30.0L341.5 40.6L345.5 54.8L349.5 69.5L355.3 90.3L348.6 92.5L348.6 92.6L348.6 92.8L352.9 107.2L353.5 108.7L354.4 109.2L370.4 104.6L372.3 105.8L373.5 108.9L375.3 115.6L373.2 118.6L362.7 127.4L362.7 128.1L362.1 128.4L360.3 129.8L350.1 139.2L347.3 140.6L337.5 143.3L318.4 148.9L299.0 154.4L280.0 160.0L263.7 164.7L260.6 165.6L244.6 170.3L239.4 171.8L218.4 178.3L197.2 184.5L179.4 189.9L176.0 190.9L187.1 203.1L198.1 215.1L198.5 215.2L209.2 227.2L220.6 239.2L220.6 239.5L220.9 239.9L221.2 240.2L221.5 240.6L230.8 251.7L240.3 262.8L249.5 274.0L259.1 285.0L263.4 290.0L263.4 290.2L263.1 290.2L262.7 290.5L256.3 294.1L246.1 300.0L236.6 305.2L234.8 306.9L233.5 308.8L231.1 314.9L228.0 322.5L225.2 329.5L221.5 338.8L219.7 340.5L209.5 342.7L198.1 345.1L185.8 347.6L173.5 350.3L166.2 351.8L158.5 353.5L156.3 354.7L154.2 356.9L149.5 365.0L145.5 371.9L140.3 381.1L134.8 390.5L128.3 396.1L118.2 404.5L109.2 412.1L100.0 420.1L97.9 420.9L95.4 421.1L86.5 419.4L76.6 417.7L71.7 416.8L61.6 415.0L49.0 412.8L37.3 410.8L23.7 408.4L13.6 406.5L4.4 404.9L5.3 404.0L5.9 394.9L6.5 392.4L8.4 388.1L8.4 386.6L6.5 384.8L5.3 384.8L5.3 384.4L5.3 384.3L5.3 384.1L4.7 384.1L5.0 381.4L5.6 379.2L6.8 377.3L7.7 374.8L8.0 369.2L8.7 366.7L12.7 355.7L13.0 353.7L13.3 347.6L13.9 344.2L14.2 343.4L14.5 342.6L14.8 341.7L14.8 340.5L16.0 336.6L19.4 331.1L21.0 327.7L21.0 324.5L19.1 318.4L19.1 315.5L19.7 313.8L20.7 308.6L21.3 307.4L21.9 306.2L22.2 305.2L22.5 303.9L22.2 302.4L21.0 300.3L20.7 299.3L20.7 297.0L21.9 292.9L22.5 290.5L26.2 278.2L31.1 268.1L31.7 265.6L32.0 263.0L32.3 262.0L33.0 260.8L33.6 260.0L35.1 258.6L35.7 257.8L36.0 255.6L35.7 253.2L36.0 251.0L37.3 248.7L38.2 247.7L40.7 245.5L41.6 243.6L41.6 240.6L41.9 237.5L45.9 229.6L46.5 226.7L45.9 224.0L44.7 221.5L43.7 219.6L42.8 216.9L42.5 214.2L43.4 211.9L44.7 209.7L44.7 207.5L44.0 206.8L45.6 203.9L47.1 199.9L47.7 197.7L47.7 196.7L47.7 190.9L47.7 190.7L47.7 190.9L47.7 190.7L47.7 190.6L48.3 183.1L49.6 175.9L51.4 171.5L53.6 166.4L56.3 163.4L54.5 158.0L54.5 157.3L55.4 156.1L53.3 148.0L53.6 147.2L54.2 147.0L54.8 146.8L55.1 146.3L55.1 145.5L54.8 144.5L54.5 143.6L54.5 142.3L54.2 141.1L53.3 138.9L53.3 134.2L53.6 132.5L55.1 131.3L54.2 130.1L54.2 128.9L55.7 126.4L55.1 125.9L55.1 125.2L55.7 124.9L56.3 124.6L56.3 123.7L56.0 122.5L56.3 121.0L57.6 116.3L56.3 116.3L56.3 115.6L56.6 115.3L57.0 115.1L57.6 114.8L56.6 113.6L56.3 111.7L56.6 109.9L57.0 108.7L56.0 107.2L56.0 104.1L55.7 103.3L55.7 102.4L56.3 102.4L56.3 103.3L57.0 103.3L56.6 102.3L56.3 101.6L56.0 100.9L55.7 100.4L55.4 100.1L55.1 99.1L56.0 98.9L56.3 98.6L56.3 98.2L55.7 97.7L55.7 97.0L56.3 97.0L56.3 96.5L56.0 96.5L55.7 96.4L57.0 95.7L56.3 95.0L57.0 94.7L57.6 94.3L57.6 93.7L57.0 93.5L57.0 93.3L56.6 93.1L56.3 93.0L56.6 92.3L57.0 91.6L57.3 91.1L58.2 90.8L58.2 90.3L57.3 89.4L57.3 88.9L56.6 88.1L56.0 88.1L55.7 88.1L55.7 87.4L57.0 87.4L56.6 86.7L56.3 84.7L57.0 85.4L57.3 84.4L57.6 84.0L57.6 84.4L57.6 84.5L57.9 84.5L58.2 84.0L57.6 82.7L57.3 80.1L57.0 79.3L57.0 78.5L57.6 78.5L57.6 78.0L56.6 77.4L56.3 76.8L56.3 75.9L56.6 75.6L57.3 75.2L57.9 74.6L59.4 72.9L61.0 71.9L62.8 72.0L64.3 71.4L67.1 68.8L71.7 66.0L73.3 65.6Z", "pins": {"Amman": [88, 145], "Al-Zarqa": [101.7, 133], "Irbid": [81.2, 85], "Al-Balqa": [70.9, 136], "kerak": [68.4, 222], "Aqaba": [9.4, 387], "Madaba": [76, 168], "Al-Mafraq": [111.9, 106], "Maan": [70.9, 321], "Jerash": [85.4, 112], "Al-Tafila": [59.8, 256], "Ajlun": [72.6, 107]}};
+function renderMap(){
+  // Pins stay at their real positions; names are HTML buttons in a column to the west, each joined to
+  // its pin by a thin line (HTML keeps Arabic letters joined correctly, unlike SVG text).
+  const L=S.lang==="ar"?1:0, cc=count(base("city"),r=>r.ci), max=Math.max(1,...cc.values());
+  const ids=D.cities.map((c,i)=>i).filter(i=>JO.pins[CKEY[i]]);
+  // six names each side: west column for the Jordan-valley governorates, east column for the rest
+  const EAST={"Al-Mafraq":1,"Al-Zarqa":1,"Amman":1,"kerak":1,"Maan":1,"Aqaba":1};
+  // phones: the map fills the width and the names move into a grid under it
+  const MOB=false;
+  const VX=MOB?-8:-140, VY=-16, VW=MOB?JO.w+16:JO.w+280, VH=JO.h+32, LX=-22, RX=JO.w+22;
+  const col=side=>ids.filter(i=>!!EAST[CKEY[i]]===side).sort((a,b)=>JO.pins[CKEY[a]][1]-JO.pins[CKEY[b]][1]);
+  const ly={}, sideOf={};
+  [false,true].forEach(east=>{const c=col(east), gap=(VH-40)/c.length; c.forEach((i,k)=>{ly[i]=VY+20+gap/2+k*gap;sideOf[i]=east})});
+  let dots="";for(let x=10;x<JO.w;x+=16)for(let y=10;y<JO.h;y+=16)dots+=`M${x} ${y}h.01`;
+  const order=[...ids].sort((a,b)=>(cc.get(b)||0)-(cc.get(a)||0));
+  const pct=(v,o,w)=>((v-o)/w*100).toFixed(3)+"%";
+  const leads=[],pins=[],labels=[];
+  for(const i of order){
+    const [x,y]=JO.pins[CKEY[i]], n=cc.get(i)||0, r=8+6*Math.sqrt(n/max), on=S.city===i?" on":"", yy=ly[i], east=sideOf[i];
+    // straight run from the pin to an elbow beside the name, then level into the name; order is kept, so lines never cross
+    const tx=east?RX-6:LX+6, sx=east?x+r:x-r, mx=(sx+tx)/2;
+    leads.push(`<path class="lead${on}" d="M${sx} ${y} C${mx} ${y} ${mx} ${yy} ${tx} ${yy}"></path><circle class="lend" cx="${tx}" cy="${yy}" r="2.2"></circle>`);
+    pins.push(`<g class="pin${on}" tabindex="0" role="button" data-c="${i}" aria-label="${esc(D.cities[i][L])}">
+      <circle class="hit" cx="${x}" cy="${y}" r="${Math.max(r,11)}"></circle>
+      <circle class="ring" cx="${x}" cy="${y}" r="${r}" style="animation-delay:${(i%6)*.35}s"></circle>
+      <circle class="dot" cx="${x}" cy="${y}" r="${r}"></circle>
+      <use class="emb" href="#emb" x="${x-r*.5}" y="${y-r*.55}" width="${r}" height="${r*1.1}"></use></g>`);
+    labels.push(`<button type="button" class="mlabel ${east?"e":"w"}${on}" data-c="${i}" style="left:${pct(east?RX:LX,VX,VW)};top:${pct(yy,VY,VH)}"><b>${esc(D.cities[i][L])}</b><span>${fmt(n)}</span></button>`);
+  }
+  if(MOB){const pos=i=>JO.pins[CKEY[i]][1]; labels.sort((a,b)=>pos(+a.match(/data-c="(\d+)"/)[1])-pos(+b.match(/data-c="(\d+)"/)[1]));}
+  $("map").classList.toggle("has-on",S.city>=0);
+  $("map").classList.toggle("mob",MOB);
+  $("map").innerHTML=`<div class="mapbox"><svg viewBox="${VX} ${VY} ${VW} ${VH}" role="img" aria-label="${S.lang==="ar"?"خريطة الأردن":"Map of Jordan"}">
+    <defs><clipPath id="jo"><path d="${JO.d}"/></clipPath>
+      <symbol id="emb" viewBox="0 0 100 110"><rect x="44" y="0" width="12" height="10"/><rect x="44" y="13" width="12" height="97"/>
+        <path d="M40 12Q2 30 0 57Q2 84 40 108Q20 82 20 57Q20 32 40 12Z"/><path d="M60 12Q98 30 100 57Q98 84 60 108Q80 82 80 57Q80 32 60 12Z"/></symbol></defs>
+    <path class="land" d="${JO.d}"/>
+    <path class="grid-dots" d="${dots}" clip-path="url(#jo)" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+    ${leads.join("")}${pins.join("")}</svg>${labels.join("")}</div>`;
+}
+const CKEY=D.cities.map(c=>({Zarqa:"Al-Zarqa",Balqa:"Al-Balqa",Karak:"kerak",Mafraq:"Al-Mafraq","Ma'an":"Maan",Tafila:"Al-Tafila",Ajloun:"Ajlun"}[c[0]]||c[0]));
+
+// ---- live weather for the chosen governorate (Open-Meteo, no key); hidden if it can't load ----
+const GEO={Amman:[31.95,35.93],"Al-Zarqa":[32.07,36.09],Irbid:[32.55,35.85],"Al-Balqa":[32.04,35.73],kerak:[31.18,35.70],Aqaba:[29.53,35.01],Madaba:[31.72,35.79],"Al-Mafraq":[32.34,36.21],Maan:[30.19,35.73],Jerash:[32.28,35.90],"Al-Tafila":[30.84,35.60],Ajlun:[32.33,35.75]};
+const WX={}; let wxLoading=null;
+function loadWx(){
+  if(wxLoading)return wxLoading;
+  const keys=Object.keys(GEO);
+  const u=`https://api.open-meteo.com/v1/forecast?latitude=${keys.map(k=>GEO[k][0]).join(",")}&longitude=${keys.map(k=>GEO[k][1]).join(",")}&current=temperature_2m,weather_code,is_day&daily=temperature_2m_max,temperature_2m_min&forecast_days=1&timezone=Asia%2FAmman`;
+  wxLoading=fetch(u).then(r=>r.ok?r.json():Promise.reject()).then(j=>{(Array.isArray(j)?j:[j]).forEach((d,k)=>WX[keys[k]]=d)}).catch(()=>{});
+  return wxLoading;
+}
+function wxKind(c,day){
+  if(c===0||c===1)return day?"sun":"moon"; if(c===2)return day?"partly":"partlyN"; if(c===3)return "cloud";
+  if(c===45||c===48)return "fog"; if(c>=95)return "storm"; if((c>=71&&c<=77)||c===85||c===86)return "snow"; if(c>=51)return "rain"; return "cloud";
+}
+const WXT={sun:["مشمس","Sunny"],moon:["صافٍ","Clear"],partly:["غائم جزئياً","Partly cloudy"],partlyN:["غائم جزئياً","Partly cloudy"],cloud:["غائم","Cloudy"],fog:["ضباب","Fog"],rain:["أمطار","Rain"],snow:["ثلوج","Snow"],storm:["عاصفة رعدية","Thunderstorm"]};
+function wxIcon(k){
+  const cloud=`<path class="cloud" d="M14 38h22a8 8 0 0 0 0-16 11 11 0 0 0-21-2 7 7 0 0 0-1 18z"/>`;
+  const sun=`<g class="rays">${[0,45,90,135,180,225,270,315].map(a=>`<line x1="24" y1="4" x2="24" y2="9" transform="rotate(${a} 24 24)"/>`).join("")}</g><circle class="sun" cx="24" cy="24" r="9"/>`;
+  const moon=`<path class="moon" d="M30 10a14 14 0 1 0 8 22 11 11 0 1 1-8-22z"/>`;
+  switch(k){
+    case "sun":return `<svg viewBox="0 0 48 48">${sun}</svg>`;
+    case "moon":return `<svg viewBox="0 0 48 48">${moon}</svg>`;
+    case "partly":return `<svg viewBox="0 0 48 48"><g transform="translate(-6 -6) scale(.8)">${sun}</g>${cloud}</svg>`;
+    case "partlyN":return `<svg viewBox="0 0 48 48"><g transform="translate(-4 -6) scale(.75)">${moon}</g>${cloud}</svg>`;
+    case "cloud":return `<svg viewBox="0 0 48 48"><path class="cloud2" d="M24 28h16a6 6 0 0 0 0-12 8 8 0 0 0-15-1z"/>${cloud}</svg>`;
+    case "fog":return `<svg viewBox="0 0 48 48">${cloud}<line class="fog" x1="10" y1="42" x2="38" y2="42"/><line class="fog" x1="14" y1="47" x2="34" y2="47" style="animation-delay:.6s"/></svg>`;
+    case "rain":return `<svg viewBox="0 0 48 48">${[14,22,30].map((x,i)=>`<line class="drop" x1="${x}" y1="40" x2="${x-2}" y2="45" style="animation-delay:${i*.3}s"/>`).join("")}${cloud}</svg>`;
+    case "snow":return `<svg viewBox="0 0 48 48">${[14,22,30].map((x,i)=>`<circle class="flake" cx="${x}" cy="42" r="2" style="animation-delay:${i*.6}s"/>`).join("")}${cloud}</svg>`;
+    default:return `<svg viewBox="0 0 48 48">${cloud}<path class="bolt" d="M24 36l-5 8h4l-2 7 7-10h-4l3-5z"/></svg>`;
+  }
+}
+function renderWx(){
+  const el=$("wx"); if(S.city<0){el.hidden=true;return}
+  const key=CKEY[S.city]; if(!GEO[key]){el.hidden=true;return}
+  loadWx().then(()=>{
+    const d=WX[key]; if(!d||!d.current||S.city<0||CKEY[S.city]!==key){if(!d)el.hidden=true;return}
+    const k=wxKind(d.current.weather_code,d.current.is_day), L=S.lang==="ar"?0:1;
+    const hi=d.daily?Math.round(d.daily.temperature_2m_max[0]):null, lo=d.daily?Math.round(d.daily.temperature_2m_min[0]):null;
+    el.innerHTML=`${wxIcon(k)}<div><div class="t">${Math.round(d.current.temperature_2m)}°</div><div class="d">${WXT[k][L]} · ${esc(D.cities[S.city][S.lang==="ar"?1:0])}</div>${hi!=null?`<div class="hl">↑${hi}° ↓${lo}°</div>`:""}</div>`;
+    el.hidden=false; el.style.animation="none"; void el.offsetWidth; el.style.animation="";
+  });
+}
+function paintMapWx(){
+  document.querySelectorAll("#map .mlabel").forEach(b=>{
+    const d=WX[CKEY[+b.dataset.c]]; if(!d||!d.current||b.querySelector(".wxs"))return;
+    const sp=document.createElement("span"); sp.className="wxs";
+    sp.innerHTML=wxIcon(wxKind(d.current.weather_code,d.current.is_day))+Math.round(d.current.temperature_2m)+"°";
+    if($("map").classList.contains("intro"))sp.style.animationDelay="4.4s";
+    b.appendChild(sp);
+  });
+}
+function countUp(){
+  const el=$("s1count"), total=rows.length, t=T[S.lang];
+  el.innerHTML=`<b>0</b><span>${t.count1}</span>`; const b=el.querySelector("b");
+  const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(reduce){b.textContent=fmt(total);return}
+  setTimeout(()=>{const t0=performance.now(),dur=1600;
+    const step=now=>{const k=Math.min(1,(now-t0)/dur), e=1-Math.pow(1-k,3); b.textContent=fmt(Math.round(total*e)); if(k<1)requestAnimationFrame(step)};
+    requestAnimationFrame(step)},3300);
+}
+function show(scene){
+  const one=$("scene1"), two=$("scene2");
+  if(scene===2){one.classList.add("leave");setTimeout(()=>{one.hidden=true;one.classList.remove("leave");two.hidden=false;two.classList.remove("enter");void two.offsetWidth;two.classList.add("enter");scrollTo(0,0)},420)}
+  else{two.hidden=true;one.hidden=false;scrollTo(0,0)}
+}
+function pickCity(c){S.city=c;S.area=-1;S.spec=-1;S.group="all";S.q="";$("q").value="";S.shown=30;render();renderWx();show(2)}
+$("allbtn").addEventListener("click",()=>pickCity(-1));
+$("quick").addEventListener("click",e=>{const b=e.target.closest("[data-q]");if(!b)return;const g=b.dataset.q;
+  if(g==="pharmacy"){S.tab="ph";S.group="all"}else{S.tab="med";S.group=S.group===g?"all":g}
+  S.spec=-1;S.shown=30;renderStatic();renderFilters();renderResults();$("count").scrollIntoView({behavior:"smooth",block:"start"})});
+$("back").addEventListener("click",()=>show(1));
+$("lang2").addEventListener("click",()=>$("lang").click());
+$("map").addEventListener("click",e=>{const g=e.target.closest("[data-c]");if(g)pickCity(+g.dataset.c)});
+$("map").addEventListener("keydown",e=>{const g=e.target.closest("[data-c]");if(g&&(e.key==="Enter"||e.key===" ")){e.preventDefault();pickCity(+g.dataset.c)}});
+const _rf=renderFilters; renderFilters=function(){_rf();renderTiles();renderMap()};
+function render(){renderV();renderStatic();renderFilters();renderResults()}
+$("switch")&&$("switch").addEventListener("click",e=>{const b=e.target.closest("[data-v]");if(!b)return;S.v=b.dataset.v;renderV()});
+$("tiles").addEventListener("click",e=>{const b=e.target.closest("[data-c]");if(!b)return;const c=+b.dataset.c;S.city=S.city===c?-1:c;S.area=-1;S.shown=30;renderFilters();renderResults()});
+
+$("tabs").addEventListener("click",e=>{const b=e.target.closest("[data-tab]");if(!b)return;S.tab=b.dataset.tab;S.group="all";S.spec=-1;S.shown=30;render()});
+$("chips").addEventListener("click",e=>{const b=e.target.closest("[data-g]");if(!b)return;S.group=b.dataset.g;S.spec=-1;S.shown=30;renderFilters();renderResults()});
+$("city").addEventListener("change",e=>{S.city=+e.target.value;S.area=-1;S.shown=30;renderStatic();renderFilters();renderResults();renderWx()});
+$("area").addEventListener("change",e=>{S.area=+e.target.value;if(S.area>=0)S.city=D.areas[S.area][0];S.shown=30;renderStatic();renderFilters();renderResults();renderWx()});
+$("spec").addEventListener("change",e=>{S.spec=+e.target.value;S.shown=30;renderFilters();renderResults()});
+let tm;$("q").addEventListener("input",e=>{clearTimeout(tm);tm=setTimeout(()=>{S.q=e.target.value;S.shown=30;renderFilters();renderResults()},150)});
+$("reset").addEventListener("click",()=>{S.q="";$("q").value="";S.city=-1;S.area=-1;S.spec=-1;S.group="all";S.shown=30;renderFilters();renderResults()});
+$("more").addEventListener("click",()=>{S.shown+=30;renderResults()});
+$("lang").addEventListener("click",()=>{location.href=S.lang==="ar"?"/en/medical-network":"/medical-network"});
+$("grid").addEventListener("click",e=>{const b=e.target.closest("[data-copy]");if(!b)return;const n=b.dataset.copy;
+  const done=()=>{const el=$("toast");el.textContent=T[S.lang].copied;el.classList.add("on");setTimeout(()=>el.classList.remove("on"),1400)};
+  (navigator.clipboard?navigator.clipboard.writeText(n):Promise.reject()).then(done).catch(()=>{const s=getSelection(),rg=document.createRange();rg.selectNodeContents(b.closest(".phone").querySelector(".num"));s.removeAllRanges();s.addRange(rg)})});
+{const M=["كانون الثاني","شباط","آذار","نيسان","أيار","حزيران","تموز","آب","أيلول","تشرين الأول","تشرين الثاني","كانون الأول"],ME=["January","February","March","April","May","June","July","August","September","October","November","December"];
+ const [yy,mm]=String(D.updated||"").split("-").map(Number); if(yy&&mm){T.ar.upd=`آخر تحديث: ${M[mm-1]} ${yy}`;T.en.upd=`Updated ${ME[mm-1]} ${yy}`}}
+render();
+
+loadWx(); countUp();
+// first view: the map draws itself, pins pop in north to south, then names
+(function intro(){
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+  const m=$("map"); m.classList.add("intro");
+  const pins=[...m.querySelectorAll(".pin")].sort((x,y)=>x.querySelector(".dot").cy.baseVal.value-y.querySelector(".dot").cy.baseVal.value);
+  pins.forEach((p,k)=>p.style.animationDelay=(2.6+k*.09)+"s");
+  m.querySelectorAll(".lead,.lend").forEach((l,k)=>l.style.animationDelay=(3.5+k*.025)+"s");
+  m.querySelectorAll(".mlabel").forEach((l,k)=>l.style.animationDelay=(3.6+k*.05)+"s");
+  setTimeout(()=>m.classList.remove("intro"),5200);
+})();
+})();
+</script>
+
+</body></html>
