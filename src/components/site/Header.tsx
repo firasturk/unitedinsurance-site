@@ -85,12 +85,12 @@ export function Header() {
 
   return (
     <header className={`sticky top-0 z-50 transition-all ${scrolled ? "glass-light shadow-soft" : "bg-background/60 backdrop-blur"}`}>
-      <div className="mx-auto grid h-16 max-w-7xl grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 sm:px-6">
+      <div className="mx-auto grid h-16 max-w-7xl 2xl:max-w-[1500px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 sm:px-6">
         <Link to="/" className="col-start-1 flex items-center shrink-0" aria-label="United Insurance">
           <Pic src={logo} alt="United Insurance" width={230} height={65} className="h-9 w-auto" />
         </Link>
 
-        <nav className="hidden min-w-0 2xl:flex items-center justify-center gap-0.5 rounded-full px-1.5 py-1 bg-background/50 backdrop-blur-md border border-white/20 shadow-sm">
+        <nav className="hidden min-w-0 2xl:flex items-center justify-center gap-0.5 rounded-full px-1.5 py-1 bg-background/50 backdrop-blur-md border border-white/20 shadow-sm overflow-hidden">
           {navKeys.map(n =>
             "children" in n && n.children ? (
               <div key={n.to} className="relative group">
