@@ -90,7 +90,7 @@ export function Header() {
           <Pic src={logo} alt="United Insurance" width={230} height={65} className="h-9 w-auto" />
         </Link>
 
-        <nav className="hidden min-w-0 2xl:flex items-center justify-center gap-0.5 rounded-full px-1.5 py-1 bg-background/50 backdrop-blur-md border border-white/20 shadow-sm overflow-hidden">
+        <nav className="hidden min-w-0 2xl:flex items-center justify-center gap-0.5 rounded-full px-1.5 py-1 bg-background/50 backdrop-blur-md border border-white/20 shadow-sm">
           {navKeys.map(n =>
             "children" in n && n.children ? (
               <div key={n.to} className="relative group">
