@@ -280,6 +280,8 @@ html[lang="ar"] .s2title{font-family:var(--f-ar);font-weight:800}
 .brand.home{display:inline-flex;align-items:center;gap:9px;color:#fff;text-decoration:none;opacity:1;font-weight:700;font-size:14px;letter-spacing:0}
 .brand.home svg{width:20px;height:22px;fill:currentColor;flex:none}
 .brand.home:hover{opacity:.85}
+.brandlogo{display:block;height:36px;width:auto;filter:brightness(0) invert(1)}
+@media(max-width:480px){.brandlogo{height:30px}}
 .topl{display:flex;align-items:center;gap:14px}
 @media(max-width:480px){#brand2 span{display:none}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -416,7 +418,7 @@ function count(list,f){const m=new Map();for(const r of list){const k=f(r);m.set
 
 function renderStatic(){
   const t=T[S.lang]; document.documentElement.lang=S.lang; document.documentElement.dir=S.lang==="ar"?"rtl":"ltr";
-  $("brand").innerHTML=EMB+`<span>${t.brand}</span>`; $("brand2").innerHTML=EMB+`<span>${t.brand}</span>`; $("brand").href=$("brand2").href=S.lang==="en"?"/en":"/"; $("title").textContent=t.title; $("sub").textContent=t.sub; $("lang").textContent=t.lang; $("lang2").textContent=t.lang;
+  $("brand").innerHTML=$("brand2").innerHTML=`<img class="brandlogo" src="/media/united-logo.png" alt="${t.brand}" width="230" height="65">`; $("brand").href=$("brand2").href=S.lang==="en"?"/en":"/"; $("title").textContent=t.title; $("sub").textContent=t.sub; $("lang").textContent=t.lang; $("lang2").textContent=t.lang;
   $("s1sub").textContent=t.s1sub; $("allbtn").textContent=t.all;
   $("back").innerHTML=`<svg width="16" height="16" viewBox="0 0 24 24" ${P} style="transform:${S.lang==="ar"?"scaleX(-1)":"none"}"><path d="M15 18l-6-6 6-6"/></svg>${t.back}`;
   $("s2title").textContent=`${t.title} — ${S.city>=0?D.cities[S.city][S.lang==="ar"?1:0]:t.allTitle}`;
